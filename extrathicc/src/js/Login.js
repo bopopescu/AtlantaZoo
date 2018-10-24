@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-//import "./css/Login.css";
+import "../css/Login.css";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
+// import Header from "./Header";
 
 class Login extends Component {
   constructor(props) {
@@ -45,6 +46,9 @@ class Login extends Component {
   render() {
     return (
       <div className="Login">
+        <Grid container justify="center">
+          <header id="title">Login</header>
+        </Grid>
         <form autoComplete="off" onSubmit={this.handleSubmit}>
           <Grid
             container
