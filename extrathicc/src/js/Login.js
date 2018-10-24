@@ -2,6 +2,7 @@ import React, { Component } from "react";
 //import "./css/Login.css";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import { Grid } from "@material-ui/core";
 
 class Login extends Component {
   constructor(props) {
@@ -13,7 +14,6 @@ class Login extends Component {
     };
   }
 
-  // validate username instead, previously email
   validateForm() {
     return this.state.username.length > 0 && this.state.password.length > 0;
   }
@@ -32,32 +32,44 @@ class Login extends Component {
     return (
       <div className="Login">
         <form autoComplete="off" onSubmit={this.handleSubmit}>
-          <TextField
-            id="username"
-            label="Username"
-            placeholder="username"
-            value={this.state.username}
-            onChange={this.handleChange}
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            id="password"
-            label="Password"
-            placeholder="password"
-            value={this.state.password}
-            onChange={this.handleChange}
-            margin="normal"
-            variant="outlined"
-          />
-
-          <Button variant="outlined" type="submit">
-            Login
-          </Button>
-
-          <Button variant="outlined" color="secondary" type="submit">
-            Cancel
-          </Button>
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+          >
+            <TextField
+              id="username"
+              label="Username"
+              placeholder="username"
+              value={this.state.username}
+              onChange={this.handleChange}
+              margin="normal"
+              variant="outlined"
+            />
+            <TextField
+              id="password"
+              label="Password"
+              placeholder="password"
+              value={this.state.password}
+              onChange={this.handleChange}
+              margin="normal"
+              variant="outlined"
+              type="password"
+            />
+          </Grid>
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Button
+              variant="outlined"
+              type="submit"
+              disabled={!this.validateForm()}
+            >
+              Login
+            </Button>
+            <Button variant="outlined" color="secondary" type="submit">
+              Cancel
+            </Button>
+          </Grid>
         </form>
       </div>
     );
