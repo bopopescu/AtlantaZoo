@@ -3,14 +3,16 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
+import { Redirect } from "react-router-dom";
 
 class Login extends Component {
   constructor(props) {
     super(props);
-
+    // this.redirect = this.redirect.bind(this);
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      redirect: false
     };
   }
 
@@ -26,6 +28,18 @@ class Login extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+  };
+
+  setRedirect = () => {
+    this.setState({
+      redirect: true
+    });
+  };
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to="/" />;
+    }
   };
 
   render() {
@@ -66,7 +80,14 @@ class Login extends Component {
             >
               Login
             </Button>
-            <Button variant="outlined" color="secondary" type="submit">
+
+            {this.renderRedirect()}
+            <Button
+              variant="outlined"
+              color="secondary"
+              type="submit"
+              onClick={this.setRedirect}
+            >
               Cancel
             </Button>
           </Grid>
