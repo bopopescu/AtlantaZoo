@@ -1,45 +1,26 @@
-from flask import Flask, session
-from Connect import connection
-from MySQLdb import escape_string as thwart
+from flask import Flask, request, jsonify, session
+
+import helpers
+
+# from MySQLdb import escape_string as thwart
 app = Flask(__name__)
 
 app.secret_key = 'super secret key'
 
-def validate_registration(username, email):
-    conn, curr = connection()
+@app.route('/login', methods=['POST'])
+def login():
+    return jsonify(message=helpers.login(request.json['username'], request.json['password']))
 
-    curr.execute("SELECT * FROM User WHERE username = %s;", (thwart(username), ))
-    results = curr.fetchall()
-    if len(results) > 0:
-        return False
+@app.route('/whoami', methods=['GET'])
+def whoami():
+    return jsonify(username=session['username'])
 
-    curr.execute("SELECT * FROM User WHERE email = %s;", (thwart(email), ))
-    results = curr.fetchall()
-    if len(results) > 0:
-        return False
-
-    return True
-
-
-def create_user(username, email, password, user_type):
-    conn, curr = connection()
-
-    if validate_registration(username, email):
-        curr.execute("INSERT INTO User(username, email, password, user_type) "
-                     "VALUES (%s, %s, %s, %s);", (thwart(username), thwart(email),
-                                                   thwart(password), thwart(user_type)))
-        conn.commit()
-        curr.close()
-        conn.close()
-
-        with app.test_request_context():
-            session['logged_in'] = True
-            session['username'] = username
-
-        return "User was successfully created"
-    else:
-        return "There is a duplicate username or email. Cannot create user"
-
+@app.route('/users', methods=['POST'])
+def create_user():
+    return jsonify(message=helpers.create_user(request.json['username'],
+                                               request.json['email'],
+                                               request.json['password'],
+                                               request.json['user_type']))
 
 if __name__ == '__main__':
     app.run(debug=True)

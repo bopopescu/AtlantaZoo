@@ -8,7 +8,7 @@ def connection():
                                     user='root',
                                     password='extrathicc',
                                     database='test')
-      curr = cnx.cursor()
+      curr = cnx.cursor(dictionary=True)
       return cnx, curr
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
