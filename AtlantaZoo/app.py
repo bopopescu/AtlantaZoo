@@ -21,6 +21,11 @@ def create_user():
                                                request.json['email'],
                                                request.json['password'],
                                                request.json['user_type']))
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.clear()
+    return jsonify(message='You have successfully logged out')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
