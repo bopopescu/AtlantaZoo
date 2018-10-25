@@ -20,4 +20,3 @@ def connection():
             cnx.close()
         return "fail"
 
-

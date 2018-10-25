@@ -43,4 +43,3 @@ def create_user(username, email, password, user_type):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
