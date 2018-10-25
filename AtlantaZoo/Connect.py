@@ -8,7 +8,8 @@ def connection():
                                     user='root',
                                     password='extrathicc',
                                     database='test')
-      return cnx
+      curr = cnx.cursor()
+      return cnx, curr
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Something is wrong with your user name or password")
@@ -18,4 +19,5 @@ def connection():
             print(err)
             cnx.close()
         return "fail"
+
 
