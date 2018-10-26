@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, session
 
 import helpers
 
-# from MySQLdb import escape_string as thwart
 app = Flask(__name__)
 
 app.secret_key = 'super secret key'
