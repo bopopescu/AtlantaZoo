@@ -15,6 +15,7 @@ class Registratino extends Component{
     };
     }
 
+    validateForm() {}
 
     render() {
         return (
@@ -65,8 +66,26 @@ class Registratino extends Component{
                             variant="outlined"
                         />  
                     </Grid>
-                    <Grid container direction="row" justify="center" alignItems="center">
-                    
+                    <Grid 
+                        container 
+                        direction="row" 
+                        justify="center" 
+                        alignItems="center"
+                    >
+                        <Button
+                            variant="outlined"
+                            type="submit"
+                            disabled={!this.validateForm()}
+                        >
+                        Register Visitor
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            type="submit"
+                            disabled={!this.validateForm()}
+                        >
+                        Register Staff
+                        </Button>                    
                     </Grid>
                 </form>
             </div>
