@@ -10,6 +10,7 @@ app.secret_key = 'super secret key'
 def login():
     return jsonify(message=helpers.login(request.json['username'], request.json['password']))
 
+#just for testing who is logged in
 @app.route('/whoami', methods=['GET'])
 def whoami():
     return jsonify(username=session['username'])
@@ -26,5 +27,19 @@ def logout():
     return jsonify(message='You have successfully logged out')
 
 
+
+@app.route('/animals', methods=['POST'])
+def create_animal():
+    return jsonify(message=helpers.create_animal(request.json['animal_name'],
+                                               request.json['species'],
+                                               request.json['animal_type'],
+                                               request.json['age'],
+                                               request.json['exhibit_name']))
+
+@app.route('/exhibit', methods=['POST'])
+def create_exhibit():
+    return jsonify(message=helpers.create_exhibit(request.json['exhibit_name'],
+                                                request.json['water_feature'],
+                                               request.json['size']))
 if __name__ == '__main__':
     app.run(debug=True)

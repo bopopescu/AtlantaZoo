@@ -1,6 +1,8 @@
 from flask import session
 from Connect import connection
 
+# def get_users():
+
 
 def validate_registration(username, email):
     conn, curr = connection()
@@ -55,5 +57,33 @@ def login(username, password):
     conn.close()
 
     return "Successfully logged in"
+
+def create_exhibit(exhibit_name, water_feature, size):
+    conn, curr = connection()
+    curr.execute("INSERT INTO Exhibit(exhibit_name, water_feature, size) "
+                 "VALUES (%s, %s, %s);", (exhibit_name, water_feature, size))
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    session['create_exhibit'] = True
+    session['exhibit_name'] = exhibit_name
+    # session['species'] = species
+
+    return "Exhibit was successfully created"
+
+def create_animal(animal_name, species, animal_type, age, exhibit_name):
+    conn, curr = connection()
+    curr.execute("INSERT INTO Animal(animal_name, species, animal_type, age, exhibit_name) "
+                 "VALUES (%s, %s, %s, %s, %s);", (animal_name, species, animal_type, age, exhibit_name))
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    session['create_animal'] = True
+    session['animal_name'] = animal_name
+    session['species'] = species
+
+    return "Animal was successfully created"
 
 
