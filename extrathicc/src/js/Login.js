@@ -28,6 +28,22 @@ class Login extends Component {
   };
 
   handleSubmit = event => {
+    fetch('http://localhost:5000/login',
+      {
+        method: 'POST',
+        body: JSON.stringify({ username: this.state.username, password: this.state.password }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          this.setState({ redirect: true });
+        } else {
+          response.json().then(resp => alert(resp.message));
+        }
+      })
+      .catch(error => console.error('Error:', error));
     event.preventDefault();
   };
 

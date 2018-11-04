@@ -1,8 +1,11 @@
-from flask import session
+from flask import session, abort as flask_abort, make_response, jsonify
 from Connect import connection
+
 
 # def get_users():
 
+def abort(status_code, **fields):
+    flask_abort(make_response(jsonify(**fields), status_code))
 
 def validate_registration(username, email):
     conn, curr = connection()
@@ -46,7 +49,7 @@ def create_user(username, email, password, user_type):
 
         return "User was successfully created"
     else:
-        return "There is a duplicate username or email. Cannot create user"
+        abort(400, message="Duplicate user given")
 
 def login(username, password):
     conn, curr = connection()
@@ -54,7 +57,7 @@ def login(username, password):
     curr.execute('SELECT * FROM User where username = %s and password = %s', (username, password))
     row = curr.fetchone()
     if row is None:
-        return "Username/password incorrect"
+        abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
     session['username'] = username
