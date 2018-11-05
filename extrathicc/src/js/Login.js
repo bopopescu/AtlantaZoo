@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
-// import Header from "./Header";
 
 class Login extends Component {
   constructor(props) {
@@ -27,6 +26,7 @@ class Login extends Component {
     });
   };
 
+  // modify later if user is not visitor
   handleSubmit = event => {
     fetch('http://localhost:5000/login',
       {
