@@ -1,18 +1,17 @@
-import React, { Component } from "react";
-import logo from "./logo.svg";
+import React from "react";
 import "./App.css";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
   AppBar,
   Toolbar,
   IconButton,
-  Button,
   Typography,
   withStyles
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Routes from "./Routes";
 import PropTypes from "prop-types";
+import { Grid } from "@material-ui/core";
 
 const styles = {
   root: {
@@ -43,8 +42,10 @@ const App = props => {
           <Typography variant="h6" color="inherit" className={classes.grow}>
             Menu
           </Typography>
-          <Link to="/login">Login</Link>
-          {/* <Button onClick={Redirect("/login")}>Login</Button> */}
+          <Grid container direction="row" justify="flex-end" alignItems="center">
+            <Link to="/registration">Registration</Link>
+            <Link to="/login">Login</Link>
+          </Grid>
         </Toolbar>
       </AppBar>
       <Routes />

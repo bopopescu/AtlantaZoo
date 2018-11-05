@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, session
+from flask_cors import CORS
 
 import helpers
 
 # from MySQLdb import escape_string as thwart
 app = Flask(__name__)
+CORS(app)
 
 app.secret_key = 'super secret key'
 

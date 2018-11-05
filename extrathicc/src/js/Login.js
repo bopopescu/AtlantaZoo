@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-//import "./css/Login.css";
+import "../css/Login.css";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
@@ -26,7 +26,24 @@ class Login extends Component {
     });
   };
 
+  // modify later if user is not visitor
   handleSubmit = event => {
+    fetch('http://localhost:5000/login',
+      {
+        method: 'POST',
+        body: JSON.stringify({ username: this.state.username, password: this.state.password }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          this.setState({ redirect: true });
+        } else {
+          response.json().then(resp => alert(resp.message));
+        }
+      })
+      .catch(error => console.error('Error:', error));
     event.preventDefault();
   };
 
@@ -38,13 +55,16 @@ class Login extends Component {
 
   renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to="/" />;
+      return <Redirect to="/home" />;
     }
   };
 
   render() {
     return (
       <div className="Login">
+        <Grid container justify="center">
+          <header id="title">Login</header>
+        </Grid>
         <form autoComplete="off" onSubmit={this.handleSubmit}>
           <Grid
             container
