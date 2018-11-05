@@ -6,7 +6,7 @@ def connection():
     try:
       cnx = mysql.connector.connect(host='timbess.net',
                                     user='root',
-                                    password='extrathicc',
+                                    password='haoquyenjeanniehaha',
                                     database='test')
       curr = cnx.cursor(dictionary=True)
       return cnx, curr

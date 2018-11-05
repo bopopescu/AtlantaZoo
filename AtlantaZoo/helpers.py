@@ -74,7 +74,6 @@ def create_exhibit(exhibit_name, water_feature, size):
 
     session['create_exhibit'] = True
     session['exhibit_name'] = exhibit_name
-    # session['species'] = species
 
     return "Exhibit was successfully created"
 
@@ -92,4 +91,40 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
 
     return "Animal was successfully created"
 
+def create_show(show_name, show_time, staff_name, exhibit_name):
+    conn, curr = connection()
+    curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
+                 "VALUES (%s, %s, %s, %s);", (show_name, show_time, staff_name, exhibit_name))
+    conn.commit()
+    curr.close()
+    conn.close()
 
+    session['create_show'] = True
+    session['show_name'] = show_name
+    session['show_time'] = show_time
+
+    return "Show was successfully created"
+
+def delete_animal(animal_name, species):
+    conn, curr = connection()
+
+    curr.execute("DELETE FROM Animal "
+                 "WHERE animal_name = %s and species = %s;",
+                 (animal_name, species))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    return "Animal was successfully deleted"
+
+def delete_show(show_name, show_time):
+    conn, curr = connection()
+
+    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;", (show_name, show_time))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    return "Show was successfully deleted"
