@@ -4,6 +4,11 @@ import { Switch, Route } from "react-router-dom";
 import React from "react";
 import HomePage from "./js/HomePage";
 import Exhibits from "./js/Exhibits";
+import ExhibitHistory from "./js/ExhibitHistory";
+import ExhibitDetail from "./js/ExhibitDetail";
+import ShowHistory from "./js/ShowHistory";
+import Shows from "./js/Shows";
+import Animals from "./js/Animals";
 
 const Routes = () => {
   return (
@@ -12,10 +17,11 @@ const Routes = () => {
       <Route path="/login" component={Login} />;
       <Route path="/registration" component={Registration} />;
       <Route path="/exhibits/" component={Exhibits} />;
-      {/* <Route path="/shows" component={Shows} />;
+      <Route path="/shows" component={Shows} />;
       <Route path="/animals" component={Animals} />;
-      <Route path="/exhibits/history" component={Exhibit_History} />;
-      <Route path="/shows/history" component={Show_History} />; */}
+      <Route path="/exhibit_history" component={ExhibitHistory} />;
+      <Route path="/shows_history" component={ShowHistory} />;
+      <Route path="/exhibits_id" component={ExhibitDetail} />;
     </Switch>
   );
 };

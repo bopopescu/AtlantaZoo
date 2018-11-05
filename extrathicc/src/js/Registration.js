@@ -30,7 +30,12 @@ class Registration extends Component {
         fetch('http://localhost:5000/users',
             {
                 method: 'POST',
-                body: JSON.stringify({ username: this.state.username, email: this.state.email, password: this.state.password, user_type: this.state.user_type }),
+                body: JSON.stringify({
+                    username: this.state.username,
+                    email: this.state.email,
+                    password: this.state.password,
+                    user_type: this.state.user_type
+                }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -47,7 +52,10 @@ class Registration extends Component {
     }
 
     validateForm() {
-        if (this.state.username.length > 0 && this.state.password.length > 0 && this.state.email.length > 0 && this.state.confirm.length > 0) {
+        if (this.state.username.length > 0
+            && this.state.password.length > 0
+            && this.state.email.length > 0
+            && this.state.confirm.length > 0) {
             if (!this.state.email.includes('@')) {
                 return false;
             } else if (this.state.password !== this.state.confirm) {
@@ -102,7 +110,7 @@ class Registration extends Component {
                             onChange={this.handleChange('confirm')}
                             margin="normal" />
                         <FormControl>
-                            <InputLabel htmlFor="age-simple">Type</InputLabel>
+                            <InputLabel>Type</InputLabel>
                             <Select
                                 value={this.state.user_type}
                                 onChange={this.handleChange('user_type')}
