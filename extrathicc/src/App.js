@@ -1,12 +1,10 @@
-import React, { Component } from "react";
-import logo from "./logo.svg";
+import React from "react";
 import "./App.css";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
   AppBar,
   Toolbar,
   IconButton,
-  Button,
   Typography,
   withStyles
 } from "@material-ui/core";
@@ -43,6 +41,7 @@ const App = props => {
           <Typography variant="h6" color="inherit" className={classes.grow}>
             Menu
           </Typography>
+          <Link to="/registration">Registration</Link>
           <Link to="/login">Login</Link>
           {/* <Button onClick={Redirect("/login")}>Login</Button> */}
         </Toolbar>
