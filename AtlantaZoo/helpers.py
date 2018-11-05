@@ -1,8 +1,11 @@
-from flask import session
+from flask import session, abort as flask_abort, make_response, jsonify
 from Connect import connection
+
 
 # def get_users():
 
+def abort(status_code, **fields):
+    flask_abort(make_response(jsonify(**fields), status_code))
 
 def validate_registration(username, email):
     conn, curr = connection()
@@ -40,7 +43,7 @@ def create_user(username, email, password, user_type):
 
         return "User was successfully created"
     else:
-        return "There is a duplicate username or email. Cannot create user"
+        abort(400, message="Duplicate user given")
 
 def login(username, password):
     conn, curr = connection()
@@ -48,7 +51,7 @@ def login(username, password):
     curr.execute('SELECT * FROM User where username = %s and password = %s', (username, password))
     row = curr.fetchone()
     if row is None:
-        return "Username/password incorrect"
+        abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
     session['username'] = username
@@ -68,7 +71,6 @@ def create_exhibit(exhibit_name, water_feature, size):
 
     session['create_exhibit'] = True
     session['exhibit_name'] = exhibit_name
-    # session['species'] = species
 
     return "Exhibit was successfully created"
 
@@ -86,4 +88,40 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
 
     return "Animal was successfully created"
 
+def create_show(show_name, show_time, staff_name, exhibit_name):
+    conn, curr = connection()
+    curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
+                 "VALUES (%s, %s, %s, %s);", (show_name, show_time, staff_name, exhibit_name))
+    conn.commit()
+    curr.close()
+    conn.close()
 
+    session['create_show'] = True
+    session['show_name'] = show_name
+    session['show_time'] = show_time
+
+    return "Show was successfully created"
+
+def delete_animal(animal_name, species):
+    conn, curr = connection()
+
+    curr.execute("DELETE FROM Animal "
+                 "WHERE animal_name = %s and species = %s;",
+                 (animal_name, species))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    return "Animal was successfully deleted"
+
+def delete_show(show_name, show_time):
+    conn, curr = connection()
+
+    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;", (show_name, show_time))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    return "Show was successfully deleted"

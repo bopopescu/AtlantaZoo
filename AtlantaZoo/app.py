@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, session
+from flask_cors import CORS
 
 import helpers
 
 app = Flask(__name__)
+CORS(app)
 
 app.secret_key = 'super secret key'
 
@@ -31,15 +33,33 @@ def logout():
 @app.route('/animals', methods=['POST'])
 def create_animal():
     return jsonify(message=helpers.create_animal(request.json['animal_name'],
-                                               request.json['species'],
-                                               request.json['animal_type'],
-                                               request.json['age'],
-                                               request.json['exhibit_name']))
+                                                 request.json['species'],
+                                                 request.json['animal_type'],
+                                                 request.json['age'],
+                                                 request.json['exhibit_name']))
 
 @app.route('/exhibit', methods=['POST'])
 def create_exhibit():
     return jsonify(message=helpers.create_exhibit(request.json['exhibit_name'],
-                                                request.json['water_feature'],
-                                               request.json['size']))
+                                                  request.json['water_feature'],
+                                                  request.json['size']))
+
+@app.route('/show', methods=['POST'])
+def create_show():
+    return jsonify(message=helpers.create_show(request.json['show_name'],
+                                               request.json['show_time'],
+                                               request.json['staff_name'],
+                                               request.json['exhibit_name']))
+
+@app.route('/deleteAnimal', methods=['POST'])
+def delete_animal():
+    return jsonify(message=helpers.delete_animal(request.json['animal_name'],
+                                                 request.json['species']))
+
+@app.route('/deleteShow', methods=['POST'])
+def delete_show():
+    return jsonify(message=helpers.delete_show(request.json['show_name'],
+                                                 request.json['show_time']))
+
 if __name__ == '__main__':
     app.run(debug=True)
