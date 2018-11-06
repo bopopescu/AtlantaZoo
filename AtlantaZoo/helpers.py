@@ -125,3 +125,31 @@ def delete_show(show_name, show_time):
     conn.close()
 
     return "Show was successfully deleted"
+
+def get_all_exhibits():
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM Exhibit")
+
+    results = curr.fetchall()
+    return results
+
+# gets size, exhibit name, and water feature
+# but not number of animals (call get_exhibit_animals for that)
+def get_exhibit_details(exhibit):
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM Exhibit WHERE exhibit_name = %s", (exhibit, ))
+
+    results = curr.fetchall()
+
+    return results
+
+def get_exhibit_animals(exhibit):
+    conn, curr = connection()
+
+    curr.execute("SELECT COUNT(*) FROM Animal WHERE exhibit_name = %s", (exhibit, ))
+
+    results = curr.fetchone()
+
+    return results
