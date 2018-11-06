@@ -153,3 +153,36 @@ def get_exhibit_animals(exhibit):
     results = curr.fetchone()
 
     return results
+
+def get_all_animals():
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM Animal")
+
+    results = curr.fetchall()
+    return results
+
+def get_all_shows():
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM `Show`")
+
+    results = curr.fetchall()
+    return results
+
+def get_all_visitors():
+    conn, curr = connection()
+
+    curr.execute("SELECT username, email FROM `User` WHERE user_type = \"Visitor\"")
+
+    results = curr.fetchall()
+    return results
+
+def get_all_staff():
+    conn, curr = connection()
+
+    curr.execute("SELECT username, email FROM `User` WHERE user_type = \"Staff\"")
+
+    results = curr.fetchall()
+    return results
+
