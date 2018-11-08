@@ -10,14 +10,14 @@ class Login extends Component {
     super(props);
     // this.redirect = this.redirect.bind(this);
     this.state = {
-      username: "",
+      email: "",
       password: "",
       redirect: false
     };
   }
 
   validateForm() {
-    return this.state.username.length > 0 && this.state.password.length > 0;
+    return this.state.email.length > 1 && this.state.password.length > 0;
   }
 
   handleChange = event => {
@@ -31,7 +31,7 @@ class Login extends Component {
     fetch('http://localhost:5000/login',
       {
         method: 'POST',
-        body: JSON.stringify({ username: this.state.username, password: this.state.password }),
+        body: JSON.stringify({ email: this.state.email, password: this.state.password }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -73,10 +73,10 @@ class Login extends Component {
             alignItems="center"
           >
             <TextField
-              id="username"
-              label="Username"
-              placeholder="username"
-              value={this.state.username}
+              id="email"
+              label="Email"
+              placeholder="email"
+              value={this.state.email}
               onChange={this.handleChange}
               margin="normal"
               variant="outlined"
