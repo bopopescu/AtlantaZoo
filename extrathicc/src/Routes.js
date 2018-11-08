@@ -11,6 +11,7 @@ import Shows from "./js/Shows";
 import Animals from "./js/Animals";
 import AssignedShows from "./js/AssignedShows";
 import StaffHome from "./js/StaffHome";
+import AddAnimal from "./js/AddAnimal";
 
 const Routes = () => {
   return (
@@ -26,6 +27,7 @@ const Routes = () => {
       <Route path="/shows_history" component={ShowHistory} />;
       <Route path="/exhibits_id" component={ExhibitDetail} />;
       <Route path="/assigned/shows" component={AssignedShows} />;
+      <Route path="/addanimal" component={AddAnimal} />;
     </Switch>
   );
 };
