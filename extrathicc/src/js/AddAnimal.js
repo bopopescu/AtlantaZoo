@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import MenuItem from '@material-ui/core/MenuItem';
+import { Redirect } from "react-router-dom";
 
 const exhibits = [
     {
@@ -25,6 +26,33 @@ const exhibits = [
     {
         value: 'Birds',
         label: 'Birds',
+    },
+];
+
+const animal_types = [
+    {
+        value: 'mammal',
+        label: 'Mammal',
+    },
+    {
+        value: 'bird',
+        label: 'Bird',
+    },
+    {
+        value: 'amphibian',
+        label: 'Amphibian',
+    },
+    {
+        value: 'reptile',
+        label: 'Reptile',
+    },
+    {
+        value: 'fish',
+        label: 'Fish',
+    },
+    {
+        value: 'invertebrate',
+        label: 'Invertebrate',
     },
 ];
 
@@ -50,9 +78,17 @@ class AddAnimal extends Component {
     }
 
     handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value
-        });
+        if (name === 'age') {
+            this.setState({
+                age: event.target.value < 0 ? 0 : event.target.value
+            });
+        } else {
+            this.setState({
+                [name]: event.target.value
+            });
+        }
+
+
     };
 
     handleSubmit = event => {
@@ -88,9 +124,9 @@ class AddAnimal extends Component {
     };
 
     renderRedirect = () => {
-        // if (this.state.redirect) {
-        //     return <Redirect to="/home" />;
-        // }
+        if (this.state.redirect) {
+            return <Redirect to="/home" />;
+        }
     };
 
     render() {
@@ -121,11 +157,6 @@ class AddAnimal extends Component {
                             label="Exhibit Name"
                             value={this.state.exhibit}
                             onChange={this.handleChange('exhibit')}
-                            SelectProps={{
-                                MenuProps: {
-
-                                },
-                            }}
                             helperText="Select an exhibit you want to add this animal to"
                             margin="normal"
                             variant="outlined"
@@ -136,6 +167,43 @@ class AddAnimal extends Component {
                                 </MenuItem>
                             ))}
                         </TextField>
+
+                        <TextField
+                            id="animal_type"
+                            select
+                            label="Animal Type"
+                            value={this.state.type}
+                            onChange={this.handleChange('type')}
+                            helperText="Select the type of this animal"
+                            margin="normal"
+                            variant="outlined"
+                        >
+                            {animal_types.map(option => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <TextField
+                            id="species"
+                            label="Animal Species"
+                            placeholder="Animal species"
+                            value={this.state.species}
+                            onChange={this.handleChange('species')}
+                            margin="normal" />
+
+                        <TextField
+                            id="age"
+                            value={this.state.age}
+                            onChange={this.handleChange('age')}
+                            type="number"
+                            InputLabelProps={{
+                                shrink: false,
+                            }}
+                            margin="normal"
+                            variant="outlined"
+                        />
                     </Grid>
                     <Grid container direction="row" justify="center" alignItems="center">
                         <Button
