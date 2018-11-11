@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="test@timbess.net">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.4">
+    <root id="1"/>
+    <schema id="2" parent="1" name="test">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="information_schema"/>
+    <schema id="4" parent="1" name="mysql"/>
+    <schema id="5" parent="1" name="performance_schema"/>
+    <schema id="6" parent="1" name="sys"/>
+    <table id="7" parent="2" name="Animal"/>
+    <table id="8" parent="2" name="Exhibit"/>
+    <table id="9" parent="2" name="Note"/>
+    <table id="10" parent="2" name="Show"/>
+    <table id="11" parent="2" name="User"/>
+    <table id="12" parent="2" name="Visit_exhibit"/>
+    <table id="13" parent="2" name="Visit_show"/>
+    <column id="14" parent="7" name="animal_name">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="15" parent="7" name="species">
+      <Position>2</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="16" parent="7" name="animal_type">
+      <Position>3</Position>
+      <DataType>enum(&apos;MAMMAL&apos;, &apos;BIRD&apos;, &apos;AMPHIBIAN&apos;, &apos;REPTILE&apos;, &apos;FISH&apos;, &apos;INVERTERABLE&apos;)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="17" parent="7" name="age">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="18" parent="7" name="exhibit_name">
+      <Position>5</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="19" parent="7" name="exhibit_name">
+      <ColNames>exhibit_name</ColNames>
+    </index>
+    <key id="20" parent="7" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>animal_name
+species</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="21" parent="7" name="Animal_ibfk_1">
+      <ColNames>exhibit_name</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>Exhibit</RefTableName>
+      <RefColNames>exhibit_name</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="22" parent="8" name="exhibit_name">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="23" parent="8" name="water_feature">
+      <Position>2</Position>
+      <DataType>tinyint(1)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="24" parent="8" name="size">
+      <Position>3</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="25" parent="8" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>exhibit_name</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="26" parent="9" name="staff_username">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="27" parent="9" name="log_time">
+      <Position>2</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="28" parent="9" name="note">
+      <Position>3</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="29" parent="9" name="animal_name">
+      <Position>4</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="30" parent="9" name="animal_species">
+      <Position>5</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="31" parent="9" name="animal_name">
+      <ColNames>animal_name
+animal_species</ColNames>
+    </index>
+    <key id="32" parent="9" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>staff_username
+log_time
+animal_name
+animal_species</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="33" parent="9" name="Note_ibfk_1">
+      <ColNames>staff_username</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>User</RefTableName>
+      <RefColNames>username</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="34" parent="9" name="Note_ibfk_2">
+      <ColNames>animal_name
+animal_species</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>Animal</RefTableName>
+      <RefColNames>animal_name
+species</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="35" parent="10" name="show_name">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="36" parent="10" name="show_time">
+      <Position>2</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="37" parent="10" name="staff_name">
+      <Position>3</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="38" parent="10" name="exhibit_name">
+      <Position>4</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="39" parent="10" name="exhibit_name">
+      <ColNames>exhibit_name</ColNames>
+    </index>
+    <index id="40" parent="10" name="staff_name">
+      <ColNames>staff_name</ColNames>
+    </index>
+    <key id="41" parent="10" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>show_name
+show_time</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="42" parent="10" name="Show_ibfk_1">
+      <ColNames>staff_name</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>User</RefTableName>
+      <RefColNames>username</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="43" parent="10" name="Show_ibfk_2">
+      <ColNames>exhibit_name</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>Exhibit</RefTableName>
+      <RefColNames>exhibit_name</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="44" parent="11" name="username">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="45" parent="11" name="email">
+      <Position>2</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="46" parent="11" name="password">
+      <Position>3</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="47" parent="11" name="user_type">
+      <Position>4</Position>
+      <DataType>enum(&apos;Staff&apos;, &apos;Admin&apos;, &apos;Visitor&apos;)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="48" parent="11" name="email">
+      <ColNames>email</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="49" parent="11" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>username</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="50" parent="11" name="email">
+      <ColNames>email</ColNames>
+      <UnderlyingIndexName>email</UnderlyingIndexName>
+    </key>
+    <column id="51" parent="12" name="visitor_username">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="52" parent="12" name="exhibit_name">
+      <Position>2</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="53" parent="12" name="visit_time">
+      <Position>3</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="54" parent="12" name="exhibit_name">
+      <ColNames>exhibit_name</ColNames>
+    </index>
+    <key id="55" parent="12" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>visitor_username
+exhibit_name
+visit_time</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="56" parent="12" name="Visit_exhibit_ibfk_1">
+      <ColNames>visitor_username</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>User</RefTableName>
+      <RefColNames>username</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="57" parent="12" name="Visit_exhibit_ibfk_2">
+      <ColNames>exhibit_name</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>Exhibit</RefTableName>
+      <RefColNames>exhibit_name</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <column id="58" parent="13" name="visitor_username">
+      <Position>1</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="59" parent="13" name="show_name">
+      <Position>2</Position>
+      <DataType>varchar(255)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="60" parent="13" name="show_time">
+      <Position>3</Position>
+      <DataType>datetime|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="61" parent="13" name="show_name">
+      <ColNames>show_name
+show_time</ColNames>
+    </index>
+    <key id="62" parent="13" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>visitor_username
+show_name
+show_time</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="63" parent="13" name="Visit_show_ibfk_1">
+      <ColNames>visitor_username</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>User</RefTableName>
+      <RefColNames>username</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+    <foreign-key id="64" parent="13" name="Visit_show_ibfk_2">
+      <ColNames>show_name
+show_time</ColNames>
+      <RefSchemaName>test</RefSchemaName>
+      <RefTableName>Show</RefTableName>
+      <RefColNames>show_name
+show_time</RefColNames>
+      <OnUpdate>cascade</OnUpdate>
+      <OnDelete>cascade</OnDelete>
+    </foreign-key>
+  </database-model>
+</dataSource>
