@@ -23,6 +23,11 @@ def create_user():
                                                request.json['email'],
                                                request.json['password'],
                                                request.json['user_type']))
+
+@app.route('/staff', methods=['GET'])
+def get_all_staff():
+    return jsonify(message=helpers.get_all_staff())
+
 @app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
