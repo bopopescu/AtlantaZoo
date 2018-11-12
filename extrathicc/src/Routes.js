@@ -6,6 +6,7 @@ import HomePage from "./js/HomePage";
 import Exhibits from "./js/Exhibits";
 import ExhibitHistory from "./js/ExhibitHistory";
 import ExhibitDetail from "./js/ExhibitDetail";
+import AnimalDetail from "./js/AnimalDetail";
 import ShowHistory from "./js/ShowHistory";
 import Shows from "./js/Shows";
 import Animals from "./js/Animals";
@@ -29,6 +30,7 @@ const Routes = () => {
       <Route path="/exhibit_history" component={ExhibitHistory} />;
       <Route path="/shows_history" component={ShowHistory} />;
       <Route path="/exhibits_id" component={ExhibitDetail} />;
+      <Route path="/animaldetail" component={AnimalDetail} />;
       <Route path="/assigned/shows" component={AssignedShows} />;
       <Route path="/addanimal" component={AddAnimal} />;
       <Route path="/addshow" component={AddShow} />;
