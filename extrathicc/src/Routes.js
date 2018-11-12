@@ -11,6 +11,7 @@ import Shows from "./js/Shows";
 import Animals from "./js/Animals";
 import AssignedShows from "./js/AssignedShows";
 import StaffHome from "./js/StaffHome";
+import AdminHome from "./js/AdminHome";
 import AddAnimal from "./js/AddAnimal";
 import AddShow from "./js/AddShow";
 
@@ -18,6 +19,7 @@ const Routes = () => {
   return (
     <Switch>
       <Route path="/staffhome" component={StaffHome} />;
+      <Route path="/adminhome" component={AdminHome} />;
       <Route path="/home" component={HomePage} />;
       <Route path="/login" component={Login} />;
       <Route path="/registration" component={Registration} />;
