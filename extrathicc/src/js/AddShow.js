@@ -6,6 +6,7 @@ import { Grid } from "@material-ui/core";
 import MenuItem from '@material-ui/core/MenuItem';
 import { Redirect } from "react-router-dom";
 import { DateTimePicker } from 'material-ui-pickers';
+import moment from 'moment';
 
 const exhibits = [
     {
@@ -38,7 +39,7 @@ class AddShow extends Component {
             name: "",
             exhibit: "",
             staff: "",
-            datetime: new Date(),
+            datetime: moment(),
             allStaff: [],
         };
 
@@ -54,12 +55,14 @@ class AddShow extends Component {
 
     validateForm() {
         return this.state.name.length > 0
-            && this.state.species.length > 0
-            && this.state.type.length > 0
-            && this.state.age !== 0
+            && this.validateTime()
+            && this.state.staff.length > 0
             && this.state.exhibit.length > 0;
     }
 
+    validateTime() {
+        return this.state.datetime > moment()
+    }
     handleDateChange = date => {
         this.setState({ datetime: date });
     };
@@ -79,12 +82,12 @@ class AddShow extends Component {
     };
 
     handleSubmit = event => {
-        fetch('http://localhost:5000/show',
+        fetch('http://localhost:5000/shows',
             {
                 method: 'POST',
                 body: JSON.stringify({
                     show_name: this.state.name,
-                    species: this.state.date.concat(" " + this.state.time),
+                    show_time: this.state.datetime.unix(),
                     staff_name: this.state.staff,
                     exhibit_name: this.state.exhibit
                 }),
@@ -170,26 +173,15 @@ class AddShow extends Component {
                             ))}
                         </TextField>
 
-                        <TextField
-                            id="date"
-                            label="Birthday"
-                            type="date"
-                            defaultValue="2017-05-24"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-
                         <DateTimePicker value={this.state.datetime} onChange={this.handleDateChange} />
                     </Grid>
-
-
 
                     <Grid container direction="row" justify="center" alignItems="center">
                         <Button
                             variant="outlined"
                             type="submit"
                             disabled={!this.validateForm()}
+                            onSubmit={this.handleSubmit}
                         >
                             Add Show
                 </Button>
