@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import MenuItem from '@material-ui/core/MenuItem';
 import { Redirect } from "react-router-dom";
+import { DateTimePicker } from 'material-ui-pickers';
 
 const exhibits = [
     {
@@ -29,10 +30,6 @@ const exhibits = [
     },
 ];
 
-const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-
-
 class AddShow extends Component {
     constructor(props) {
         super(props);
@@ -41,8 +38,7 @@ class AddShow extends Component {
             name: "",
             exhibit: "",
             staff: "",
-            date: "",
-            time: "",
+            datetime: new Date(),
             allStaff: [],
         };
 
@@ -64,6 +60,10 @@ class AddShow extends Component {
             && this.state.exhibit.length > 0;
     }
 
+    handleDateChange = date => {
+        this.setState({ datetime: date });
+    };
+
     handleChange = name => event => {
         if (name === 'age') {
             this.setState({
@@ -77,8 +77,6 @@ class AddShow extends Component {
 
 
     };
-
-
 
     handleSubmit = event => {
         fetch('http://localhost:5000/show',
@@ -172,41 +170,20 @@ class AddShow extends Component {
                             ))}
                         </TextField>
 
-                        <Grid container direction="row" justify="center" alignItems="center">
-                            <TextField
-                                id="month"
-                                select
-                                label="Month"
-                                value={this.state.exhibit}
-                                onChange={this.handleChange('month')}
-                                margin="normal"
-                                variant="outlined"
-                            >
-                                {exhibits.map(option => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-
-
-                        </Grid>
-
-                    </Grid>
-
-                    <Grid container direction="row" justify="center" alignItems="center">
                         <TextField
-                            id="age"
-                            value={this.state.age}
-                            onChange={this.handleChange('age')}
-                            type="number"
+                            id="date"
+                            label="Birthday"
+                            type="date"
+                            defaultValue="2017-05-24"
                             InputLabelProps={{
-                                shrink: false,
+                                shrink: true,
                             }}
-                            margin="normal"
-                            variant="outlined"
                         />
+
+                        <DateTimePicker value={this.state.datetime} onChange={this.handleDateChange} />
                     </Grid>
+
+
 
                     <Grid container direction="row" justify="center" alignItems="center">
                         <Button

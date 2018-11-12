@@ -43,18 +43,22 @@ def create_animal():
                                                  request.json['age'],
                                                  request.json['exhibit_name']))
 
-@app.route('/exhibit', methods=['POST'])
+@app.route('/exhibits', methods=['POST'])
 def create_exhibit():
     return jsonify(message=helpers.create_exhibit(request.json['exhibit_name'],
                                                   request.json['water_feature'],
                                                   request.json['size']))
 
-@app.route('/show', methods=['POST'])
+@app.route('/shows', methods=['POST'])
 def create_show():
     return jsonify(message=helpers.create_show(request.json['show_name'],
                                                request.json['show_time'],
                                                request.json['staff_name'],
                                                request.json['exhibit_name']))
+
+@app.route('/shows', methods=['GET'])
+def get_all_shows():
+    return jsonify(message=helpers.get_all_shows())
 
 @app.route('/deleteAnimal', methods=['POST'])
 def delete_animal():
