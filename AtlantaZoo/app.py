@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, make_response
 from flask_cors import CORS
 
 import helpers
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 app.secret_key = 'super secret key'
 
@@ -69,6 +69,10 @@ def delete_animal():
 def delete_show():
     return jsonify(message=helpers.delete_show(request.json['show_name'],
                                                  request.json['show_time']))
+
+@app.errorhandler(Exception)
+def general_errors(e):
+    return make_response(jsonify(message=repr(e)), 500)
 
 if __name__ == '__main__':
     app.run(debug=True)
