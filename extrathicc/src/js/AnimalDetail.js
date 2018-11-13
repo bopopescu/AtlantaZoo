@@ -10,14 +10,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Grid } from "@material-ui/core";
 
-const titles = [
-    'Name',
-    'Species',
-    'Age',
-    'Exhibit',
-    'Type'
-]
-
 class AnimalDetail extends Component {
     constructor(props) {
         super(props);
@@ -26,8 +18,9 @@ class AnimalDetail extends Component {
             details: [],
         };
 
-        // need to update this api for getting specific animal
-        // based on name and species
+        /**
+         * @todo: update api to get specific animal
+         */
         fetch('http://localhost:5000/animals', {
             method: 'GET',
             headers: {

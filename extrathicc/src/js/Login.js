@@ -4,11 +4,11 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
+import UserContext from "../UserContext.js";
 
 class Login extends Component {
   constructor(props) {
     super(props);
-    // this.redirect = this.redirect.bind(this);
     this.state = {
       email: "",
       password: "",
@@ -31,7 +31,7 @@ class Login extends Component {
     fetch('http://localhost:5000/login',
       {
         method: 'POST',
-        body: JSON.stringify({ email: this.state.email, password: this.state.password }),
+        body: JSON.stringify({ username: this.state.email, password: this.state.password }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -55,6 +55,7 @@ class Login extends Component {
 
   renderRedirect = () => {
     if (this.state.redirect) {
+
       return <Redirect to="/home" />;
     }
   };
@@ -102,6 +103,8 @@ class Login extends Component {
             </Button>
 
             {this.renderRedirect()}
+            <UserContext.Provider value={this.state.email}>
+            </UserContext.Provider>
             <Button
               variant="outlined"
               color="secondary"

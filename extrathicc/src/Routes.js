@@ -29,7 +29,7 @@ const Routes = () => {
       <Route path="/animals" component={Animals} />;
       <Route path="/exhibit_history" component={ExhibitHistory} />;
       <Route path="/shows_history" component={ShowHistory} />;
-      <Route path="/exhibits_id" component={ExhibitDetail} />;
+      <Route path="/exhibit_id" component={ExhibitDetail} />;
       <Route path="/animaldetail" component={AnimalDetail} />;
       <Route path="/assigned/shows" component={AssignedShows} />;
       <Route path="/addanimal" component={AddAnimal} />;
