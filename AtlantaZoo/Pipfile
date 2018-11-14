@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 mysql-connector-python = "*"
 flask = "*"
+<<<<<<< HEAD
+=======
+flask-cors = "*"
+>>>>>>> 60de630cc3f0e441a57edbc5de26c62f48443439
 
 [dev-packages]
 

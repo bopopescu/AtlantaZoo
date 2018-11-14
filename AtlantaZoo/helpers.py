@@ -1,6 +1,8 @@
 from flask import session, abort as flask_abort, make_response, jsonify
 from Connect import connection
 
+from datetime import datetime
+
 
 # def get_users():
 
@@ -69,9 +71,6 @@ def create_exhibit(exhibit_name, water_feature, size):
     curr.close()
     conn.close()
 
-    session['create_exhibit'] = True
-    session['exhibit_name'] = exhibit_name
-
     return "Exhibit was successfully created"
 
 def create_animal(animal_name, species, animal_type, age, exhibit_name):
@@ -82,23 +81,15 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
     curr.close()
     conn.close()
 
-    session['create_animal'] = True
-    session['animal_name'] = animal_name
-    session['species'] = species
-
     return "Animal was successfully created"
 
 def create_show(show_name, show_time, staff_name, exhibit_name):
     conn, curr = connection()
     curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
-                 "VALUES (%s, %s, %s, %s);", (show_name, show_time, staff_name, exhibit_name))
+                 "VALUES (%s, %s, %s, %s);", (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
     conn.commit()
     curr.close()
     conn.close()
-
-    session['create_show'] = True
-    session['show_name'] = show_name
-    session['show_time'] = show_time
 
     return "Show was successfully created"
 
@@ -125,6 +116,18 @@ def delete_show(show_name, show_time):
     conn.close()
 
     return "Show was successfully deleted"
+
+def delete_user(username, user_type):
+    conn, curr = connection()
+
+    curr.execute("DELETE FROM `User` WHERE username = %s and user_type = %s;", (username, user_type))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+
+    return "User was successfully deleted"
+
 
 def get_all_exhibits():
     conn, curr = connection()
@@ -168,6 +171,8 @@ def get_all_shows():
     curr.execute("SELECT * FROM `Show`")
 
     results = curr.fetchall()
+    for result in results:
+        result['show_time'] = int(result['show_time'].timestamp())
     return results
 
 def get_all_visitors():
