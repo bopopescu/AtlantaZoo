@@ -1,11 +1,7 @@
 {
     "_meta": {
         "hash": {
-<<<<<<< HEAD
             "sha256": "8e6860792cf66556a24cf98ece2e8133ad6c3d48ee2b0c7da8951fcb60eecd95"
-=======
-            "sha256": "80f046148f5eb9af1f85d11d2a9e5cea64dd903f2db2cb7c243916d302e7f6d3"
->>>>>>> 60de630cc3f0e441a57edbc5de26c62f48443439
         },
         "pipfile-spec": 6,
         "requires": {
@@ -35,14 +31,6 @@
             "index": "pypi",
             "version": "==1.0.2"
         },
-<<<<<<< HEAD
-        "itsdangerous": {
-            "hashes": [
-                "sha256:a7de3201740a857380421ef286166134e10fe58846bcefbc9d6424a69a0b99ec",
-                "sha256:aca4fc561b7671115a2156f625f2eaa5e0e3527e0adf2870340e7968c0a81f85"
-            ],
-            "version": "==1.0.0"
-=======
         "flask-cors": {
             "hashes": [
                 "sha256:7ad56ee3b90d4955148fc25a2ecaa1124fc84298471e266a7fea59aeac4405a5",
@@ -57,7 +45,6 @@
                 "sha256:b12271b2047cb23eeb98c8b5622e2e5c5e9abd9784a153e9d8ef9cb4dd09d749"
             ],
             "version": "==1.1.0"
->>>>>>> 60de630cc3f0e441a57edbc5de26c62f48443439
         },
         "jinja2": {
             "hashes": [
@@ -68,11 +55,6 @@
         },
         "markupsafe": {
             "hashes": [
-<<<<<<< HEAD
-                "sha256:a6be69091dac236ea9c6bc7d012beab42010fa914c459791d627dad4910eb665"
-            ],
-            "version": "==1.0"
-=======
                 "sha256:048ef924c1623740e70204aa7143ec592504045ae4429b59c30054cb31e3c432",
                 "sha256:130f844e7f5bdd8e9f3f42e7102ef1d49b2e6fdf0d7526df3f87281a532d8c8b",
                 "sha256:19f637c2ac5ae9da8bfd98cef74d64b7e1bb8a63038a3505cd182c3fac5eb4d9",
@@ -103,7 +85,6 @@
                 "sha256:fb7c206e01ad85ce57feeaaa0bf784b97fa3cad0d4a5737bc5295785f5c613a1"
             ],
             "version": "==1.1.0"
->>>>>>> 60de630cc3f0e441a57edbc5de26c62f48443439
         },
         "mysql-connector-python": {
             "hashes": [
