@@ -20,46 +20,46 @@ import UserContext from "./UserContext.js";
 
 const AuthRoute = ({ component: Component, ...rest }) => (
     <UserContext.Consumer>
-    {({loggedIn}) => (
-        <Route
-        {...rest}
-        render={props =>
-            loggedIn ? (
-                <Component {...props} />
-            ) : (
-                <Redirect
-                    to={{
-                        pathname: "/login",
-                        state: { from: props.location }
-                    }}
-                />
-            )
-        }
-        />
-    )}
+        {({ loggedIn }) => (
+            <Route
+                {...rest}
+                render={props =>
+                    loggedIn ? (
+                        <Component {...props} />
+                    ) : (
+                            <Redirect
+                                to={{
+                                    pathname: "/login",
+                                    state: { from: props.location }
+                                }}
+                            />
+                        )
+                }
+            />
+        )}
     </UserContext.Consumer>
 );
 
 const Routes = () => {
-  return (
-    <Switch>
-      <AuthRoute path="/staffhome" component={StaffHome} />;
-      <AuthRoute path="/adminhome" component={AdminHome} />;
-      <AuthRoute path="/home" component={HomePage} />;
-      <Route path="/login" component={Login} />;
-      <Route path="/registration" component={Registration} />;
-      <AuthRoute path="/exhibits/" component={Exhibits} />;
-      <AuthRoute path="/shows" component={Shows} />;
-      <AuthRoute path="/animals" component={Animals} />;
-      <AuthRoute path="/exhibit_history" component={ExhibitHistory} />;
-      <AuthRoute path="/shows_history" component={ShowHistory} />;
-      <AuthRoute path="/exhibit_id" component={ExhibitDetail} />;
-      <AuthRoute path="/animaldetail" component={AnimalDetail} />;
-      <AuthRoute path="/assigned/shows" component={AssignedShows} />;
-      <AuthRoute path="/addanimal" component={AddAnimal} />;
-      <AuthRoute path="/addshow" component={AddShow} />;
-    </Switch>
-  );
+    return (
+        <Switch>
+            <AuthRoute path="/staffhome" component={StaffHome} />;
+            <AuthRoute path="/adminhome" component={AdminHome} />;
+            <AuthRoute path="/visitorhome" component={HomePage} />;
+            <Route path="/login" component={Login} />;
+            <Route path="/registration" component={Registration} />;
+            <AuthRoute path="/exhibits/" component={Exhibits} />;
+            <AuthRoute path="/shows" component={Shows} />;
+            <AuthRoute path="/animals" component={Animals} />;
+            <AuthRoute path="/exhibit_history" component={ExhibitHistory} />;
+            <AuthRoute path="/shows_history" component={ShowHistory} />;
+            <AuthRoute path="/exhibit_id" component={ExhibitDetail} />;
+            <AuthRoute path="/animaldetail" component={AnimalDetail} />;
+            <AuthRoute path="/assigned/shows" component={AssignedShows} />;
+            <AuthRoute path="/addanimal" component={AddAnimal} />;
+            <AuthRoute path="/addshow" component={AddShow} />;
+        </Switch>
+    );
 };
 
 export default Routes;

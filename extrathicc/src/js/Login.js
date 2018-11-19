@@ -13,7 +13,8 @@ class Login extends Component {
         this.state = {
             email: "",
             password: "",
-            redirect: false
+            redirect: false,
+            redirectCancel: false
         };
     }
 
@@ -32,14 +33,26 @@ class Login extends Component {
         const email = this.state.email;
         const password = this.state.password;
         LoginService.login(email, password)
-                    .then(response => {
-                        setUser({email, loggedIn: true});
-                        this.setState({ redirect: true });
-                    })
-                    .catch(response => {
-                        response.json().then(resp => alert(resp.message));
-                    });
+            .then(response => {
+                setUser({ email, loggedIn: true });
+                this.setState({ redirect: true });
+            })
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
         event.preventDefault();
+    };
+
+    setRedirectCancel = () => {
+        this.setState({
+            redirectCancel: true
+        });
+    };
+
+    renderRedirectCancel = () => {
+        if (this.state.redirectCancel) {
+            return <Redirect to="/" />;
+        }
     };
 
     setRedirect = () => {
@@ -50,10 +63,10 @@ class Login extends Component {
 
     renderRedirect = () => {
         if (this.state.redirect) {
-
-            return <Redirect to="/home" />;
+            return <Redirect to="/visitorhome" />;
         }
     };
+
 
     render() {
         return (
@@ -62,7 +75,7 @@ class Login extends Component {
                     <header id="title">Login</header>
                 </Grid>
                 <UserContext.Consumer>
-                    {({setUserContext}) => (
+                    {({ setUserContext }) => (
                         <form autoComplete="off" onSubmit={this.handleSubmit(setUserContext)}>
                             <Grid
                                 container
@@ -91,20 +104,22 @@ class Login extends Component {
                                 />
                             </Grid>
                             <Grid container direction="row" justify="center" alignitems="center">
+                                {this.renderRedirect()}
                                 <Button
                                     variant="outlined"
                                     type="submit"
                                     disabled={!this.validateForm()}
+                                    onClick={this.setRedirect}
                                 >
                                     login
                                 </Button>
 
-                                {this.renderRedirect()}
+                                {this.renderRedirectCancel()}
                                 <Button
                                     variant="outlined"
                                     color="secondary"
                                     type="submit"
-                                    onClick={this.setRedirect}
+                                    onClick={this.setRedirectCancel}
                                 >
                                     cancel
                                 </Button>
