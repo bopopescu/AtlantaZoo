@@ -60,6 +60,10 @@ def create_show():
 def get_all_shows():
     return jsonify(message=helpers.get_all_shows())
 
+@app.route('/animals', methods=['GET'])
+def get_all_animals():
+    return jsonify(message=helpers.get_all_animals())
+
 @app.route('/deleteAnimal', methods=['POST'])
 def delete_animal():
     return jsonify(message=helpers.delete_animal(request.json['animal_name'],
