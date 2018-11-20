@@ -62,7 +62,12 @@ def get_all_shows():
 
 @app.route('/animals', methods=['GET'])
 def get_all_animals():
-    return jsonify(message=helpers.get_all_animals())
+    name = request.args['name']
+    species = request.args['species']
+    if name and species:
+        return jsonify(message=helpers.get_animal(name, species))
+
+    return jsonify(message=helpers.get_all_animals())  
 
 @app.route('/deleteAnimal', methods=['POST'])
 def delete_animal():

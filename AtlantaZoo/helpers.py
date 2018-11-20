@@ -191,3 +191,10 @@ def get_all_staff():
     results = curr.fetchall()
     return results
 
+def get_animal(name, species):
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM test.Animal WHERE animal_name=%s AND species=%s", (name, species))
+
+    results = curr.fetchall()
+    return results
