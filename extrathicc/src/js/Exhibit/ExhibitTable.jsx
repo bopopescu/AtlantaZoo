@@ -210,7 +210,7 @@ class ExhibitTable extends React.Component {
 
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                <Link to={`/exhibitdetail/${n.id}`} >
+                                                <Link to={`/exhibitdetail/${n.name}`} >
                                                 {n.name}
                                                 </Link>
                                             </TableCell>

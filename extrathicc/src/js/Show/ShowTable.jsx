@@ -13,6 +13,7 @@ import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
 import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
+import {Link} from "react-router-dom";
 
 let counter = 0;
 
@@ -174,7 +175,7 @@ class ShowTable extends React.Component {
                 })
                 .then(response => {
                     if (response.ok) {
-                        this.setState({ redirect: true });
+                        this.setState({redirect: true});
                     } else {
                         response.json().then(resp => alert(resp.message));
                     }
@@ -220,9 +221,11 @@ class ShowTable extends React.Component {
                                             <TableCell>
                                                 <Button variant="outlined" color="secondary" className={classes.button}
                                                         onClick={this.handleLogVisit(
-                                                    {name: n.name,
-                                                        time: n.time,
-                                                        exhibit: n.exhibit})}>
+                                                            {
+                                                                name: n.name,
+                                                                time: n.time,
+                                                                exhibit: n.exhibit
+                                                            })}>
                                                     Log Visit
                                                 </Button>
                                             </TableCell>
@@ -230,7 +233,11 @@ class ShowTable extends React.Component {
                                                 {n.name}
                                             </TableCell>
                                             <TableCell>{n.time}</TableCell>
-                                            <TableCell>{n.exhibit}</TableCell>
+                                            <TableCell>
+                                                <Link to={`/exhibitdetail/${n.exhibit_name}`}>
+                                                    {n.exhibit}
+                                                </Link>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
