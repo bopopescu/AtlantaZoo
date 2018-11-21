@@ -144,18 +144,13 @@ def get_exhibit_details(exhibit):
 
     curr.execute("SELECT * FROM Exhibit WHERE exhibit_name = %s", (exhibit, ))
 
-    results = curr.fetchall()
+    details = curr.fetchall()
 
-    return results
+    curr.execute("SELECT COUNT(*) FROM Animal WHERE exhibit_name = %s", (exhibit,))
 
-def get_exhibit_animals(exhibit):
-    conn, curr = connection()
+    animal_num = curr.fetchone()
 
-    curr.execute("SELECT COUNT(*) FROM Animal WHERE exhibit_name = %s", (exhibit, ))
-
-    results = curr.fetchone()
-
-    return results
+    return details, animal_num
 
 def get_all_animals():
     conn, curr = connection()
