@@ -43,10 +43,11 @@ class Login extends Component {
         event.preventDefault();
     };
 
-    setRedirectCancel = () => {
+    setRedirectCancel = event => {
         this.setState({
             redirectCancel: true
         });
+        event.preventDefault();
     };
 
     renderRedirectCancel = () => {
@@ -55,10 +56,11 @@ class Login extends Component {
         }
     };
 
-    setRedirect = () => {
+    setRedirect = event => {
         this.setState({
             redirect: true
         });
+        event.preventDefault();
     };
 
     renderRedirect = () => {

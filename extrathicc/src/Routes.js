@@ -54,7 +54,7 @@ const Routes = () => {
             <AuthRoute path="/exhibit_history" component={ExhibitHistory} />;
             <AuthRoute path="/shows_history" component={ShowHistory} />;
             <AuthRoute path="/exhibit_id" component={ExhibitDetail} />;
-            <AuthRoute path="/animaldetail" component={AnimalDetail} />;
+            <AuthRoute path="/animaldetail/:name/:species" component={AnimalDetail} />;
             <AuthRoute path="/assigned/shows" component={AssignedShows} />;
             <AuthRoute path="/addanimal" component={AddAnimal} />;
             <AuthRoute path="/addshow" component={AddShow} />;

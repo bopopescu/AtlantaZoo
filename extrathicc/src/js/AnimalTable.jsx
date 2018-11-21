@@ -18,6 +18,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import "../css/Login.css";
 import SharedTableHead from './SharedTableHead.jsx';
+import { Link } from "react-router-dom";
 
 let counter = 0;
 function createData(name, species, exhibit, age, type) {
@@ -144,10 +145,15 @@ const styles = theme => ({
     },
 });
 
+/**
+ * @todo: update api from get all animals to search by certain criteria
+ */
 class AnimalTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            api: this.props.api,
+            // search_fields: null,
             order: 'asc',
             orderBy: 'name',
             selected: [],
@@ -155,7 +161,7 @@ class AnimalTable extends React.Component {
             page: 0,
             rowsPerPage: 5,
         };
-        fetch('http://localhost:5000/animals', {
+        fetch(this.state.api, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -261,7 +267,9 @@ class AnimalTable extends React.Component {
                                                 <Checkbox checked={isSelected} />
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
+                                                <Link to={`/animaldetail/${n.name}/${n.species}`} >
                                                 {n.name}
+                                                </Link>
                                             </TableCell>
                                             <TableCell >{n.species}</TableCell>
                                             <TableCell >{n.exhibit}</TableCell>

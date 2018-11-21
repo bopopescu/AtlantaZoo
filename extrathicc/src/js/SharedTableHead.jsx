@@ -4,14 +4,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import TableCell from '@material-ui/core/TableCell';
 import React from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import Tooltip from '@material-ui/core/Tooltip';
 
-class SharedTableHead extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+class SharedTableHead extends React.Component {\
     createSortHandler = property => event => {
         this.props.onRequestSort(event, property);
     };
@@ -66,7 +62,7 @@ SharedTableHead.propTypes = {
     order: PropTypes.string.isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
-    data: PropTypes.string.isRequired,
+    data: PropTypes.array.isRequired,
 };
 
 export default SharedTableHead;
