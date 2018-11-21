@@ -47,16 +47,16 @@ def create_user(username, email, password, user_type):
     else:
         abort(400, message="Duplicate user given")
 
-def login(username, password):
+def login(email, password):
     conn, curr = connection()
 
-    curr.execute('SELECT * FROM User where username = %s and password = %s', (username, password))
+    curr.execute('SELECT * FROM User where email = %s and password = %s', (email, password))
     row = curr.fetchone()
     if row is None:
         abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
-    session['username'] = username
+    session['email'] = email
 
     curr.close()
     conn.close()
@@ -135,6 +135,10 @@ def get_all_exhibits():
     curr.execute("SELECT * FROM Exhibit")
 
     results = curr.fetchall()
+
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 # gets size, exhibit name, and water feature
@@ -146,6 +150,9 @@ def get_exhibit_details(exhibit):
 
     results = curr.fetchall()
 
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 def get_exhibit_animals(exhibit):
@@ -155,6 +162,9 @@ def get_exhibit_animals(exhibit):
 
     results = curr.fetchone()
 
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 def get_all_animals():
@@ -163,6 +173,10 @@ def get_all_animals():
     curr.execute("SELECT * FROM Animal")
 
     results = curr.fetchall()
+
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 def get_all_shows():
@@ -173,6 +187,10 @@ def get_all_shows():
     results = curr.fetchall()
     for result in results:
         result['show_time'] = int(result['show_time'].timestamp())
+
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 def get_all_visitors():
@@ -181,6 +199,10 @@ def get_all_visitors():
     curr.execute("SELECT username, email FROM `User` WHERE user_type = \"Visitor\"")
 
     results = curr.fetchall()
+
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 def get_all_staff():
@@ -189,6 +211,10 @@ def get_all_staff():
     curr.execute("SELECT username, email FROM `User` WHERE user_type = \"Staff\"")
 
     results = curr.fetchall()
+
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
 
 def get_animal(name, species):
@@ -197,4 +223,42 @@ def get_animal(name, species):
     curr.execute("SELECT * FROM test.Animal WHERE animal_name=%s AND species=%s", (name, species))
 
     results = curr.fetchall()
+
+    conn.commit()
+    curr.close()
+    conn.close()
     return results
+
+#log
+def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
+    conn, curr = connection()
+
+    curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
+                 (visitor_username, exhibit_name, datetime.fromtimestamp(int(visit_time))))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+    return "Successfully logged exhibit visit!!!"
+
+def log_show_visit(visitor_username, show_name, show_time):
+    conn, curr = connection()
+
+    curr.execute("INSERT INTO Visit_show(visitor_username, show_name, show_time) VALUES (%s, %s, %s);",
+                 (visitor_username, show_name, datetime.fromtimestamp(int(show_time))))
+
+    conn.commit()
+    curr.close()
+    conn.close()
+    return "Successfully logged show visit!!!"
+
+def log_note(staff_username, log_time, note, animal_name, animal_species):
+    conn, curr = connection()
+
+    curr.execute("INSERT INTO Note(staff_username, log_time, note, animal_name, animal_species) VALUES (%s, %s, %s, %s, %s);",
+                 (staff_username, datetime.fromtimestamp(int(log_time,)), note, animal_name, animal_species ) )
+
+    conn.commit()
+    curr.close()
+    conn.close()
+    return "Successfully added note"
