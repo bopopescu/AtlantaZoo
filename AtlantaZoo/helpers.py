@@ -109,7 +109,7 @@ def delete_animal(animal_name, species):
 def delete_show(show_name, show_time):
     conn, curr = connection()
 
-    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;", (show_name, show_time))
+    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;", (show_name, datetime.fromtimestamp(int(show_time))))
 
     conn.commit()
     curr.close()
@@ -117,10 +117,10 @@ def delete_show(show_name, show_time):
 
     return "Show was successfully deleted"
 
-def delete_user(username, user_type):
+def delete_user(username):
     conn, curr = connection()
 
-    curr.execute("DELETE FROM `User` WHERE username = %s and user_type = %s;", (username, user_type))
+    curr.execute("DELETE FROM `User` WHERE username = %s;", (username,))
 
     conn.commit()
     curr.close()

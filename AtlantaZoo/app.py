@@ -11,7 +11,7 @@ app.secret_key = 'super secret key'
 
 @app.route('/login', methods=['POST'])
 def login():
-    return jsonify(message=helpers.login(request.json['username'], request.json['password']))
+    return jsonify(message=helpers.login(request.json['email'], request.json['password']))
 
 #just for testing who is logged in
 @app.route('/whoami', methods=['GET'])
@@ -73,20 +73,17 @@ def get_all_animals():
 
     return jsonify(message=helpers.get_all_animals())  
 
-@app.route('/deleteAnimal', methods=['POST'])
-def delete_animal():
-    return jsonify(message=helpers.delete_animal(request.json['animal_name'],
-                                                 request.json['species']))
+@app.route('/animals/<animal_name>/<species>', methods=['DELETE'])
+def delete_animal(animal_name, species):
+    return jsonify(message=helpers.delete_animal(animal_name, species))
 
-@app.route('/deleteShow', methods=['POST'])
-def delete_show():
-    return jsonify(message=helpers.delete_show(request.json['show_name'],
-                                                 request.json['show_time']))
+@app.route('/shows/<show_name>/<show_time>', methods=['DELETE'])
+def delete_show(show_name, show_time):
+    return jsonify(message=helpers.delete_show(show_name, show_time))
 
-@app.route('/deleteUser', methods=['POST'])
-def delete_user():
-    return jsonify(message=helpers.delete_user(request.json['username'],
-                                                 request.json['user_type']))
+@app.route('/users/<username>', methods=['DELETE'])
+def delete_user(username):
+    return jsonify(message=helpers.delete_user(username))
 
 
 @app.errorhandler(HTTPException)
