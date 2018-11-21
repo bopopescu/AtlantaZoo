@@ -10,25 +10,39 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Grid } from "@material-ui/core";
 
+const query = params => Object.entries(params)
+    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+    .join('&');
+
 class AnimalDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
             redirect: false,
-            details: [],
+            name:'',
+            species: '',
+            age: 0,
+            exhibit: '',
+            type: ''
         };
-
-        /**
-         * @todo: update api to get specific animal
-         */
-        fetch('http://localhost:5000/animals', {
+        const {match: {params: {name, species}}} = this.props;
+        fetch(`http://localhost:5000/animals?${query({name, species})}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => {
+        })
+        .then(response => {
             return response.json();
-        }).then(json => this.setState({ details: json.message }));
+        })
+        .then(json => json.message[0])
+        .then(json => this.setState({
+            name: json.animal_name,
+            species: json.species,
+            age: json.age,
+            exhibit: json.exhibit_name,
+            type: json.animal_type,
+        }));
     }
 
     renderRedirect = () => {
@@ -36,7 +50,7 @@ class AnimalDetail extends Component {
             return <Redirect to="/animals" />;
         }
     };
-    setRedirect = () => {
+    setRedirect = event => {
         this.setState({
             redirect: true
         });
@@ -60,19 +74,20 @@ class AnimalDetail extends Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow key={this.state.details[0]}>
+                            <TableRow key={this.state.name}>
                                 <TableCell component="th" scope="row">
-                                    {this.state.details[0]}
+                                    {this.state.name}
                                 </TableCell>
-                                <TableCell>{this.state.details[1]}</TableCell>
-                                <TableCell numeric>{this.state.details[2]}</TableCell>
-                                <TableCell>{this.state.details[3]}</TableCell>
-                                <TableCell>{this.state.details[4]}</TableCell>
+                                <TableCell>{this.state.species}</TableCell>
+                                <TableCell numeric>{this.state.age}</TableCell>
+                                <TableCell>{this.state.exhibit}</TableCell>
+                                <TableCell>{this.state.type}</TableCell>
 
                             </TableRow>
                         </TableBody>
                     </Table>
                 </Paper>
+
                 {this.renderRedirect()}
                 <Button
                     variant="outlined"
