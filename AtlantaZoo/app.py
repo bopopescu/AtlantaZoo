@@ -59,6 +59,9 @@ def create_show():
 
 @app.route('/shows', methods=['GET'])
 def get_all_shows():
+    email = request.args.get('email')
+    if email:
+        return jsonify(message=helpers.get_show(email))
     return jsonify(message=helpers.get_all_shows())
 
 @app.route('/animals', methods=['GET'])

@@ -175,6 +175,16 @@ def get_all_shows():
         result['show_time'] = int(result['show_time'].timestamp())
     return results
 
+def get_show(email):
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM test.Show WHERE staff_name=(Select username from test.User where email=%s)", (email,))
+
+    results = curr.fetchall()
+    for result in results:
+        result['show_time'] = int(result['show_time'].timestamp())
+    return results
+
 def get_all_visitors():
     conn, curr = connection()
 
@@ -194,7 +204,7 @@ def get_all_staff():
 def get_animal(name, species):
     conn, curr = connection()
 
-    curr.execute("SELECT * FROM test.Animal WHERE animal_name=%s AND species=%s", (name, species))
+    curr.execute("SELECT * FROM Animal WHERE animal_name=%s AND species=%s", (name, species))
 
     results = curr.fetchall()
     return results
