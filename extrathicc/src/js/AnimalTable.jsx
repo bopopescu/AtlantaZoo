@@ -17,7 +17,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import "../css/Login.css";
-import SharedTableHead from './SharedTableHead.jsx';
+import SharedTableHead from '../SharedTableHead.jsx';
 import { Link } from "react-router-dom";
 
 let counter = 0;
