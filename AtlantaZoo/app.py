@@ -1,3 +1,4 @@
+from werkzeug.exceptions import HTTPException
 from flask import Flask, request, jsonify, session, make_response
 from flask_cors import CORS
 
@@ -62,8 +63,8 @@ def get_all_shows():
 
 @app.route('/animals', methods=['GET'])
 def get_all_animals():
-    name = request.args['name']
-    species = request.args['species']
+    name = request.args.get('name')
+    species = request.args.get('species')
     if name and species:
         return jsonify(message=helpers.get_animal(name, species))
 
@@ -83,6 +84,11 @@ def delete_show():
 def delete_user():
     return jsonify(message=helpers.delete_user(request.json['username'],
                                                  request.json['user_type']))
+
+
+@app.errorhandler(HTTPException)
+def general_errors(e: HTTPException):
+    return make_response(jsonify(message=e.description), e.code)
 
 
 @app.errorhandler(Exception)
