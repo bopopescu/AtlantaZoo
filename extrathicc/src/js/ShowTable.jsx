@@ -144,6 +144,9 @@ const styles = theme => ({
     },
 });
 
+/**
+ * @todo: change api to fetch if only want to fetch assigned shows for a specific staff member
+ */
 class ShowTable extends React.Component {
     constructor(props) {
         super(props);
@@ -155,6 +158,23 @@ class ShowTable extends React.Component {
             page: 0,
             rowsPerPage: 5,
         };
+        fetch(`http://localhost:5000/shows`, {
+
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(json => this.setState({
+                shows: json.message.map(
+                    show => createData(
+                        show.show_name,
+                        moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
+                        show.exhibit_name))
+            }))
     }
 
     handleRequestSort = (event, property) => {
@@ -209,23 +229,7 @@ class ShowTable extends React.Component {
 
     handleRender = userContext => event => {
         // fetch(`http://localhost:5000/shows?email=${(userContext.email)}`, {
-        fetch(`http://localhost:5000/shows?email=!@`, {
 
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then(json => this.setState({
-                shows: json.message.map(
-                    show => createData(
-                        show.show_name,
-                        show.show_time,
-                        show.exhibit_name))
-            }))
     }
 
     render() {
@@ -235,74 +239,68 @@ class ShowTable extends React.Component {
 
         return (
             <Paper className={classes.root}>
-                <UserContext.Consumer>
-                    {userContext => (
-                        <form autoComplete="off">
-                            {this.handleRender(userContext)}
-                            <ShowTableToolbar numSelected={selected.length}/>
-                            <div className={classes.tableWrapper}>
-                                <Table className={classes.table} aria-labelledby="tableTitle">
-                                    <SharedTableHead
-                                        data={rows}
-                                        numSelected={selected.length}
-                                        order={order}
-                                        orderBy={orderBy}
-                                        onSelectAllClick={this.handleSelectAllClick}
-                                        onRequestSort={this.handleRequestSort}
-                                        rowCount={shows.length}
-                                    />
-                                    <TableBody>
-                                        {stableSort(shows, getSorting(order, orderBy))
-                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            .map(n => {
-                                                const isSelected = this.isSelected(n.id);
-                                                return (
-                                                    <TableRow
-                                                        hover
-                                                        onClick={event => this.handleClick(event, n.id)}
-                                                        role="checkbox"
-                                                        aria-checked={isSelected}
-                                                        tabIndex={-1}
-                                                        key={n.id}
-                                                        selected={isSelected}
-                                                    >
-                                                        <TableCell padding="checkbox">
-                                                            <Checkbox checked={isSelected}/>
-                                                        </TableCell>
-                                                        <TableCell component="th" scope="row" padding="none">
-                                                            {n.name}
-                                                        </TableCell>
-                                                        <TableCell>{n.time}</TableCell>
-                                                        <TableCell>{n.exhibit}</TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        {emptyRows > 0 && (
-                                            <TableRow style={{height: 49 * emptyRows}}>
-                                                <TableCell colSpan={6}/>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25]}
-                                component="div"
-                                count={shows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                backIconButtonProps={{
-                                    'aria-label': 'Previous Page',
-                                }}
-                                nextIconButtonProps={{
-                                    'aria-label': 'Next Page',
-                                }}
-                                onChangePage={this.handleChangePage}
-                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            />
-                        </form>
-                    )}
-                </UserContext.Consumer>
+
+                <ShowTableToolbar numSelected={selected.length}/>
+                <div className={classes.tableWrapper}>
+                    <Table className={classes.table} aria-labelledby="tableTitle">
+                        <SharedTableHead
+                            data={rows}
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={this.handleSelectAllClick}
+                            onRequestSort={this.handleRequestSort}
+                            rowCount={shows.length}
+                        />
+                        <TableBody>
+                            {stableSort(shows, getSorting(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map(n => {
+                                    const isSelected = this.isSelected(n.id);
+                                    return (
+                                        <TableRow
+                                            hover
+                                            onClick={event => this.handleClick(event, n.id)}
+                                            role="checkbox"
+                                            aria-checked={isSelected}
+                                            tabIndex={-1}
+                                            key={n.id}
+                                            selected={isSelected}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox checked={isSelected}/>
+                                            </TableCell>
+                                            <TableCell component="th" scope="row" padding="none">
+                                                {n.name}
+                                            </TableCell>
+                                            <TableCell>{n.time}</TableCell>
+                                            <TableCell>{n.exhibit}</TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow style={{height: 49 * emptyRows}}>
+                                    <TableCell colSpan={6}/>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={shows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    backIconButtonProps={{
+                        'aria-label': 'Previous Page',
+                    }}
+                    nextIconButtonProps={{
+                        'aria-label': 'Next Page',
+                    }}
+                    onChangePage={this.handleChangePage}
+                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                />
             </Paper>
         )
     }
