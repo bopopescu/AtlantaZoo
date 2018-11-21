@@ -7,19 +7,12 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import {lighten} from '@material-ui/core/styles/colorManipulator';
-import "../css/Login.css";
-import SharedTableHead from '../SharedTableHead.jsx';
+import Button from '@material-ui/core/Button';
+import "../../css/Login.css";
+import SharedTableHead from '../../SharedTableHead.jsx';
 import moment from "moment";
-import UserContext from '../UserContext';
+import SharedToolbar from '../../SharedToolbar.jsx';
 
 let counter = 0;
 
@@ -58,79 +51,6 @@ const rows = [
     {id: 'exhibit', numeric: false, disablePadding: true, label: 'Exhibit'}
 ];
 
-
-const toolbarStyles = theme => ({
-    root: {
-        paddingRight: theme.spacing.unit,
-    },
-    highlight:
-        theme.palette.type === 'light'
-            ? {
-                color: theme.palette.secondary.main,
-                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-            }
-            : {
-                color: theme.palette.text.primary,
-                backgroundColor: theme.palette.secondary.dark,
-            },
-    spacer: {
-        flex: '1 1 100%',
-    },
-    actions: {
-        color: theme.palette.text.secondary,
-    },
-    title: {
-        flex: '0 0 auto',
-    },
-});
-
-let ShowTableToolbar = props => {
-    const {numSelected, classes} = props;
-
-    return (
-        <Toolbar
-            className={classNames(classes.root, {
-                [classes.highlight]: numSelected > 0,
-            })}
-        >
-            <div className={classes.title}>
-                {numSelected > 0 ? (
-                    <Typography color="inherit" variant="subtitle1">
-                        {numSelected} selected
-                    </Typography>
-                ) : (
-                    <Typography variant="h6" id="tableTitle">
-                        List of Shows
-                    </Typography>
-                )}
-            </div>
-            <div className={classes.spacer}/>
-            <div className={classes.actions}>
-                {numSelected > 0 ? (
-                    <Tooltip title="Delete">
-                        <IconButton aria-label="Delete">
-                            <DeleteIcon/>
-                        </IconButton>
-                    </Tooltip>
-                ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="Filter list">
-                            <FilterListIcon/>
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </div>
-        </Toolbar>
-    );
-};
-
-ShowTableToolbar.propTypes = {
-    classes: PropTypes.object.isRequired,
-    numSelected: PropTypes.number.isRequired,
-};
-
-ShowTableToolbar = withStyles(toolbarStyles)(ShowTableToolbar);
-
 const styles = theme => ({
     root: {
         width: '100%',
@@ -157,6 +77,7 @@ class ShowTable extends React.Component {
             shows: [],
             page: 0,
             rowsPerPage: 5,
+            currentTime: moment(),
         };
         fetch(`http://localhost:5000/shows`, {
 
@@ -230,6 +151,37 @@ class ShowTable extends React.Component {
     handleRender = userContext => event => {
         // fetch(`http://localhost:5000/shows?email=${(userContext.email)}`, {
 
+    };
+
+    /**
+     * @todo: Need to grab username
+     * @param row contains show name, show time and its exhibit
+     * @returns {Function}
+     */
+    handleLogVisit = row => event => {
+        if (row.time <= this.state.currentTime) {
+            fetch('http://localhost:5000/shows/visit',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        show_name: row.name,
+                        show_time: row.time.unix(),
+                        staff_name: 'asdfasdf' // NOTE: not this name
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        this.setState({ redirect: true });
+                    } else {
+                        response.json().then(resp => alert(resp.message));
+                    }
+                })
+                .catch(error => console.error('Error logging a visit to a show:', error));
+            event.preventDefault();
+        }
     }
 
     render() {
@@ -239,8 +191,7 @@ class ShowTable extends React.Component {
 
         return (
             <Paper className={classes.root}>
-
-                <ShowTableToolbar numSelected={selected.length}/>
+                <SharedToolbar numSelected={selected.length} title={'List of Shows'}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
@@ -260,15 +211,20 @@ class ShowTable extends React.Component {
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => this.handleClick(event, n.id)}
-                                            role="checkbox"
-                                            aria-checked={isSelected}
+                                            // onClick={event => this.handleClick(event, n.id)}
+                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={n.id}
                                             selected={isSelected}
                                         >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox checked={isSelected}/>
+                                            <TableCell>
+                                                <Button variant="outlined" color="secondary" className={classes.button}
+                                                        onClick={this.handleLogVisit(
+                                                    {name: n.name,
+                                                        time: n.time,
+                                                        exhibit: n.exhibit})}>
+                                                    Log Visit
+                                                </Button>
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
                                                 {n.name}

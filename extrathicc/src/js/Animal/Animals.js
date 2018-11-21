@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../css/Login.css";
+import "../../css/Login.css";
 import { Grid } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from '@material-ui/core/MenuItem';
@@ -111,7 +111,7 @@ class Animals extends Component {
             //     exhibit: this.state.exhibit
             // }
         });
-    }
+    };
 
     render() {
         return (
