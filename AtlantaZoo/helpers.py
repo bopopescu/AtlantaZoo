@@ -2,6 +2,7 @@ from flask import session, abort as flask_abort, make_response, jsonify
 from Connect import connection
 
 from datetime import datetime
+from passlib.hash import argon2
 
 
 # def get_users():
@@ -11,7 +12,6 @@ def abort(status_code, **fields):
 
 def validate_registration(username, email):
     conn, curr = connection()
-
 
     #how to do with parameterization
     curr.execute("SELECT * FROM User WHERE username = %s;", (username, ))
@@ -34,8 +34,7 @@ def create_user(username, email, password, user_type):
     if validate_registration(username, email):
 
         curr.execute("INSERT INTO User(username, email, password, user_type) "
-                     "VALUES (%s, %s, %s, %s);", (username, email,
-                                                   password, user_type))
+                     "VALUES (%s, %s, %s, %s);", (username, email, argon2.hash(password), user_type))
         conn.commit()
         curr.close()
         conn.close()
@@ -50,9 +49,12 @@ def create_user(username, email, password, user_type):
 def login(email, password):
     conn, curr = connection()
 
-    curr.execute('SELECT * FROM User where email = %s and password = %s', (email, password))
+    curr.execute('SELECT * FROM User where email = %s ', (email, ))
     row = curr.fetchone()
     if row is None:
+        abort(401, message="Incorrect username or password")
+
+    if not argon2.verify(password, row['password']):
         abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
@@ -109,7 +111,8 @@ def delete_animal(animal_name, species):
 def delete_show(show_name, show_time):
     conn, curr = connection()
 
-    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;", (show_name, datetime.fromtimestamp(int(show_time))))
+    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;",
+                 (show_name, datetime.fromtimestamp(int(show_time))))
 
     conn.commit()
     curr.close()
