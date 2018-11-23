@@ -135,6 +135,8 @@ def get_all_exhibits():
     curr.execute("SELECT * FROM Exhibit")
 
     results = curr.fetchall()
+    curr.close()
+    conn.close()
     return results
 
 # gets size, exhibit name, and water feature
@@ -148,8 +150,10 @@ def get_exhibit_details(exhibit):
 
     curr.execute("SELECT COUNT(*) FROM Animal WHERE exhibit_name = %s", (exhibit,))
 
-    animal_num = curr.fetchone()
+    animal_num = curr.fetchall()
 
+    curr.close()
+    conn.close()
     return details, animal_num
 
 def get_all_animals():
@@ -158,6 +162,8 @@ def get_all_animals():
     curr.execute("SELECT * FROM Animal")
 
     results = curr.fetchall()
+    curr.close()
+    conn.close()
     return results
 
 def get_all_shows():
@@ -168,6 +174,9 @@ def get_all_shows():
     results = curr.fetchall()
     for result in results:
         result['show_time'] = int(result['show_time'].timestamp())
+
+    curr.close()
+    conn.close()
     return results
 
 def get_all_visitors():
@@ -176,6 +185,8 @@ def get_all_visitors():
     curr.execute("SELECT username, email FROM `User` WHERE user_type = \"Visitor\"")
 
     results = curr.fetchall()
+    curr.close()
+    conn.close()
     return results
 
 def get_all_staff():
@@ -184,6 +195,8 @@ def get_all_staff():
     curr.execute("SELECT username, email FROM `User` WHERE user_type = \"Staff\"")
 
     results = curr.fetchall()
+    curr.close()
+    conn.close()
     return results
 
 def get_animal(name, species):
@@ -192,21 +205,25 @@ def get_animal(name, species):
     curr.execute("SELECT * FROM test.Animal WHERE animal_name=%s AND species=%s", (name, species))
 
     results = curr.fetchall()
+    curr.close()
+    conn.close()
     return results
 
 
-def search_animal(name, species, type, age, exhibit):
+def search_animal(name, species, type, min_age, max_age, exhibit):
     conn, curr = connection()
 
-    if name == None:
+    if name is None:
         name = ""
-    if species == None:
+    if species is None:
         species = ""
-    if type ==None:
+    if type is None:
         type = ""
-    if age == None:
-        age = ""
-    if exhibit == None:
+    if min_age is None:
+        min_age = "0"
+    if max_age is None:
+        max_age = "1000000000"
+    if exhibit is None:
         exhibit = ""
 
 
@@ -214,13 +231,14 @@ def search_animal(name, species, type, age, exhibit):
             "WHERE (%s = '' OR animal_name LIKE '%" + name + "%')" \
             " AND (%s = '' OR species LIKE '%" + species + "%')" \
             " AND (%s = '' OR animal_type LIKE '%" + type + "%')" \
-            " AND (%s = '' OR age LIKE '%" + age + "%')" \
+            " AND age BETWEEN " + min_age + " AND " + max_age + \
             " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
-    print(query)
-    curr.execute(query, (name, species, type, age, exhibit))
+
+    curr.execute(query, (name, species, type, exhibit))
 
     results = curr.fetchall()
+    curr.close()
+    conn.close()
     return results
-
 
 

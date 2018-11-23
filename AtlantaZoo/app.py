@@ -44,11 +44,25 @@ def create_animal():
                                                  request.json['age'],
                                                  request.json['exhibit_name']))
 
-@app.route('/exhibits', methods=['POST'])
+@app.route('/exhibits', methods=['POST','GET'])
 def create_exhibit():
-    return jsonify(message=helpers.create_exhibit(request.json['exhibit_name'],
+
+    if request.method == 'POST':
+        return jsonify(message=helpers.create_exhibit(request.json['exhibit_name'],
                                                   request.json['water_feature'],
                                                   request.json['size']))
+    if request.method == 'GET':
+        name = request.args.get('exhibit_name')
+        water = request.args.get('water_feature')
+        min_size = request.args.get('min_size')
+        max_size = request.args.get('max_size')
+        min_animal = request.args.get('min_animal_num')
+        max_animal = request.args.get('max_animal_num')
+        if name and not (water or min_size or max_size or min_animal or max_animal):
+            return jsonify(message=helpers.get_exhibit_details(name))
+        if name or water or min_size or max_size or min_animal or max_animal:
+            return jsonify(message=helpers.search_exhibit(name, water, min_size, max_size, min_animal, max_animal))
+        return jsonify(message=helpers.get_all_exhibits())
 
 @app.route('/shows', methods=['POST'])
 def create_show():
@@ -66,14 +80,15 @@ def get_all_animals():
     name = request.args.get('name')
     species = request.args.get('species')
     animal_type = request.args.get('animal_type')
-    age = request.args.get('age')
+    min_age = request.args.get('min_age')
+    max_age = request.args.get('max_age')
     exhibit_name = request.args.get('exhibit_name')
 
-    if name and species and not(animal_type or age or exhibit_name):
+    if name and species and not(animal_type or min_age or max_age or exhibit_name):
         return jsonify(message=helpers.get_animal(name, species))
 
-    if name or species or animal_type or age or exhibit_name:
-        return jsonify(message=helpers.search_animal(name, species, animal_type, age, exhibit_name))
+    if name or species or animal_type or min_age or max_age or exhibit_name:
+        return jsonify(message=helpers.search_animal(name, species, animal_type, min_age, max_age, exhibit_name))
 
     return jsonify(message=helpers.get_all_animals())
 
