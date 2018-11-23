@@ -87,16 +87,16 @@ class ShowTable extends React.Component {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => {
-                return response.json();
-            })
-            .then(json => this.setState({
-                shows: json.message.map(
-                    show => createData(
-                        show.show_name,
-                        moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
-                        show.exhibit_name))
-            }))
+        .then(response => {
+            return response.json();
+        })
+        .then(json => this.setState({
+            shows: json.message.map(
+                show => createData(
+                    show.show_name,
+                    moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
+                    show.exhibit_name))
+        }))
     }
 
     handleRequestSort = (event, property) => {
@@ -234,7 +234,7 @@ class ShowTable extends React.Component {
                                             </TableCell>
                                             <TableCell>{n.time}</TableCell>
                                             <TableCell>
-                                                <Link to={`/exhibitdetail/${n.exhibit_name}`}>
+                                                <Link to={`/exhibitdetail/${n.exhibit}`}>
                                                     {n.exhibit}
                                                 </Link>
                                             </TableCell>

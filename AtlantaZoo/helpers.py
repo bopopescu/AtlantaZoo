@@ -203,6 +203,17 @@ def get_show(email):
         result['show_time'] = int(result['show_time'].timestamp())
     return results
 
+def get_user_by_email(email):
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM test.User WHERE email = %s", (email,))
+
+    results = curr.fetchall()
+
+    curr.close()
+    conn.close()
+    return results[0]
+
 def get_all_visitors():
     conn, curr = connection()
 

@@ -12,13 +12,20 @@ app.secret_key = 'super secret key'
 
 @app.route('/login', methods=['POST'])
 def login():
-    return jsonify(message=helpers.login(request.json['email'], request.json['password']))
+    user = helpers.get_user_by_email(session['email'])
+    login_message = helpers.login(request.json['email'], request.json['password'])
+    return jsonify(message=login_message,
+                   username=user['username'],
+                   email=user['email'],
+                   user_type=user['user_type'])
 
 
 # just for testing who is logged in
 @app.route('/whoami', methods=['GET'])
 def whoami():
-    return jsonify(username=session['username'])
+    user = helpers.get_user_by_email(session['email'])
+    return jsonify(email=user['email'], username=user['username'],
+                   user_type=user['user_type'])
 
 
 @app.route('/users', methods=['POST'])
