@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Grid } from "@material-ui/core";
-import "../css/Login.css";
+import "../../css/Login.css";
 
 class AdminHome extends Component {
     render() {
