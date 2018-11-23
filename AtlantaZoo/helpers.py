@@ -2,6 +2,7 @@ from flask import session, abort as flask_abort, make_response, jsonify
 from Connect import connection
 
 from datetime import datetime
+from passlib.hash import argon2
 
 
 # def get_users():
@@ -11,7 +12,6 @@ def abort(status_code, **fields):
 
 def validate_registration(username, email):
     conn, curr = connection()
-
 
     #how to do with parameterization
     curr.execute("SELECT * FROM User WHERE username = %s;", (username, ))
@@ -34,8 +34,7 @@ def create_user(username, email, password, user_type):
     if validate_registration(username, email):
 
         curr.execute("INSERT INTO User(username, email, password, user_type) "
-                     "VALUES (%s, %s, %s, %s);", (username, email,
-                                                   password, user_type))
+                     "VALUES (%s, %s, %s, %s);", (username, email, argon2.hash(password), user_type))
         conn.commit()
         curr.close()
         conn.close()
@@ -50,9 +49,12 @@ def create_user(username, email, password, user_type):
 def login(email, password):
     conn, curr = connection()
 
-    curr.execute('SELECT * FROM User where email = %s and password = %s', (email, password))
+    curr.execute('SELECT * FROM User where email = %s ', (email, ))
     row = curr.fetchone()
     if row is None:
+        abort(401, message="Incorrect username or password")
+
+    if not argon2.verify(password, row['password']):
         abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
@@ -109,7 +111,8 @@ def delete_animal(animal_name, species):
 def delete_show(show_name, show_time):
     conn, curr = connection()
 
-    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;", (show_name, datetime.fromtimestamp(int(show_time))))
+    curr.execute("DELETE FROM `Show` WHERE show_name = %s and show_time = %s;",
+                 (show_name, datetime.fromtimestamp(int(show_time))))
 
     conn.commit()
     curr.close()
@@ -136,36 +139,27 @@ def get_all_exhibits():
 
     results = curr.fetchall()
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
 
-# gets size, exhibit name, and water feature
-# but not number of animals (call get_exhibit_animals for that)
 def get_exhibit_details(exhibit):
     conn, curr = connection()
 
-    curr.execute("SELECT * FROM Exhibit WHERE exhibit_name = %s", (exhibit, ))
+    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) " \
+            "FROM Exhibit NATURAL JOIN Animal " \
+            "WHERE exhibit_name = %s" \
+            "GROUP BY exhibit_name"
+
+    curr.execute(query, (exhibit, ))
+
 
     results = curr.fetchall()
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
 
-def get_exhibit_animals(exhibit):
-    conn, curr = connection()
-
-    curr.execute("SELECT COUNT(*) FROM Animal WHERE exhibit_name = %s", (exhibit, ))
-
-    results = curr.fetchone()
-
-    conn.commit()
-    curr.close()
-    conn.close()
-    return results
 
 def get_all_animals():
     conn, curr = connection()
@@ -174,7 +168,6 @@ def get_all_animals():
 
     results = curr.fetchall()
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
@@ -188,7 +181,6 @@ def get_all_shows():
     for result in results:
         result['show_time'] = int(result['show_time'].timestamp())
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
@@ -201,6 +193,7 @@ def get_show(email):
     results = curr.fetchall()
     for result in results:
         result['show_time'] = int(result['show_time'].timestamp())
+
     return results
 
 def get_user_by_email(email):
@@ -221,7 +214,6 @@ def get_all_visitors():
 
     results = curr.fetchall()
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
@@ -233,7 +225,6 @@ def get_all_staff():
 
     results = curr.fetchall()
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
@@ -245,10 +236,43 @@ def get_animal(name, species):
 
     results = curr.fetchall()
 
-    conn.commit()
     curr.close()
     conn.close()
     return results
+
+
+def search_animal(name, species, type, min_age, max_age, exhibit):
+    conn, curr = connection()
+
+    if name is None:
+        name = ""
+    if species is None:
+        species = ""
+    if type is None:
+        type = ""
+    if min_age is None:
+        min_age = "0"
+    if max_age is None:
+        max_age = "1000000000"
+    if exhibit is None:
+        exhibit = ""
+
+
+    query = "SELECT * FROM Animal " \
+            "WHERE (%s = '' OR animal_name LIKE '%" + name + "%')" \
+            " AND (%s = '' OR species LIKE '%" + species + "%')" \
+            " AND (%s = '' OR animal_type LIKE '%" + type + "%')" \
+            " AND age BETWEEN " + min_age + " AND " + max_age + \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+
+    curr.execute(query, (name, species, type, exhibit))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
+
+
 
 #log
 def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
@@ -283,3 +307,4 @@ def log_note(staff_username, log_time, note, animal_name, animal_species):
     curr.close()
     conn.close()
     return "Successfully added note"
+

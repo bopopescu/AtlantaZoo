@@ -7,6 +7,8 @@ name = "pypi"
 mysql-connector-python = "*"
 flask = "*"
 flask-cors = "*"
+passlib = "*"
+"argon2-cffi" = "*"
 
 [dev-packages]
 
