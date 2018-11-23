@@ -193,3 +193,34 @@ def get_animal(name, species):
 
     results = curr.fetchall()
     return results
+
+
+def search_animal(name, species, type, age, exhibit):
+    conn, curr = connection()
+
+    if name == None:
+        name = ""
+    if species == None:
+        species = ""
+    if type ==None:
+        type = ""
+    if age == None:
+        age = ""
+    if exhibit == None:
+        exhibit = ""
+
+
+    query = "SELECT * FROM Animal " \
+            "WHERE (%s = '' OR animal_name LIKE '%" + name + "%')" \
+            " AND (%s = '' OR species LIKE '%" + species + "%')" \
+            " AND (%s = '' OR animal_type LIKE '%" + type + "%')" \
+            " AND (%s = '' OR age LIKE '%" + age + "%')" \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+    print(query)
+    curr.execute(query, (name, species, type, age, exhibit))
+
+    results = curr.fetchall()
+    return results
+
+
+

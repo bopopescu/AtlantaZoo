@@ -65,10 +65,17 @@ def get_all_shows():
 def get_all_animals():
     name = request.args.get('name')
     species = request.args.get('species')
-    if name and species:
+    animal_type = request.args.get('animal_type')
+    age = request.args.get('age')
+    exhibit_name = request.args.get('exhibit_name')
+
+    if name and species and not(animal_type or age or exhibit_name):
         return jsonify(message=helpers.get_animal(name, species))
 
-    return jsonify(message=helpers.get_all_animals())  
+    if name or species or animal_type or age or exhibit_name:
+        return jsonify(message=helpers.search_animal(name, species, animal_type, age, exhibit_name))
+
+    return jsonify(message=helpers.get_all_animals())
 
 @app.route('/animals/<animal_name>/<species>', methods=['DELETE'])
 def delete_animal(animal_name, species):
