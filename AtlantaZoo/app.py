@@ -12,7 +12,7 @@ app.secret_key = 'super secret key'
 
 @app.route('/login', methods=['POST'])
 def login():
-    user = helpers.get_user_by_email(session['email'])
+    user = helpers.get_user_by_username(session['username'])
     login_message = helpers.login(request.json['email'], request.json['password'])
     return jsonify(message=login_message,
                    username=user['username'],
@@ -23,7 +23,7 @@ def login():
 # just for testing who is logged in
 @app.route('/whoami', methods=['GET'])
 def whoami():
-    user = helpers.get_user_by_email(session['email'])
+    user = helpers.get_user_by_username(session['username'])
     return jsonify(email=user['email'], username=user['username'],
                    user_type=user['user_type'])
 
@@ -41,7 +41,7 @@ def get_all_staff():
     return jsonify(message=helpers.get_all_staff())
 
 
-@app.route('/logout', methods=['GET'])
+app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
     return jsonify(message='You have successfully logged out')
