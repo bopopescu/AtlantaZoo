@@ -7,8 +7,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import {Redirect} from "react-router-dom";
+import UserContext from "../UserContext";
+import LoginService from '../_services/LoginService.js';
 
 class Registration extends Component {
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -20,6 +25,7 @@ class Registration extends Component {
             redirect: false
         };
     }
+
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value
@@ -27,29 +33,19 @@ class Registration extends Component {
     };
 
     handleSubmit = event => {
-        fetch('http://localhost:5000/users',
-            {
-                method: 'POST',
-                body: JSON.stringify({
-                    username: this.state.username,
-                    email: this.state.email,
-                    password: this.state.password,
-                    user_type: this.state.userType
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    this.setState({ redirect: true });
-                } else {
-                    response.json().then(resp => alert(resp.message));
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        const { setUserContext } = this.context;
+
+        const { username, email, userType, password } = this.state;
+        LoginService.register(username, email, password, userType)
+                    .then(response => {
+                        setUserContext({ username, email, userType, checkedLogin: true, loggedIn: true });
+                        this.setState({ redirect: true });
+                    })
+                    .catch(response => {
+                        response.json().then(resp => alert(resp.message));
+                    });
         event.preventDefault();
-    }
+    };
 
     validateForm() {
         if (this.state.username.length > 0
@@ -64,7 +60,18 @@ class Registration extends Component {
             return true;
         }
         return false;
-    }
+    };
+
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            switch(this.state.userType.toLowerCase()){
+                case 'visitor':
+                    return <Redirect to="/visitorhome"/>;
+                case 'staff':
+                    return <Redirect to="/staffhome"/>;
+            }
+        }
+    };
 
     render() {
         return (
@@ -126,10 +133,11 @@ class Registration extends Component {
                         justify="center"
                         alignItems="center"
                     >
+                        {this.renderRedirect()}
                         <Button
                             id="register"
-                            disabled={!this.validateForm()}
                             type="submit"
+                            disabled={!this.validateForm()}
                         >
                             Register
                         </Button>
