@@ -140,11 +140,18 @@ def log_exhibit_visit():
                                                      request.json['visit_time']))
 
 #log_show_visit
-@app.route('/visit_show', methods=['POST'])
+@app.route('/visit_show', methods=['POST', 'GET'])
 def log_show_visit():
-    return jsonify(message=helpers.log_show_visit(request.json['visitor_username'],
+    if request.method == 'POST':
+        return jsonify(message=helpers.log_show_visit(request.json['visitor_username'],
                                                   request.json['show_name'],
                                                   request.json['show_time']))
+    if request.method == 'GET':
+        visitor_name = request.args.get('visitor_username')
+        show_name = request.args.get('show_name')
+        show_time = request.args.get('show_time')
+        exhibit_name = request.args.get('exhibit_name')
+        return jsonify(message=helpers.search_show_history(visitor_name, show_name, show_time, exhibit_name))
 #log_note
 @app.route('/notes', methods=['POST'])
 def log_note():

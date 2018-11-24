@@ -313,6 +313,61 @@ def search_show(show_name, date, exhibit, staff_name):
     conn.close()
     return results
 
+def search_show(show_name, date, exhibit, staff_name):
+    conn, curr = connection()
+
+    if show_name is None:
+        show_name = ""
+    if date is None:
+        date = ""
+    else:
+        date = datetime.fromtimestamp(int(date)).date()
+
+    if exhibit is None:
+        exhibit = ""
+
+
+
+    query = "SELECT * FROM `Show` " \
+            "WHERE staff_name = %s" \
+            " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
+            " AND (%s = '' OR DATE(show_time) = %s)" \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+
+    curr.execute(query, (staff_name, show_name, date, date, exhibit))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
+
+def search_show_history(visitor_name, show_name, date, exhibit):
+    conn, curr = connection()
+
+    if show_name is None:
+        show_name = ""
+    if date is None:
+        date = ""
+    else:
+        date = datetime.fromtimestamp(int(date)).date()
+
+    if exhibit is None:
+        exhibit = ""
+
+    query = "SELECT DISTINCT visitor_username, Visit_show.show_name, Visit_show.show_time, exhibit_name " \
+            "FROM Visit_show INNER JOIN `Show` ON Visit_show.show_name=`Show`.show_name " \
+            "WHERE visitor_username = %s" \
+            " AND (%s = '' OR Visit_show.show_name LIKE '%" + show_name + "%')" \
+            " AND (%s = '' OR DATE(Visit_show.show_time) = %s)" \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+
+    curr.execute(query, (visitor_name, show_name, date, date, exhibit))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
+
 #log
 def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn, curr = connection()
