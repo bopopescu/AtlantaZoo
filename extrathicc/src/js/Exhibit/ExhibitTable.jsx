@@ -19,16 +19,6 @@ import {Link} from "react-router-dom";
 
 let counter = 0;
 
-// function createData(name, size, total_animals, water_feature) {
-//     counter += 1;
-//     return {id: counter, name, size, total_animals, water_feature};
-// }
-
-function createData(name, size, water_feature) {
-    counter += 1;
-    return {id: counter, name, size, water_feature};
-}
-
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -54,11 +44,12 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-    {id: 'name', numeric: false, disablePadding: true, label: 'Name'},
+    {id: 'exhibit_name', numeric: false, disablePadding: true, label: 'Name'},
     {id: 'size', numeric: true, disablePadding: false, label: 'Size'},
-    // {id: 'num_animals', numeric: true, disablePadding: false, label: 'NumAnimals'},
+    {id: 'total_animals', numeric: true, disablePadding: false, label: 'Num of Animals'},
     {id: 'water_feature', numeric: false, disablePadding: true, label: 'Water Feature'}
 ];
+
 
 const styles = theme => ({
     root: {
@@ -73,6 +64,15 @@ const styles = theme => ({
     },
 });
 
+const allFilters = (filters, row) => {
+    for (let filter of filters) {
+        if (!filter(row)) {
+            return false;
+        }
+    }
+    return true;
+};
+
 /**
  * @todo: change api to fetch accordingly to search fields
  */
@@ -81,30 +81,11 @@ class ExhibitTable extends React.Component {
         super(props);
         this.state = {
             order: 'asc',
-            orderBy: 'name',
+            orderBy: 'exhibit_name',
             selected: [],
-            exhibits: [],
             page: 0,
             rowsPerPage: 5,
         };
-        fetch(`http://localhost:5000/exhibits`, {
-
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then(json => this.setState({
-                exhibits: json.message.map(
-                    exhibit => createData(
-                        exhibit.exhibit_name,
-                        exhibit.size,
-                        // exhibit.total_animals,
-                        exhibit.water_feature))
-            }))
     }
 
     handleRequestSort = (event, property) => {
@@ -157,14 +138,9 @@ class ExhibitTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-    handleRender = userContext => event => {
-        // fetch(`http://localhost:5000/exhibits?email=${(userContext.email)}`, {
-
-    };
-
     render() {
-        const {classes} = this.props;
-        const {exhibits, order, orderBy, selected, rowsPerPage, page} = this.state;
+        const {classes, exhibits, filters} = this.props;
+        const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, exhibits.length - page * rowsPerPage);
 
         return (
@@ -184,39 +160,27 @@ class ExhibitTable extends React.Component {
                         <TableBody>
                             {stableSort(exhibits, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(n => {
-                                    const isSelected = this.isSelected(n.id);
+                                .filter(row => allFilters(filters, row))
+                                .map((n, id) => {
+                                    const isSelected = this.isSelected(id);
                                     return (
                                         <TableRow
                                             hover
                                             // onClick={event => this.handleClick(event, n.id)}
                                             // aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={n.id}
+                                            key={id}
                                             // selected={isSelected}
                                         >
-                                            <TableCell>
-                                                {/*<Button variant="outlined" color="secondary" className={classes.button}*/}
-                                                        {/*onClick={this.handleLogVisit(*/}
-                                                            {/*{name: n.name,*/}
-                                                                {/*time: n.time,*/}
-                                                                {/*exhibit: n.exhibit})}>*/}
-                                                    {/*Log Visit*/}
-                                                {/*</Button>*/}
-
-                                                {/*<TableCell padding="checkbox">*/}
-                                                    {/*<Checkbox checked={isSelected} />*/}
-                                                {/*</TableCell>*/}
-
-                                            </TableCell>
+                                            <TableCell/>
                                             <TableCell component="th" scope="row" padding="none">
-                                                <Link to={`/exhibitdetail/${n.name}`} >
-                                                {n.name}
+                                                <Link to={`/exhibitdetail/${n.exhibit_name}`} >
+                                                {n.exhibit_name}
                                                 </Link>
                                             </TableCell>
                                             <TableCell>{n.size}</TableCell>
-                                            {/*<TableCell>{n.total_animals}</TableCell>*/}
-                                            <TableCell>{n.water_feature}</TableCell>
+                                            <TableCell>{n.total_animals}</TableCell>
+                                            <TableCell>{n.water_feature ? 'Yes' : 'No'}</TableCell>
                                         </TableRow>
                                     );
                                 })}

@@ -15,6 +15,7 @@ import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import {Link} from "react-router-dom";
+import {query} from "../../utils";
 
 
 let counter = 0;
@@ -76,7 +77,7 @@ class DetailTable extends React.Component {
             page: 0,
             rowsPerPage: 5,
         };
-        fetch(`http://localhost:5000/exhibits`, {
+        fetch(`http://localhost:5000/animals?${query({exhibit_name: this.props.exhibit_name})}`, {
 
             method: 'GET',
             headers: {
@@ -88,11 +89,7 @@ class DetailTable extends React.Component {
             })
             .then(json => this.setState({
                 exhibits: json.message.map(
-                    exhibit => createData(
-                        exhibit.exhibit_name,
-                        exhibit.size,
-                        // exhibit.total_animals,
-                        exhibit.water_feature))
+                    exhibit => createData(exhibit.animal_name, exhibit.species))
             }))
     }
 
@@ -146,11 +143,6 @@ class DetailTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-    handleRender = userContext => event => {
-        // fetch(`http://localhost:5000/exhibits?email=${(userContext.email)}`, {
-
-    };
-
     render() {
         const {classes} = this.props;
         const {exhibits, order, orderBy, selected, rowsPerPage, page} = this.state;
@@ -199,13 +191,9 @@ class DetailTable extends React.Component {
 
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                <Link to={`/exhibitdetail/${n.name}`} >
                                                 {n.name}
-                                                </Link>
                                             </TableCell>
-                                            <TableCell>{n.size}</TableCell>
-                                            {/*<TableCell>{n.total_animals}</TableCell>*/}
-                                            <TableCell>{n.water_feature}</TableCell>
+                                            <TableCell>{n.species}</TableCell>
                                         </TableRow>
                                     );
                                 })}

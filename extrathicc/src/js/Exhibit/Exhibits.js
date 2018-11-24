@@ -9,33 +9,67 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import ExhibitTable from './ExhibitTable';
 import Button from "@material-ui/core/Button/Button";
+import {standardHandler} from "../../utils";
+
 
 class Exhibits extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            rows: [{ name: "Name", size: 1, numAnimal: 2, water: 'YES' }], // query all of the shows
+            rows: [],
             redirect: false,
-            exhibit: "",
-            min_num_animals: 0,
-            max_num_animals: 0,
-            water_feature: true,
-            api: ''
+            exhibit_name: '',
+            min_num_animals: '',
+            max_num_animals: '',
+            min_size: '',
+            max_size: '',
+            water_feature: '',
         };
     }
+
+    generateFilters = () => {
+        let filters = [];
+
+        const {exhibit_name, min_num_animals, max_num_animals, min_size, max_size, water_feature} = this.state;
+
+        if (exhibit_name !== '') {
+            filters.push(row => row.exhibit_name.toLowerCase().includes(exhibit_name.toLowerCase()));
+        }
+        if (min_num_animals !== '') {
+            filters.push(row => row.total_animals >= min_num_animals);
+        }
+        if (max_num_animals !== '') {
+            filters.push(row => row.total_animals <= max_num_animals);
+        }
+        if (min_size !== '') {
+            filters.push(row => row.size >= min_size);
+        }
+        if (max_size !== '') {
+            filters.push(row => row.size <= max_size);
+        }
+        if (water_feature !== '') {
+            filters.push(row => !!row.water_feature === water_feature);
+        }
+        return filters;
+    };
+
+    componentDidMount = () => {
+        fetch(`http://localhost:5000/exhibits`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(standardHandler)
+        .then(response => this.setState({rows: response.message}))
+        .catch(response => {
+            response.json().then(resp => alert(resp.message));
+        });
+    };
 
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value
-        });
-    };
-
-    /**
-     * @todo: update api
-     */
-    handleClick = () => {
-        this.setState({
-            api: '',
         });
     };
 
@@ -53,9 +87,10 @@ class Exhibits extends Component {
                         id="name"
                         label="Name"
                         placeholder="Exhibit name"
-                        //onChange={this.handleChange}
+                        onChange={this.handleChange('exhibit_name')}
                         margin="normal"
                         variant="outlined"
+                        value={this.state.exhibit_name}
                     />
                 </Grid>
                 <Grid container
@@ -66,10 +101,9 @@ class Exhibits extends Component {
                     <TextField
                         id="outlined-number"
                         label="Min Num Animals"
-                        value={this.state.age}
-                        onChange={this.handleChange('age')}
+                        value={this.state.min_num_animals}
+                        onChange={this.handleChange('min_num_animals')}
                         type="number"
-                        className={"abc"}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -80,10 +114,9 @@ class Exhibits extends Component {
                     <TextField
                         id="outlined-number"
                         label="Max Num Animals"
-                        value={this.state.age}
-                        onChange={this.handleChange('age')}
+                        value={this.state.max_num_animals}
+                        onChange={this.handleChange('max_num_animals')}
                         type="number"
-                        className={"abc"}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -100,10 +133,9 @@ class Exhibits extends Component {
                     <TextField
                         id="outlined-number"
                         label="Min Size"
-                        value={this.state.age}
-                        onChange={this.handleChange('age')}
+                        value={this.state.min_size}
+                        onChange={this.handleChange('min_size')}
                         type="number"
-                        className={"abc"}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -114,10 +146,9 @@ class Exhibits extends Component {
                     <TextField
                         id="outlined-number"
                         label="Max Size"
-                        value={this.state.age}
-                        onChange={this.handleChange('age')}
+                        value={this.state.max_size}
+                        onChange={this.handleChange('max_size')}
                         type="number"
-                        className={"abc"}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -140,19 +171,10 @@ class Exhibits extends Component {
                             <MenuItem value={false}>No</MenuItem>
                         </Select>
                     </FormControl>
-
-                    <Button
-                        variant="outlined"
-                        type="submit"
-                        onClick={this.handleClick}
-                    >
-                        Search
-                    </Button>
-
                 </Grid>
 
                 <Paper >
-                    <ExhibitTable> </ExhibitTable>
+                    <ExhibitTable exhibits={this.state.rows} filters={this.generateFilters()}> </ExhibitTable>
                 </Paper>
             </div>
         );

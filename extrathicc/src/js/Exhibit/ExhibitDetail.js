@@ -12,8 +12,11 @@ import moment from 'moment';
 import Button from '@material-ui/core/Button';
 import DetailTable from "./DetailTable";
 import {query} from "../../utils";
+import UserContext from "../../UserContext";
 
 class ExhibitDetail extends Component {
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -26,7 +29,8 @@ class ExhibitDetail extends Component {
          * @todo: Update api to get a specific exhibit details
          */
         const {match: {params: {name}}} = this.props;
-        fetch(`http://localhost:5000/exhibits?exhibit_name=${query({name})}`, {
+
+        fetch(`http://localhost:5000/exhibits?${query({exhibit_name: name})}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -34,32 +38,16 @@ class ExhibitDetail extends Component {
         }).then(response => {
             return response.json();
         }).then(json => this.setState({ details: json.message }));
-
-        // /**
-        //  * @todo: Update api to get animals for a specific exhibit
-        //  */
-        // fetch('http://localhost:5000/animals/exhibit', {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }).then(response => {
-        //     return response.json();
-        // }).then(json => this.setState({ animals: json.message }));
     }
 
-    /**
-     * @todo: Update api to create a visit
-     * @todo: fix the visitor_username by the the shared context
-     */
-    handleSubmit = event => {
+    handleLog = event => {
         fetch('http://localhost:5000/visit_exhibit',
             {
                 method: 'POST',
                 body: JSON.stringify({
-                    visitor_username: this.state.name,
-                    visit_time: this.state.datetime.unix(),
-                    exhibit_name: this.state.exhibit
+                    visitor_username: this.context.username,
+                    visit_time: this.state.current_time.unix(),
+                    exhibit_name: this.props.match.params.name
                 }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -67,9 +55,9 @@ class ExhibitDetail extends Component {
             })
             .then(response => {
                 if (response.ok) {
-                    this.setState({ redirect: true });
+                    response.json().then(resp => alert("Successfully log a visit"));
                 } else {
-                    response.json().then(resp => alert(resp.message));
+                    response.json().then(resp => alert("You already logged a visit"));
                 }
             })
             .catch(error => console.error('Error adding a show:', error));
@@ -105,25 +93,26 @@ class ExhibitDetail extends Component {
                                         </TableCell>
                                         <TableCell>{detail.size}</TableCell>
                                         <TableCell>{detail.total_animal}</TableCell>
-                                        <TableCell>{detail.water_feature === 1 ? 'Yes' : 'No'}</TableCell>
+                                        <TableCell>{detail.water_feature ? 'Yes' : 'No'}</TableCell>
                                     </TableRow>
                                 );
                             })}
                         </TableBody>
                     </Table>
 
-                    <form autoComplete="off" onSubmit={this.handleSubmit}>
+                    <form autoComplete="off" >
                         <Grid container direction="row" justify="center" alignItems="center">
                             <Button
                                 variant="outlined"
                                 type="submit"
+                                onClick={this.handleLog}
                             >
                                 Log Visit
                             </Button>
                         </Grid>
                     </form>
 
-                    <DetailTable title={'Animals in this Exhibit'} />
+                    <DetailTable title={'Animals in this Exhibit'} exhibit_name={this.props.match.params.name}/>
                 </Paper>
 
             </div >
