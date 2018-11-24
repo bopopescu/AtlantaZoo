@@ -12,8 +12,8 @@ app.secret_key = 'super secret key'
 
 @app.route('/login', methods=['POST'])
 def login():
-    user = helpers.get_user_by_username(session['username'])
     login_message = helpers.login(request.json['email'], request.json['password'])
+    user = helpers.get_user_by_username(session['username'])
     return jsonify(message=login_message,
                    username=user['username'],
                    email=user['email'],

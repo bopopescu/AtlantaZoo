@@ -159,7 +159,7 @@ def get_all_exhibits():
 def get_exhibit_details(exhibit):
     conn, curr = connection()
 
-    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) " \
+    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animal' " \
             "FROM Exhibit NATURAL JOIN Animal " \
             "WHERE exhibit_name = %s" \
             "GROUP BY exhibit_name"
@@ -213,10 +213,10 @@ def get_show(**filters):
     return results
 
 
-def get_user_by_email(email):
+def get_user_by_username(username):
     conn, curr = connection()
 
-    curr.execute("SELECT * FROM test.User WHERE email = %s", (email,))
+    curr.execute("SELECT * FROM test.User WHERE username = %s", (username,))
 
     results = curr.fetchall()
 
