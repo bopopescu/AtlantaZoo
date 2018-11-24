@@ -429,16 +429,16 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
     if max_visits is None:
         max_visits = "1000000000"
 
-    query = "SELECT exhibit_name as a, visit_time, (SELECT COUNT(exhibit_name) " \
+    query = "SELECT exhibit_name as exhibit, visit_time, (SELECT COUNT(exhibit_name) " \
             "FROM Visit_exhibit " \
-            "WHERE visitor_username = %s " \
-            "AND exhibit_name = a) as num_visits " \
+            "WHERE visitor_username = %s" \
+            " AND exhibit_name = exhibit) as num_visits " \
             "FROM Visit_exhibit " \
-            "WHERE visitor_username = %s " \
+            "WHERE visitor_username = %s" \
             " AND (%s = '' OR exhibit_name LIKE '%" + exhibit_name + "%')" \
             " AND (%s = '' OR DATE(visit_time) = %s)" \
             " GROUP BY exhibit_name, visit_time" \
-            " HAVING num_visits < " + min_visits + " AND num_visits >= " + max_visits
+            " HAVING num_visits >= " + min_visits + " AND num_visits <= " + max_visits
 
     curr.execute(query, (visitor_name, visitor_name, exhibit_name, date, date))
 
