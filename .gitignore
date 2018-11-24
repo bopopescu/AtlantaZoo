@@ -1,4 +1,4 @@
-
+.idea/
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
@@ -6,8 +6,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
-
+*$py.class 
 # C extensions
 *.so
 

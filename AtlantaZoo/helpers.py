@@ -5,6 +5,16 @@ from datetime import datetime
 from passlib.hash import argon2
 
 
+def _generate_filters(filters):
+    sql = []
+    for ind, (col, val) in enumerate(filters.items()):
+        if ind == 0:
+            sql.append(' WHERE {col} = %s '.format(col=col))
+        else:
+            sql.append(' AND {col} = %s '.format(col=col))
+
+    return ' '.join(sql), list(filters.values())
+
 # def get_users():
 
 def abort(status_code, **fields):
@@ -185,15 +195,18 @@ def get_all_shows():
     conn.close()
     return results
 
-def get_show(email):
+def get_show(**filters):
     conn, curr = connection()
 
-    curr.execute("SELECT * FROM test.Show WHERE staff_name=(Select username from test.User where email=%s)", (email,))
+    sql, values = _generate_filters(filters)
+    curr.execute("SELECT * FROM test.Show {};".format(sql), values)
 
     results = curr.fetchall()
     for result in results:
         result['show_time'] = int(result['show_time'].timestamp())
 
+    curr.close()
+    conn.close()
     return results
 
 def get_user_by_email(email):

@@ -14,6 +14,8 @@ import SharedTableHead from '../../SharedTableHead.jsx';
 import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
 import {Link} from "react-router-dom";
+import UserContext from "../../UserContext";
+import { query } from '../../utils.js';
 
 let counter = 0;
 
@@ -69,6 +71,8 @@ const styles = theme => ({
  * @todo: change api to fetch if only want to fetch assigned shows for a specific staff member
  */
 class ShowTable extends React.Component {
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -80,7 +84,11 @@ class ShowTable extends React.Component {
             rowsPerPage: 5,
             currentTime: moment(),
         };
-        fetch(`http://localhost:5000/shows`, {
+    }
+
+    componentDidMount = () => {
+        const { username } = this.context;
+        fetch(`http://localhost:5000/shows?${query({staff_name: username})}`, {
 
             method: 'GET',
             headers: {
