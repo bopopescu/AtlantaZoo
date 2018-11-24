@@ -17,8 +17,10 @@ def _generate_filters(filters):
 
 # def get_users():
 
+
 def abort(status_code, **fields):
     flask_abort(make_response(jsonify(**fields), status_code))
+
 
 def validate_registration(username, email):
     conn, curr = connection()
@@ -56,6 +58,7 @@ def create_user(username, email, password, user_type):
     else:
         abort(400, message="Duplicate user given")
 
+
 def login(email, password):
     conn, curr = connection()
 
@@ -75,6 +78,7 @@ def login(email, password):
 
     return "Successfully logged in"
 
+
 def create_exhibit(exhibit_name, water_feature, size):
     conn, curr = connection()
     curr.execute("INSERT INTO Exhibit(exhibit_name, water_feature, size) "
@@ -84,6 +88,7 @@ def create_exhibit(exhibit_name, water_feature, size):
     conn.close()
 
     return "Exhibit was successfully created"
+
 
 def create_animal(animal_name, species, animal_type, age, exhibit_name):
     conn, curr = connection()
@@ -95,6 +100,7 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
 
     return "Animal was successfully created"
 
+
 def create_show(show_name, show_time, staff_name, exhibit_name):
     conn, curr = connection()
     curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
@@ -104,6 +110,7 @@ def create_show(show_name, show_time, staff_name, exhibit_name):
     conn.close()
 
     return "Show was successfully created"
+
 
 def delete_animal(animal_name, species):
     conn, curr = connection()
@@ -118,6 +125,7 @@ def delete_animal(animal_name, species):
 
     return "Animal was successfully deleted"
 
+
 def delete_show(show_name, show_time):
     conn, curr = connection()
 
@@ -129,6 +137,7 @@ def delete_show(show_name, show_time):
     conn.close()
 
     return "Show was successfully deleted"
+
 
 def delete_user(username):
     conn, curr = connection()
@@ -153,6 +162,7 @@ def get_all_exhibits():
     conn.close()
     return results
 
+
 def get_exhibit_details(exhibit):
     conn, curr = connection()
 
@@ -162,7 +172,6 @@ def get_exhibit_details(exhibit):
             "GROUP BY exhibit_name"
 
     curr.execute(query, (exhibit, ))
-
 
     results = curr.fetchall()
 
@@ -182,6 +191,7 @@ def get_all_animals():
     conn.close()
     return results
 
+
 def get_all_shows():
     conn, curr = connection()
 
@@ -194,6 +204,7 @@ def get_all_shows():
     curr.close()
     conn.close()
     return results
+
 
 def get_show(**filters):
     conn, curr = connection()
@@ -209,6 +220,7 @@ def get_show(**filters):
     conn.close()
     return results
 
+
 def get_user_by_email(email):
     conn, curr = connection()
 
@@ -219,6 +231,7 @@ def get_user_by_email(email):
     curr.close()
     conn.close()
     return results[0]
+
 
 def get_all_visitors():
     conn, curr = connection()
@@ -231,6 +244,7 @@ def get_all_visitors():
     conn.close()
     return results
 
+
 def get_all_staff():
     conn, curr = connection()
 
@@ -241,6 +255,7 @@ def get_all_staff():
     curr.close()
     conn.close()
     return results
+
 
 def get_animal(name, species):
     conn, curr = connection()
@@ -270,7 +285,6 @@ def search_animal(name, species, type, min_age, max_age, exhibit):
     if exhibit is None:
         exhibit = ""
 
-
     query = "SELECT * FROM Animal " \
             "WHERE (%s = '' OR animal_name LIKE '%" + name + "%')" \
             " AND (%s = '' OR species LIKE '%" + species + "%')" \
@@ -285,6 +299,39 @@ def search_animal(name, species, type, min_age, max_age, exhibit):
     conn.close()
     return results
 
+
+def search_exhibit(name, water, min_size, max_size, min_animal, max_animal):
+    conn, curr = connection()
+
+    if name is None:
+        name = ""
+    if water is None:
+        water = ""
+    if min_size is None:
+        min_size = "0"
+    if max_size is None:
+        max_size = "1000000000"
+    if min_animal is None:
+        min_animal = "0"
+    if max_animal is None:
+        max_animal = "1000000000"
+
+    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) " \
+            "FROM Exhibit NATURAL JOIN Animal " \
+            "WHERE (%s = '' OR exhibit_name LIKE '%" + name + "%')" \
+            " AND (%s ='' OR water_feature LIKE '%" + water + "%')" \
+            " AND (size BETWEEN " + min_size + " AND " + max_size + ")" \
+            " GROUP BY exhibit_name" \
+            " HAVING COUNT(exhibit_name) >= " + min_animal + " AND COUNT(exhibit_name) <= " + max_animal
+
+    curr.execute(query, (name, water))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
+
+
 def search_show(show_name, date, exhibit, staff_name):
     conn, curr = connection()
 
@@ -297,8 +344,6 @@ def search_show(show_name, date, exhibit, staff_name):
 
     if exhibit is None:
         exhibit = ""
-
-
 
     query = "SELECT * FROM `Show` " \
             "WHERE staff_name = %s" \
@@ -313,6 +358,7 @@ def search_show(show_name, date, exhibit, staff_name):
     conn.close()
     return results
 
+
 def search_show(show_name, date, exhibit, staff_name):
     conn, curr = connection()
 
@@ -326,8 +372,6 @@ def search_show(show_name, date, exhibit, staff_name):
     if exhibit is None:
         exhibit = ""
 
-
-
     query = "SELECT * FROM `Show` " \
             "WHERE staff_name = %s" \
             " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
@@ -340,6 +384,7 @@ def search_show(show_name, date, exhibit, staff_name):
     curr.close()
     conn.close()
     return results
+
 
 def search_show_history(visitor_name, show_name, date, exhibit):
     conn, curr = connection()
@@ -367,6 +412,7 @@ def search_show_history(visitor_name, show_name, date, exhibit):
     curr.close()
     conn.close()
     return results
+
 
 def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits):
     conn, curr = connection()
@@ -402,6 +448,8 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
     return results
 
 #log
+
+
 def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn, curr = connection()
 
@@ -413,6 +461,7 @@ def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn.close()
     return "Successfully logged exhibit visit!!!"
 
+
 def log_show_visit(visitor_username, show_name, show_time):
     conn, curr = connection()
 
@@ -423,6 +472,7 @@ def log_show_visit(visitor_username, show_name, show_time):
     curr.close()
     conn.close()
     return "Successfully logged show visit!!!"
+
 
 def log_note(staff_username, log_time, note, animal_name, animal_species):
     conn, curr = connection()

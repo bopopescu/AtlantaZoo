@@ -71,9 +71,8 @@ def create_exhibit():
         max_animal = request.args.get('max_animal_num')
         if name and not (water or min_size or max_size or min_animal or max_animal):
             return jsonify(message=helpers.get_exhibit_details(name))
-        if name or water or min_size or max_size or min_animal or max_animal:
-            return jsonify(message=helpers.search_exhibit(name, water, min_size, max_size, min_animal, max_animal))
-        return jsonify(message=helpers.get_all_exhibits())
+
+        return jsonify(message=helpers.search_exhibit(name, water, min_size, max_size, min_animal, max_animal))
 
 
 @app.route('/shows', methods=['POST'])
