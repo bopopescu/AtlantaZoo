@@ -185,10 +185,10 @@ def get_all_shows():
     conn.close()
     return results
 
-def get_show(email):
+def get_show(staff_name):
     conn, curr = connection()
 
-    curr.execute("SELECT * FROM test.Show WHERE staff_name=(Select username from test.User where email=%s)", (email,))
+    curr.execute("SELECT * FROM test.Show WHERE staff_name = %s", (staff_name,))
 
     results = curr.fetchall()
     for result in results:
@@ -261,7 +261,28 @@ def search_animal(name, species, type, min_age, max_age, exhibit):
     conn.close()
     return results
 
+def search_show(show_name, date, exhibit, staff_name):
+    conn, curr = connection()
 
+    if show_name is None:
+        show_name = ""
+    if date is None:
+        date = ""
+    if exhibit is None:
+        exhibit = ""
+
+    query = "SELECT * FROM `Show` " \
+            "WHERE staff_name = %s" \
+            " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
+            " AND (%s = '' OR (SELECT left(show_time, 10)) = %s)" \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+
+    curr.execute(query, (staff_name, show_name, date, date, exhibit))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
 
 #log
 def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
