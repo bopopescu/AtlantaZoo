@@ -71,9 +71,8 @@ def create_exhibit():
         max_animal = request.args.get('max_animal_num')
         if name and not (water or min_size or max_size or min_animal or max_animal):
             return jsonify(message=helpers.get_exhibit_details(name))
-        if name or water or min_size or max_size or min_animal or max_animal:
-            return jsonify(message=helpers.search_exhibit(name, water, min_size, max_size, min_animal, max_animal))
-        return jsonify(message=helpers.get_all_exhibits())
+
+        return jsonify(message=helpers.search_exhibit(name, water, min_size, max_size, min_animal, max_animal))
 
 
 @app.route('/shows', methods=['POST'])
@@ -133,18 +132,34 @@ def delete_user(username):
 
 
 # log_exhibit_visit
-@app.route('/visit_exhibit', methods=['POST'])
+@app.route('/visit_exhibit', methods=['POST', 'GET'])
 def log_exhibit_visit():
-    return jsonify(message=helpers.log_exhibit_visit(request.json['visitor_username'],
+    if request.method == 'POST':
+        return jsonify(message=helpers.log_exhibit_visit(request.json['visitor_username'],
                                                      request.json['exhibit_name'],
                                                      request.json['visit_time']))
+    if request.method == 'GET':
+        visitor_name = request.args.get('visitor_username')
+        exhibit_name = request.args.get('exhibit_name')
+        date = request.args.get('time')
+        min_visits = request.args.get('min_visits')
+        max_visits = request.args.get('max_visits')
+        return jsonify(message=helpers.search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits))
+
 
 #log_show_visit
-@app.route('/visit_show', methods=['POST'])
+@app.route('/visit_show', methods=['POST', 'GET'])
 def log_show_visit():
-    return jsonify(message=helpers.log_show_visit(request.json['visitor_username'],
+    if request.method == 'POST':
+        return jsonify(message=helpers.log_show_visit(request.json['visitor_username'],
                                                   request.json['show_name'],
                                                   request.json['show_time']))
+    if request.method == 'GET':
+        visitor_name = request.args.get('visitor_username')
+        show_name = request.args.get('show_name')
+        show_time = request.args.get('show_time')
+        exhibit_name = request.args.get('exhibit_name')
+        return jsonify(message=helpers.search_show_history(visitor_name, show_name, show_time, exhibit_name))
 #log_note
 @app.route('/notes', methods=['POST'])
 def log_note():
