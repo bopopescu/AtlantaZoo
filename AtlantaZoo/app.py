@@ -133,11 +133,20 @@ def delete_user(username):
 
 
 # log_exhibit_visit
-@app.route('/visit_exhibit', methods=['POST'])
+@app.route('/visit_exhibit', methods=['POST', 'GET'])
 def log_exhibit_visit():
-    return jsonify(message=helpers.log_exhibit_visit(request.json['visitor_username'],
+    if request.method == 'POST':
+        return jsonify(message=helpers.log_exhibit_visit(request.json['visitor_username'],
                                                      request.json['exhibit_name'],
                                                      request.json['visit_time']))
+    if request.method == 'GET':
+        visitor_name = request.args.get('visitor_username')
+        exhibit_name = request.args.get('exhibit_name')
+        date = request.args.get('time')
+        min_visits = request.args.get('min_visits')
+        max_visits = request.args.get('max_visits')
+        return jsonify(message=helpers.search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits))
+
 
 #log_show_visit
 @app.route('/visit_show', methods=['POST', 'GET'])

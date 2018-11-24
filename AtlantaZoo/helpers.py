@@ -368,6 +368,39 @@ def search_show_history(visitor_name, show_name, date, exhibit):
     conn.close()
     return results
 
+def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits):
+    conn, curr = connection()
+
+    if exhibit_name is None:
+        exhibit_name = ""
+    if date is None:
+        date = ""
+    else:
+        date = datetime.fromtimestamp(int(date)).date()
+
+    if min_visits is None:
+        min_visits = "0"
+    if max_visits is None:
+        max_visits = "1000000000"
+
+    query = "SELECT exhibit_name as a, visit_time, (SELECT COUNT(exhibit_name) " \
+            "FROM Visit_exhibit " \
+            "WHERE visitor_username = %s " \
+            "AND exhibit_name = a) as num_visits " \
+            "FROM Visit_exhibit " \
+            "WHERE visitor_username = %s " \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit_name + "%')" \
+            " AND (%s = '' OR DATE(visit_time) = %s)" \
+            " GROUP BY exhibit_name, visit_time" \
+            " HAVING num_visits < " + min_visits + " AND num_visits >= " + max_visits
+
+    curr.execute(query, (visitor_name, visitor_name, exhibit_name, date, date))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
+
 #log
 def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn, curr = connection()
