@@ -18,6 +18,7 @@ def _generate_filters(filters):
 
 # def get_users():
 
+
 def abort(status_code, **fields):
     flask_abort(make_response(jsonify(**fields), status_code))
 
@@ -58,11 +59,10 @@ def create_user(username, email, password, user_type):
     else:
         abort(400, message="Duplicate user given")
 
-
 def login(email, password):
     conn, curr = connection()
 
-    curr.execute('SELECT * FROM User where email = %s ', (email,))
+    curr.execute('SELECT * FROM User where email = %s ', (email, ))
     row = curr.fetchone()
     if row is None:
         abort(401, message="Incorrect username or password")
@@ -71,13 +71,12 @@ def login(email, password):
         abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
-    session['username'] = row['username']
+    session['email'] = email
 
     curr.close()
     conn.close()
 
     return "Successfully logged in"
-
 
 def create_exhibit(exhibit_name, water_feature, size):
     conn, curr = connection()
@@ -89,7 +88,6 @@ def create_exhibit(exhibit_name, water_feature, size):
 
     return "Exhibit was successfully created"
 
-
 def create_animal(animal_name, species, animal_type, age, exhibit_name):
     conn, curr = connection()
     curr.execute("INSERT INTO Animal(animal_name, species, animal_type, age, exhibit_name) "
@@ -100,18 +98,15 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
 
     return "Animal was successfully created"
 
-
 def create_show(show_name, show_time, staff_name, exhibit_name):
     conn, curr = connection()
     curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
-                 "VALUES (%s, %s, %s, %s);",
-                 (show_name, datetime.fromtimestamp(int(show_time)).date(), staff_name, exhibit_name))
+                 "VALUES (%s, %s, %s, %s);", (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
     conn.commit()
     curr.close()
     conn.close()
 
     return "Show was successfully created"
-
 
 def delete_animal(animal_name, species):
     conn, curr = connection()
@@ -126,7 +121,6 @@ def delete_animal(animal_name, species):
 
     return "Animal was successfully deleted"
 
-
 def delete_show(show_name, show_time):
     conn, curr = connection()
 
@@ -138,7 +132,6 @@ def delete_show(show_name, show_time):
     conn.close()
 
     return "Show was successfully deleted"
-
 
 def delete_user(username):
     conn, curr = connection()
@@ -163,16 +156,15 @@ def get_all_exhibits():
     conn.close()
     return results
 
-
 def get_exhibit_details(exhibit):
     conn, curr = connection()
 
-    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animal' " \
+    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) " \
             "FROM Exhibit NATURAL JOIN Animal " \
             "WHERE exhibit_name = %s" \
             "GROUP BY exhibit_name"
 
-    curr.execute(query, (exhibit,))
+    curr.execute(query, (exhibit, ))
 
 
     results = curr.fetchall()
@@ -193,7 +185,6 @@ def get_all_animals():
     conn.close()
     return results
 
-
 def get_all_shows():
     conn, curr = connection()
 
@@ -206,7 +197,6 @@ def get_all_shows():
     curr.close()
     conn.close()
     return results
-
 
 def get_show(**filters):
     conn, curr = connection()
@@ -234,7 +224,6 @@ def get_user_by_email(email):
     conn.close()
     return results[0]
 
-
 def get_all_visitors():
     conn, curr = connection()
 
@@ -246,7 +235,6 @@ def get_all_visitors():
     conn.close()
     return results
 
-
 def get_all_staff():
     conn, curr = connection()
 
@@ -257,7 +245,6 @@ def get_all_staff():
     curr.close()
     conn.close()
     return results
-
 
 def get_animal(name, species):
     conn, curr = connection()
@@ -477,7 +464,6 @@ def log_show_visit(visitor_username, show_name, show_time):
     curr.close()
     conn.close()
     return "Successfully logged show visit!!!"
-
 
 def log_note(staff_username, log_time, note, animal_name, animal_species):
     conn, curr = connection()
