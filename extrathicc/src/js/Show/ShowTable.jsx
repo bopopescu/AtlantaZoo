@@ -105,7 +105,7 @@ class ShowTable extends React.Component {
                     moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
                     show.exhibit_name))
         }))
-    }
+    };
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -191,7 +191,7 @@ class ShowTable extends React.Component {
                 .catch(error => console.error('Error logging a visit to a show:', error));
             event.preventDefault();
         }
-    }
+    };
 
     render() {
         const {classes} = this.props;
