@@ -13,12 +13,6 @@ import SharedTableHead from '../../SharedTableHead.jsx';
 import SharedToolbar from '../../SharedToolbar.jsx';
 import { Link } from "react-router-dom";
 
-let counter = 0;
-function createData(name, species, exhibit, age, type) {
-    counter += 1;
-    return { id: counter, name, species, exhibit, age, type };
-}
-
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -44,9 +38,9 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+    { id: 'animal_name', numeric: false, disablePadding: true, label: 'Name' },
     { id: 'species', numeric: false, disablePadding: true, label: 'Species' },
-    { id: 'exhibit', numeric: false, disablePadding: true, label: 'Exhibit' },
+    { id: 'exhibit_name', numeric: false, disablePadding: true, label: 'Exhibit' },
     { id: 'age', numeric: true, disablePadding: false, label: 'Age (month)' },
     { id: 'type', numeric: false, disablePadding: true, label: 'Type' },
 ];
@@ -64,38 +58,25 @@ const styles = theme => ({
     },
 });
 
-/**
- * @todo: update api from get all animals to search by certain criteria
- */
+const allFilters = (filters, row) => {
+    for (let filter of filters) {
+        if (!filter(row)) {
+            return false;
+        }
+    }
+    return true;
+};
+
 class AnimalTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            api: this.props.api,
-            // search_fields: null,
             order: 'asc',
-            orderBy: 'name',
+            orderBy: 'animal_name',
             selected: [],
-            animals: [],
             page: 0,
             rowsPerPage: 5,
         };
-        fetch(this.state.api, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            return response.json();
-        }).then(json => this.setState({
-            animals: json.message.map(
-                animal => createData(
-                    animal.animal_name,
-                    animal.species,
-                    animal.exhibit_name,
-                    animal.age,
-                    animal.animal_type))
-        }));
     }
 
     handleRequestSort = (event, property) => {
@@ -149,8 +130,8 @@ class AnimalTable extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        const { classes } = this.props;
-        const { animals, order, orderBy, selected, rowsPerPage, page } = this.state;
+        const { classes, filters, animals } = this.props;
+        const { order, orderBy, selected, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, animals.length - page * rowsPerPage);
 
         return (
@@ -170,8 +151,9 @@ class AnimalTable extends React.Component {
                         <TableBody>
                             {stableSort(animals, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(n => {
-                                    const isSelected = this.isSelected(n.id);
+                                .filter(row => allFilters(filters, row))
+                                .map((n, id) => {
+                                    const isSelected = this.isSelected(id);
                                     return (
                                         <TableRow
                                             hover
@@ -186,14 +168,14 @@ class AnimalTable extends React.Component {
                                                 <Checkbox checked={isSelected} />
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                <Link to={`/animaldetail/${n.name}/${n.species}`} >
-                                                {n.name}
+                                                <Link to={`/animaldetail/${n.animal_name}/${n.species}`} >
+                                                {n.animal_name}
                                                 </Link>
                                             </TableCell>
                                             <TableCell >{n.species}</TableCell>
-                                            <TableCell >{n.exhibit}</TableCell>
+                                            <TableCell >{n.exhibit_name}</TableCell>
                                             <TableCell numeric>{n.age}</TableCell>
-                                            <TableCell >{n.type}</TableCell>
+                                            <TableCell >{n.animal_type}</TableCell>
                                         </TableRow>
                                     );
                                 })}

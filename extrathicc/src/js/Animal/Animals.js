@@ -8,6 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import AnimalTable from './AnimalTable.jsx';
 import Button from "@material-ui/core/Button";
+import {standardHandler} from "../../utils";
 
 const exhibits = [
     {
@@ -72,16 +73,55 @@ class Animals extends Component {
         super(props);
         this.state = {
             redirect: false,
-            name: '',
+            animal_name: '',
             type: '',
             species: '',
-            min_age: 0,
-            max_age: 0,
-            exhibit: '',
-            api: 'http://localhost:5000/animals',
-            search_object: null,
+            min_age: '',
+            max_age: '',
+            exhibit_name: '',
+            rows:[],
         };
     }
+
+    generateFilters = () => {
+        let filters = [];
+
+        const {animal_name, type, species, min_age, max_age, exhibit_name} = this.state;
+
+        if (animal_name !== '') {
+            filters.push(row => row.animal_name.toLowerCase().includes(animal_name.toLowerCase()));
+        }
+        if (min_age !== '') {
+            filters.push(row => row.age >= min_age);
+        }
+        if (max_age !== '') {
+            filters.push(row => row.age <= max_age);
+        }
+        if (type !== '') {
+            filters.push(row => row.animal_type.toLowerCase() === type.toLowerCase());
+        }
+        if (species !== '') {
+            filters.push(row => row.species.toLowerCase().includes(species.toLowerCase()));
+        }
+        if (exhibit_name !== '') {
+            filters.push(row => row.exhibit_name.toLowerCase() === exhibit_name.toLowerCase());
+        }
+        return filters;
+    };
+
+    componentDidMount = () => {
+        fetch(`http://localhost:5000/animals`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
 
     handleChange = name => event => {
         if (name === 'min_age' || name === 'max_age') {
@@ -96,22 +136,6 @@ class Animals extends Component {
 
     };
 
-    /**
-     * @todo: update api 
-     */
-    handleClick = () => {
-        this.setState({
-            api: '',
-            // search_object: {
-            //     name: this.state.name,
-            //     type: this.state.type,
-            //     species: this.state.species,
-            //     min_age: this.state.min_age,
-            //     max_age: this.state.max_age,
-            //     exhibit: this.state.exhibit
-            // }
-        });
-    };
 
     render() {
         return (
@@ -124,10 +148,10 @@ class Animals extends Component {
                     justify="space-around"
                     alignItems="center">
                     <TextField
-                        id="name"
+                        id="animal_name"
                         label="Name"
                         placeholder="Animal name"
-                        onChange={this.handleChange('name')}
+                        onChange={this.handleChange('animal_name')}
                         margin="normal"
                         variant="outlined"
                     />
@@ -180,8 +204,8 @@ class Animals extends Component {
                     <FormControl>
                         <InputLabel>Exhibit</InputLabel>
                         <Select
-                            value={this.state.exhibit}
-                            onChange={this.handleChange('exhibit')}
+                            value={this.state.exhibit_name}
+                            onChange={this.handleChange('exhibit_name')}
                         >
                             {exhibits.map(exhibit => (
                                 <MenuItem key={exhibit.value} value={exhibit.value}>
@@ -205,24 +229,9 @@ class Animals extends Component {
                         </Select>
                     </FormControl>
                 </Grid>
-
-                <Grid container
-                    direction="row"
-                    justify="space-around"
-                    alignItems="center">
-
-                    <Button
-                        variant="outlined"
-                        type="submit"
-                        onClick={this.handleClick}
-                    >
-                        Search
-                    </Button>
-
-                </Grid>
                 <AnimalTable
-                    // search_field={this.state.search_object}
-                    api={this.state.api}>
+                    animals={this.state.rows}
+                    filters={this.generateFilters()}>
                 </AnimalTable>
             </div>
         );

@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -8,12 +7,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
-import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import {Link} from "react-router-dom";
 
 
@@ -73,9 +69,6 @@ const allFilters = (filters, row) => {
     return true;
 };
 
-/**
- * @todo: change api to fetch accordingly to search fields
- */
 class ExhibitTable extends React.Component {
     constructor(props) {
         super(props);

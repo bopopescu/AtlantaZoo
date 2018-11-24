@@ -8,7 +8,6 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import ExhibitTable from './ExhibitTable';
-import Button from "@material-ui/core/Button/Button";
 import {standardHandler} from "../../utils";
 
 
@@ -167,6 +166,7 @@ class Exhibits extends Component {
                             value={this.state.water_feature}
                             onChange={this.handleChange('water_feature')}
                         >
+                            <MenuItem value={''}/>
                             <MenuItem value={true}>Yes</MenuItem>
                             <MenuItem value={false}>No</MenuItem>
                         </Select>
