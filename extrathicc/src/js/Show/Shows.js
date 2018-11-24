@@ -10,6 +10,8 @@ import ShowTable from './ShowTable.jsx';
 import Button from "@material-ui/core/Button";
 import moment from "moment";
 import {DateTimePicker} from "material-ui-pickers";
+import {standardHandler} from "../../utils";
+import ExhibitTable from "../Exhibit/ExhibitTable";
 
 const exhibits = [
     {
@@ -43,13 +45,43 @@ class Shows extends Component {
         super(props);
         this.state = {
             redirect: false,
-            name: '',
-            exhibit: '',
-            search_time: moment(),
-            api: 'http://localhost:5000/shows',
-            search_object: null,
+            show_name: '',
+            exhibit_name: '',
+            search_time: null,
+            rows:[]
         };
     }
+
+    generateFilters = () => {
+        let filters = [];
+
+        const {exhibit_name, show_name, search_time} = this.state;
+
+        if (exhibit_name !== '') {
+            filters.push(row => row.exhibit_name.toLowerCase().includes(exhibit_name.toLowerCase()));
+        }
+        if (show_name !== '') {
+            filters.push(row => row.show_name.toLowerCase().includes(show_name.toLowerCase()));
+        }
+        if (search_time !== null) {
+            filters.push(row => row.show_time > moment());
+        }
+        return filters;
+    };
+
+    componentDidMount = () => {
+        fetch(`http://localhost:5000/shows`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
 
     handleChange = name => event => {
         if (name === 'min_age' || name === 'max_age') {
@@ -68,23 +100,6 @@ class Shows extends Component {
         this.setState({ search_time: date });
     };
 
-    /**
-     * @todo: update api
-     */
-    handleClick = () => {
-        this.setState({
-            api: '',
-            // search_object: {
-            //     name: this.state.name,
-            //     type: this.state.type,
-            //     species: this.state.species,
-            //     min_age: this.state.min_age,
-            //     max_age: this.state.max_age,
-            //     exhibit: this.state.exhibit
-            // }
-        });
-    }
-
     render() {
         return (
             <div className={'Shows'}>
@@ -96,15 +111,15 @@ class Shows extends Component {
                       justify="space-around"
                       alignItems="center">
                     <TextField
-                        id="name"
+                        id="show_name"
                         label="Name"
                         placeholder="Show name"
-                        onChange={this.handleChange('name')}
+                        onChange={this.handleChange('show_name')}
                         margin="normal"
                         variant="outlined"
                     />
 
-                    <DateTimePicker value={this.state.search_time} onChange={this.handleDateChange} />
+                    <DateTimePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
 
                 </Grid>
 
@@ -115,7 +130,7 @@ class Shows extends Component {
                     <FormControl>
                         <InputLabel>Exhibit</InputLabel>
                         <Select
-                            value={this.state.exhibit}
+                            value={this.state.exhibit_name}
                             onChange={this.handleChange('exhibit')}
                         >
                             {exhibits.map(exhibit => (
@@ -125,19 +140,12 @@ class Shows extends Component {
                             ))}
                         </Select>
                     </FormControl>
-
-                    <Button
-                        variant="outlined"
-                        type="submit"
-                        onClick={this.handleClick}
-                    >
-                        Search
-                    </Button>
                 </Grid>
 
 
                 <ShowTable
-                    api={this.state.api}>
+                    show_names={this.state.rows}
+                    filters={this.generateFilters()}>
                 </ShowTable>
             </div>
         );

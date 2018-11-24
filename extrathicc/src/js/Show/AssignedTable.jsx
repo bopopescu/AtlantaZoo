@@ -17,6 +17,12 @@ import {Link} from "react-router-dom";
 import UserContext from "../../UserContext";
 import { query } from '../../utils.js';
 
+let counter = 0;
+
+function createData(name, time, exhibit) {
+    counter += 1;
+    return {id: counter, name, time, exhibit};
+}
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -43,9 +49,9 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-    {id: 'show_name', numeric: false, disablePadding: true, label: 'Name'},
-    {id: 'show_time', numeric: false, disablePadding: true, label: 'Times'},
-    {id: 'exhibit_name', numeric: false, disablePadding: true, label: 'Exhibit'}
+    {id: 'name', numeric: false, disablePadding: true, label: 'Name'},
+    {id: 'time', numeric: false, disablePadding: true, label: 'Times'},
+    {id: 'exhibit', numeric: false, disablePadding: true, label: 'Exhibit'}
 ];
 
 const styles = theme => ({
@@ -61,15 +67,9 @@ const styles = theme => ({
     },
 });
 
-const allFilters = (filters, row) => {
-    for (let filter of filters) {
-        if (!filter(row)) {
-            return false;
-        }
-    }
-    return true;
-};
-
+/**
+ * @todo: change api to fetch if only want to fetch assigned shows for a specific staff member
+ */
 class ShowTable extends React.Component {
     static contextType = UserContext;
 
@@ -77,12 +77,35 @@ class ShowTable extends React.Component {
         super(props);
         this.state = {
             order: 'asc',
-            orderBy: 'show_name',
+            orderBy: 'name',
             selected: [],
+            shows: [],
             page: 0,
             rowsPerPage: 5,
+            currentTime: moment(),
         };
     }
+
+    componentDidMount = () => {
+        const { username } = this.context;
+        fetch(`http://localhost:5000/shows?${query({staff_name: username})}`, {
+
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(json => this.setState({
+            shows: json.message.map(
+                show => createData(
+                    show.show_name,
+                    moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
+                    show.exhibit_name))
+        }))
+    };
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -95,13 +118,13 @@ class ShowTable extends React.Component {
         this.setState({order, orderBy});
     };
 
-    // handleSelectAllClick = event => {
-    //     if (event.target.checked) {
-    //         this.setState(state => ({selected: state.shows.map(n => n.id)}));
-    //         return;
-    //     }
-    //     this.setState({selected: []});
-    // };
+    handleSelectAllClick = event => {
+        if (event.target.checked) {
+            this.setState(state => ({selected: state.shows.map(n => n.id)}));
+            return;
+        }
+        this.setState({selected: []});
+    };
 
     handleClick = (event, id) => {
         const {selected} = this.state;
@@ -134,15 +157,25 @@ class ShowTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+    handleRender = userContext => event => {
+        // fetch(`http://localhost:5000/shows?email=${(userContext.email)}`, {
+
+    };
+
+    /**
+     * @todo: Need to grab username
+     * @param row contains show name, show time and its exhibit
+     * @returns {Function}
+     */
     handleLogVisit = row => event => {
-        if (row.time <= moment()) {
-            fetch('http://localhost:5000/visit_show',
+        if (row.time <= this.state.currentTime) {
+            fetch('http://localhost:5000/shows/visit',
                 {
                     method: 'POST',
                     body: JSON.stringify({
                         show_name: row.name,
-                        show_time: row.time,
-                        visitor_username: this.context.username // NOTE: not this name
+                        show_time: row.time.unix(),
+                        staff_name: 'asdfasdf' // NOTE: not this name
                     }),
                     headers: {
                         'Content-Type': 'application/json'
@@ -150,9 +183,9 @@ class ShowTable extends React.Component {
                 })
                 .then(response => {
                     if (response.ok) {
-                        response.json().then(resp => alert("You've successfully logged a visit"));
+                        this.setState({redirect: true});
                     } else {
-                        response.json().then(resp => alert("You've already logged a visit"));
+                        response.json().then(resp => alert(resp.message));
                     }
                 })
                 .catch(error => console.error('Error logging a visit to a show:', error));
@@ -161,9 +194,9 @@ class ShowTable extends React.Component {
     };
 
     render() {
-        const {classes, filters, show_names} = this.props;
-        const {order, orderBy, selected, rowsPerPage, page} = this.state;
-        const emptyRows = rowsPerPage - Math.min(rowsPerPage, show_names.length - page * rowsPerPage);
+        const {classes} = this.props;
+        const {shows, order, orderBy, selected, rowsPerPage, page} = this.state;
+        const emptyRows = rowsPerPage - Math.min(rowsPerPage, shows.length - page * rowsPerPage);
 
         return (
             <Paper className={classes.root}>
@@ -175,43 +208,42 @@ class ShowTable extends React.Component {
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            // onSelectAllClick={this.handleSelectAllClick}
+                            onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            rowCount={show_names.length}
+                            rowCount={shows.length}
                         />
                         <TableBody>
-                            {stableSort(show_names, getSorting(order, orderBy))
+                            {stableSort(shows, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .filter(row => allFilters(filters, row))
-                                .map((n, id) => {
-                                    const isSelected = this.isSelected(id);
+                                .map(n => {
+                                    const isSelected = this.isSelected(n.id);
                                     return (
                                         <TableRow
                                             hover
                                             // onClick={event => this.handleClick(event, n.id)}
                                             // aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={id}
+                                            key={n.id}
                                             selected={isSelected}
                                         >
                                             <TableCell>
                                                 <Button variant="outlined" color="secondary" className={classes.button}
                                                         onClick={this.handleLogVisit(
                                                             {
-                                                                name: n.show_name,
-                                                                time: n.show_time,
-                                                                exhibit: n.exhibit_name
+                                                                name: n.name,
+                                                                time: n.time,
+                                                                exhibit: n.exhibit
                                                             })}>
                                                     Log Visit
                                                 </Button>
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                {n.show_name}
+                                                {n.name}
                                             </TableCell>
-                                            <TableCell>{moment.unix(n.show_time).format('MM/DD/YY hh:mm a')}</TableCell>
+                                            <TableCell>{n.time}</TableCell>
                                             <TableCell>
-                                                <Link to={`/exhibitdetail/${n.exhibit_name}`}>
-                                                    {n.exhibit_name}
+                                                <Link to={`/exhibitdetail/${n.exhibit}`}>
+                                                    {n.exhibit}
                                                 </Link>
                                             </TableCell>
                                         </TableRow>
@@ -228,7 +260,7 @@ class ShowTable extends React.Component {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={show_names.length}
+                    count={shows.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     backIconButtonProps={{
