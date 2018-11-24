@@ -97,7 +97,6 @@ def get_all_shows():
     return jsonify(message=helpers.get_all_shows())
 
 
-
 @app.route('/animals', methods=['GET'])
 def get_all_animals():
     name = request.args.get('name')

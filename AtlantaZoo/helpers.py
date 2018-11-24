@@ -306,7 +306,7 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal):
     if max_animal is None:
         max_animal = "1000000000"
 
-    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) " \
+    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animals' " \
             "FROM Exhibit NATURAL JOIN Animal " \
             "WHERE (%s = '' OR exhibit_name LIKE '%" + name + "%')" \
             " AND (%s ='' OR water_feature LIKE '%" + water + "%')" \
