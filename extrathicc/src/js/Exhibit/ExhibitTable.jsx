@@ -99,13 +99,13 @@ class ExhibitTable extends React.Component {
         this.setState({order, orderBy});
     };
 
-    handleSelectAllClick = event => {
-        if (event.target.checked) {
-            this.setState(state => ({selected: state.exhibits.map(n => n.id)}));
-            return;
-        }
-        this.setState({selected: []});
-    };
+    // handleSelectAllClick = event => {
+    //     if (event.target.checked) {
+    //         this.setState(state => ({selected: state.exhibits.map(n => n.id)}));
+    //         return;
+    //     }
+    //     this.setState({selected: []});
+    // };
 
     handleClick = (event, id) => {
         const {selected} = this.state;
@@ -153,7 +153,7 @@ class ExhibitTable extends React.Component {
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={this.handleSelectAllClick}
+                            // onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
                             rowCount={exhibits.length}
                         />
