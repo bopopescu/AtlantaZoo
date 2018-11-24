@@ -292,8 +292,13 @@ def search_show(show_name, date, exhibit, staff_name):
         show_name = ""
     if date is None:
         date = ""
+    else:
+        date = datetime.fromtimestamp(int(date)).date()
+
     if exhibit is None:
         exhibit = ""
+
+
 
     query = "SELECT * FROM `Show` " \
             "WHERE staff_name = %s" \
