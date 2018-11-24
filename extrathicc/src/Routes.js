@@ -28,7 +28,7 @@ const AuthRoute = ({ component: Component, requiredUserType, ...rest }) => (
                         return (<div/>);
                     }
                     if (loggedIn) {
-                        if (requiredUserType && requiredUserType !== userType) {
+                        if (requiredUserType && requiredUserType.toLowerCase() !== userType.toLowerCase()) {
                             return (<Redirect
                                 to={{
                                     pathname: "/",

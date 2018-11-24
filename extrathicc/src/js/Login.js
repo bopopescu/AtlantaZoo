@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "../css/Login.css";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { Grid } from "@material-ui/core";
-import { Redirect } from "react-router-dom";
+import {Grid} from "@material-ui/core";
+import {Redirect} from "react-router-dom";
 import UserContext from "../UserContext.js";
 import LoginService from "../_services/LoginService.js";
 
@@ -13,6 +13,7 @@ class Login extends Component {
         this.state = {
             email: "",
             password: "",
+            userType: "",
             redirect: false,
             redirectCancel: false
         };
@@ -34,12 +35,14 @@ class Login extends Component {
         const password = this.state.password;
         LoginService.login(email, password)
             .then(response => {
-                setUser({ email: response.email,
-                          username: response.username,
-                          userType: response.user_type,
-                          loggedIn: true,
-                          checkedLogin: true });
-                this.setState({ redirect: true });
+                setUser({
+                    email: response.email,
+                    username: response.username,
+                    userType: response.user_type,
+                    loggedIn: true,
+                    checkedLogin: true
+                });
+                this.setState({redirect: true, userType: response.user_type});
             })
             .catch(response => {
                 response.json().then(resp => alert(resp.message));
@@ -56,13 +59,21 @@ class Login extends Component {
 
     renderRedirectCancel = () => {
         if (this.state.redirectCancel) {
-            return <Redirect to="/" />;
+            return <Redirect to="/"/>;
         }
     };
 
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to="/visitorhome" />;
+            switch(this.state.userType){
+                case 'Visitor':
+                    return <Redirect to="/visitorhome"/>;
+                case 'Staff':
+                    return <Redirect to="/staffhome"/>;
+                case 'Admin':
+                    return <Redirect to="/adminhome"/>;
+            }
+
         }
     };
 
@@ -74,7 +85,7 @@ class Login extends Component {
                     <header id="title">Login</header>
                 </Grid>
                 <UserContext.Consumer>
-                    {({ setUserContext }) => (
+                    {({setUserContext}) => (
                         <form autoComplete="off" onSubmit={this.handleSubmit(setUserContext)}>
                             <Grid
                                 container

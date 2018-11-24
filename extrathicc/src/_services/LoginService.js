@@ -17,6 +17,24 @@ const login = (email, password) =>
       .catch(e => console.error(e))
       .then(standardHandler);
 
+const register = (username, email, password, userType) =>
+    fetch('http://localhost:5000/users',
+        {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({
+                username,
+                email,
+                password,
+                user_type: userType
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .catch(e => console.error(e))
+        .then(standardHandler);
+
 
 const checkForExistingLogin = () =>
       fetch('http://localhost:5000/whoami',
@@ -30,6 +48,7 @@ const checkForExistingLogin = () =>
 
 const LoginService = {
     login,
+    register,
     checkForExistingLogin,
 };
 
