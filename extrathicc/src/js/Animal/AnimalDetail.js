@@ -9,10 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Grid } from "@material-ui/core";
-
-const query = params => Object.entries(params)
-    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
-    .join('&');
+import { query } from '../../utils.js';
 
 class AnimalDetail extends Component {
     constructor(props) {

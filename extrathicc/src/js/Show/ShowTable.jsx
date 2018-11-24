@@ -13,6 +13,9 @@ import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
 import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
+import {Link} from "react-router-dom";
+import UserContext from "../../UserContext";
+import { query } from '../../utils.js';
 
 let counter = 0;
 
@@ -68,6 +71,8 @@ const styles = theme => ({
  * @todo: change api to fetch if only want to fetch assigned shows for a specific staff member
  */
 class ShowTable extends React.Component {
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -79,24 +84,28 @@ class ShowTable extends React.Component {
             rowsPerPage: 5,
             currentTime: moment(),
         };
-        fetch(`http://localhost:5000/shows`, {
+    }
+
+    componentDidMount = () => {
+        const { username } = this.context;
+        fetch(`http://localhost:5000/shows?${query({staff_name: username})}`, {
 
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => {
-                return response.json();
-            })
-            .then(json => this.setState({
-                shows: json.message.map(
-                    show => createData(
-                        show.show_name,
-                        moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
-                        show.exhibit_name))
-            }))
-    }
+        .then(response => {
+            return response.json();
+        })
+        .then(json => this.setState({
+            shows: json.message.map(
+                show => createData(
+                    show.show_name,
+                    moment.unix(show.show_time).format('MM/DD/YY hh:mm a'),
+                    show.exhibit_name))
+        }))
+    };
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -174,7 +183,7 @@ class ShowTable extends React.Component {
                 })
                 .then(response => {
                     if (response.ok) {
-                        this.setState({ redirect: true });
+                        this.setState({redirect: true});
                     } else {
                         response.json().then(resp => alert(resp.message));
                     }
@@ -182,7 +191,7 @@ class ShowTable extends React.Component {
                 .catch(error => console.error('Error logging a visit to a show:', error));
             event.preventDefault();
         }
-    }
+    };
 
     render() {
         const {classes} = this.props;
@@ -220,9 +229,11 @@ class ShowTable extends React.Component {
                                             <TableCell>
                                                 <Button variant="outlined" color="secondary" className={classes.button}
                                                         onClick={this.handleLogVisit(
-                                                    {name: n.name,
-                                                        time: n.time,
-                                                        exhibit: n.exhibit})}>
+                                                            {
+                                                                name: n.name,
+                                                                time: n.time,
+                                                                exhibit: n.exhibit
+                                                            })}>
                                                     Log Visit
                                                 </Button>
                                             </TableCell>
@@ -230,7 +241,11 @@ class ShowTable extends React.Component {
                                                 {n.name}
                                             </TableCell>
                                             <TableCell>{n.time}</TableCell>
-                                            <TableCell>{n.exhibit}</TableCell>
+                                            <TableCell>
+                                                <Link to={`/exhibitdetail/${n.exhibit}`}>
+                                                    {n.exhibit}
+                                                </Link>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}

@@ -18,15 +18,9 @@ import {Link} from "react-router-dom";
 
 
 let counter = 0;
-
-// function createData(name, size, total_animals, water_feature) {
-//     counter += 1;
-//     return {id: counter, name, size, total_animals, water_feature};
-// }
-
-function createData(name, size, water_feature) {
+function createData(name, species) {
     counter += 1;
-    return {id: counter, name, size, water_feature};
+    return {id: counter, name, species};
 }
 
 function desc(a, b, orderBy) {
@@ -55,9 +49,7 @@ function getSorting(order, orderBy) {
 
 const rows = [
     {id: 'name', numeric: false, disablePadding: true, label: 'Name'},
-    {id: 'size', numeric: true, disablePadding: false, label: 'Size'},
-    // {id: 'num_animals', numeric: true, disablePadding: false, label: 'NumAnimals'},
-    {id: 'water_feature', numeric: false, disablePadding: true, label: 'Water Feature'}
+    {id: 'species', numeric: true, disablePadding: false, label: 'Species'}
 ];
 
 const styles = theme => ({
@@ -73,10 +65,7 @@ const styles = theme => ({
     },
 });
 
-/**
- * @todo: change api to fetch accordingly to search fields
- */
-class ExhibitTable extends React.Component {
+class DetailTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -248,8 +237,8 @@ class ExhibitTable extends React.Component {
     }
 }
 
-ExhibitTable.propTypes = {
+DetailTable.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ExhibitTable);
+export default withStyles(styles)(DetailTable);

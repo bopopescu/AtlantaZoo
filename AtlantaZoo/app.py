@@ -12,13 +12,20 @@ app.secret_key = 'super secret key'
 
 @app.route('/login', methods=['POST'])
 def login():
-    return jsonify(message=helpers.login(request.json['email'], request.json['password']))
+    user = helpers.get_user_by_email(session['email'])
+    login_message = helpers.login(request.json['email'], request.json['password'])
+    return jsonify(message=login_message,
+                   username=user['username'],
+                   email=user['email'],
+                   user_type=user['user_type'])
 
 
 # just for testing who is logged in
 @app.route('/whoami', methods=['GET'])
 def whoami():
-    return jsonify(username=session['username'])
+    user = helpers.get_user_by_email(session['email'])
+    return jsonify(email=user['email'], username=user['username'],
+                   user_type=user['user_type'])
 
 
 @app.route('/users', methods=['POST'])
@@ -84,10 +91,12 @@ def get_all_shows():
     date = request.args.get('show_time')
     exhibit = request.args.get('exhibit_name')
     if staff_name and not (show_name or date or exhibit):
-        return jsonify(message=helpers.get_show(staff_name))
+        filters = request.args.to_dict()
+        return jsonify(message=helpers.get_show(**filters))
     if staff_name or show_name or date or exhibit:
         return jsonify(message=helpers.search_show(show_name, date, exhibit, staff_name))
     return jsonify(message=helpers.get_all_shows())
+
 
 
 @app.route('/animals', methods=['GET'])

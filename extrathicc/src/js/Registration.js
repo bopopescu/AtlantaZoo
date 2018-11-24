@@ -16,7 +16,7 @@ class Registration extends Component {
             username: "",
             password: "",
             confirm: "",
-            user_type: "",
+            userType: "",
             redirect: false
         };
     }
@@ -34,7 +34,7 @@ class Registration extends Component {
                     username: this.state.username,
                     email: this.state.email,
                     password: this.state.password,
-                    user_type: this.state.user_type
+                    user_type: this.state.userType
                 }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -112,8 +112,8 @@ class Registration extends Component {
                         <FormControl>
                             <InputLabel>Type</InputLabel>
                             <Select
-                                value={this.state.user_type}
-                                onChange={this.handleChange('user_type')}
+                                value={this.state.userType}
+                                onChange={this.handleChange('userType')}
                             >
                                 <MenuItem value={'VISITOR'}>VISITOR</MenuItem>
                                 <MenuItem value={'STAFF'}>STAFF</MenuItem>

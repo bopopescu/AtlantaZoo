@@ -34,17 +34,19 @@ class App extends React.Component {
 
         this.setUserContext = (context) => {
             this.setState({userContext: context})
-        }
+        };
 
         this.state = {
-            userContext: {email: null, setUserContext: this.setUserContext, loggedIn: true}
+            userContext: {email: null, username: null, userType: null, setUserContext: this.setUserContext, loggedIn: false, checkedLogin: false}
         };
     }
 
     componentDidMount() {
         LoginService.checkForExistingLogin()
-                    .then(response => this.setState({userContext: {...this.state.userContext, email: response.message, loggedIn: true}}))
-                    .catch(response => this.setState({userContext: {...this.state.userContext, email: null, loggedIn: false}}));
+                    .then(response => this.setState({userContext: {...this.state.userContext, email: response.email,
+                                                                        loggedIn: true, username: response.username,
+                                                                        userType: response.user_type, checkedLogin: true}}))
+                    .catch(response => this.setState({userContext: {...this.state.userContext, email: null, loggedIn: false, checkedLogin: true }}));
     }
 
     render() {

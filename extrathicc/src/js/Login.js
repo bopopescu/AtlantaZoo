@@ -34,7 +34,11 @@ class Login extends Component {
         const password = this.state.password;
         LoginService.login(email, password)
             .then(response => {
-                setUser({ email, loggedIn: true });
+                setUser({ email: response.email,
+                          username: response.username,
+                          userType: response.user_type,
+                          loggedIn: true,
+                          checkedLogin: true });
                 this.setState({ redirect: true });
             })
             .catch(response => {
@@ -54,13 +58,6 @@ class Login extends Component {
         if (this.state.redirectCancel) {
             return <Redirect to="/" />;
         }
-    };
-
-    setRedirect = event => {
-        this.setState({
-            redirect: true
-        });
-        event.preventDefault();
     };
 
     renderRedirect = () => {
@@ -111,7 +108,6 @@ class Login extends Component {
                                     variant="outlined"
                                     type="submit"
                                     disabled={!this.validateForm()}
-                                    onClick={this.setRedirect}
                                 >
                                     login
                                 </Button>

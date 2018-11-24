@@ -10,6 +10,7 @@ import { Grid } from "@material-ui/core";
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
+import DetailTable from "./DetailTable";
 
 class ExhibitDetail extends Component {
     constructor(props) {
@@ -109,40 +110,43 @@ class ExhibitDetail extends Component {
                         </TableBody>
                     </Table>
 
-                    <Typography variant="h6" id="tableTitle">
-                        List of Animals in this Exhibit
-                    </Typography>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Species</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {this.state.animals.map(animal => {
-                                return (
-                                    <TableRow key={animal.animal_name.concat(animal.species)}>
-                                        <TableCell component="th" scope="row">
-                                            {animal.animal_name}
-                                        </TableCell>
-                                        <TableCell>{animal.water_feature === true ? 'YES' : 'NO'}</TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
+                    <form autoComplete="off" onSubmit={this.handleSubmit}>
+                        <Grid container direction="row" justify="center" alignItems="center">
+                            <Button
+                                variant="outlined"
+                                type="submit"
+                            >
+                                Log Visit
+                            </Button>
+                        </Grid>
+                    </form>
+                    {/*<Typography variant="h6" id="tableTitle">*/}
+                        {/*List of Animals in this Exhibit*/}
+                    {/*</Typography>*/}
+                    {/*<Table>*/}
+                        {/*<TableHead>*/}
+                            {/*<TableRow>*/}
+                                {/*<TableCell>Name</TableCell>*/}
+                                {/*<TableCell>Species</TableCell>*/}
+                            {/*</TableRow>*/}
+                        {/*</TableHead>*/}
+                        {/*<TableBody>*/}
+                            {/*{this.state.animals.map(animal => {*/}
+                                {/*return (*/}
+                                    {/*<TableRow key={animal.animal_name.concat(animal.species)}>*/}
+                                        {/*<TableCell component="th" scope="row">*/}
+                                            {/*{animal.animal_name}*/}
+                                        {/*</TableCell>*/}
+                                        {/*<TableCell>{animal.water_feature === true ? 'YES' : 'NO'}</TableCell>*/}
+                                    {/*</TableRow>*/}
+                                {/*);*/}
+                            {/*})}*/}
+                        {/*</TableBody>*/}
+                    {/*</Table>*/}
+
+                    <DetailTable title={'Animals in this Exhibit'} />
                 </Paper>
-                <form autoComplete="off" onSubmit={this.handleSubmit}>
-                    <Grid container direction="row" justify="center" alignItems="center">
-                        <Button
-                            variant="outlined"
-                            type="submit"
-                        >
-                            Log Visit
-                        </Button>
-                    </Grid>
-                </form>
+
             </div >
         );
     }

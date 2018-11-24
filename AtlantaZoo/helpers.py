@@ -5,6 +5,16 @@ from datetime import datetime
 from passlib.hash import argon2
 
 
+def _generate_filters(filters):
+    sql = []
+    for ind, (col, val) in enumerate(filters.items()):
+        if ind == 0:
+            sql.append(' WHERE {col} = %s '.format(col=col))
+        else:
+            sql.append(' AND {col} = %s '.format(col=col))
+
+    return ' '.join(sql), list(filters.values())
+
 # def get_users():
 
 def abort(status_code, **fields):
@@ -185,16 +195,30 @@ def get_all_shows():
     conn.close()
     return results
 
-def get_show(staff_name):
+def get_show(**filters):
     conn, curr = connection()
 
-    curr.execute("SELECT * FROM test.Show WHERE staff_name = %s", (staff_name,))
+    sql, values = _generate_filters(filters)
+    curr.execute("SELECT * FROM test.Show {};".format(sql), values)
 
     results = curr.fetchall()
     for result in results:
         result['show_time'] = int(result['show_time'].timestamp())
 
+    curr.close()
+    conn.close()
     return results
+
+def get_user_by_email(email):
+    conn, curr = connection()
+
+    curr.execute("SELECT * FROM test.User WHERE email = %s", (email,))
+
+    results = curr.fetchall()
+
+    curr.close()
+    conn.close()
+    return results[0]
 
 def get_all_visitors():
     conn, curr = connection()
@@ -274,7 +298,7 @@ def search_show(show_name, date, exhibit, staff_name):
     query = "SELECT * FROM `Show` " \
             "WHERE staff_name = %s" \
             " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
-            " AND (%s = '' OR (SELECT left(show_time, 10)) = %s)" \
+            " AND (%s = '' OR DATE(show_time) = %s)" \
             " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
 
     curr.execute(query, (staff_name, show_name, date, date, exhibit))
