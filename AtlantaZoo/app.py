@@ -86,8 +86,17 @@ def create_show():
 
 @app.route('/shows', methods=['GET'])
 def get_all_shows():
-    filters = request.args.to_dict()
-    return jsonify(message=helpers.get_show(**filters))
+    staff_name = request.args.get('staff_name')
+    show_name = request.args.get('show_name')
+    date = request.args.get('show_time')
+    exhibit = request.args.get('exhibit_name')
+    if staff_name and not (show_name or date or exhibit):
+        filters = request.args.to_dict()
+        return jsonify(message=helpers.get_show(**filters))
+    if staff_name or show_name or date or exhibit:
+        return jsonify(message=helpers.search_show(show_name, date, exhibit, staff_name))
+    return jsonify(message=helpers.get_all_shows())
+
 
 
 @app.route('/animals', methods=['GET'])
