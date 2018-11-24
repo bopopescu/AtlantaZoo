@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
 import DetailTable from "./DetailTable";
+import {query} from "../../utils";
 
 class ExhibitDetail extends Component {
     constructor(props) {
@@ -24,7 +25,8 @@ class ExhibitDetail extends Component {
         /**
          * @todo: Update api to get a specific exhibit details
          */
-        fetch('http://localhost:5000/exhibits/Exh_ID', {
+        const {match: {params: {name}}} = this.props;
+        fetch(`http://localhost:5000/exhibits?exhibit_name=${query({name})}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -33,17 +35,17 @@ class ExhibitDetail extends Component {
             return response.json();
         }).then(json => this.setState({ details: json.message }));
 
-        /**
-         * @todo: Update api to get animals for a specific exhibit
-         */
-        fetch('http://localhost:5000/animals/exhibit', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            return response.json();
-        }).then(json => this.setState({ animals: json.message }));
+        // /**
+        //  * @todo: Update api to get animals for a specific exhibit
+        //  */
+        // fetch('http://localhost:5000/animals/exhibit', {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(response => {
+        //     return response.json();
+        // }).then(json => this.setState({ animals: json.message }));
     }
 
     /**
@@ -51,7 +53,7 @@ class ExhibitDetail extends Component {
      * @todo: fix the visitor_username by the the shared context
      */
     handleSubmit = event => {
-        fetch('http://localhost:5000/exhibit/visit',
+        fetch('http://localhost:5000/visit_exhibit',
             {
                 method: 'POST',
                 body: JSON.stringify({
@@ -97,13 +99,13 @@ class ExhibitDetail extends Component {
                         <TableBody>
                             {this.state.details.map(detail => {
                                 return (
-                                    <TableRow key={detail.name}>
+                                    <TableRow key={detail.exhibit_name}>
                                         <TableCell component="th" scope="row">
                                             {detail.exhibit_name}
                                         </TableCell>
                                         <TableCell>{detail.size}</TableCell>
                                         <TableCell>{detail.total_animal}</TableCell>
-                                        <TableCell>{detail.size}</TableCell>
+                                        <TableCell>{detail.water_feature === 1 ? 'Yes' : 'No'}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -120,29 +122,6 @@ class ExhibitDetail extends Component {
                             </Button>
                         </Grid>
                     </form>
-                    {/*<Typography variant="h6" id="tableTitle">*/}
-                        {/*List of Animals in this Exhibit*/}
-                    {/*</Typography>*/}
-                    {/*<Table>*/}
-                        {/*<TableHead>*/}
-                            {/*<TableRow>*/}
-                                {/*<TableCell>Name</TableCell>*/}
-                                {/*<TableCell>Species</TableCell>*/}
-                            {/*</TableRow>*/}
-                        {/*</TableHead>*/}
-                        {/*<TableBody>*/}
-                            {/*{this.state.animals.map(animal => {*/}
-                                {/*return (*/}
-                                    {/*<TableRow key={animal.animal_name.concat(animal.species)}>*/}
-                                        {/*<TableCell component="th" scope="row">*/}
-                                            {/*{animal.animal_name}*/}
-                                        {/*</TableCell>*/}
-                                        {/*<TableCell>{animal.water_feature === true ? 'YES' : 'NO'}</TableCell>*/}
-                                    {/*</TableRow>*/}
-                                {/*);*/}
-                            {/*})}*/}
-                        {/*</TableBody>*/}
-                    {/*</Table>*/}
 
                     <DetailTable title={'Animals in this Exhibit'} />
                 </Paper>

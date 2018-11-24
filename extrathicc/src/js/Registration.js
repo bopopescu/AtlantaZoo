@@ -49,7 +49,7 @@ class Registration extends Component {
 
     validateForm() {
         if (this.state.username.length > 0
-            && this.state.password.length > 8
+            && this.state.password.length >= 8
             && this.state.email.length > 0
             && this.state.confirm.length > 0) {
             if (!this.state.email.includes('@')) {
