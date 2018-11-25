@@ -45,11 +45,20 @@ const checkForExistingLogin = () =>
       .catch(e => console.error(e))
       .then(standardHandler);
 
+const logout = () =>
+    fetch('http://localhost:5000/logout',
+    {
+        credentials: 'include',
+        method: 'GET',
+    })
+    .catch(e => console.error(e))
+    .then(standardHandler);
 
 const LoginService = {
     login,
     register,
     checkForExistingLogin,
+    logout,
 };
 
 export default LoginService;
