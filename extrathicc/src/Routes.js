@@ -17,6 +17,7 @@ import AddAnimal from "./js/Animal/AddAnimal";
 import AddShow from "./js/Show/AddShow";
 import { Redirect } from "react-router-dom";
 import UserContext from "./UserContext.js";
+import AnimalCare from "./js/Animal/AnimalCare";
 
 const AuthRoute = ({ component: Component, requiredUserType, ...rest }) => (
     <UserContext.Consumer>
@@ -71,6 +72,7 @@ const Routes = () => {
             <AuthRoute path="/exhibitdetail/:name" component={ExhibitDetail} />;
             <AuthRoute path="/animaldetail/:name/:species" component={AnimalDetail} />;
             <AuthRoute path="/assignedshows" component={AssignedShows} requiredUserType="Staff"/>;
+            <AuthRoute path="/animalcare/:name/:species" component={AnimalCare} requiredUserType="Staff"/>;
             <AuthRoute path="/addanimal" component={AddAnimal} requiredUserType="Admin"/>;
             <AuthRoute path="/addshow" component={AddShow} requiredUserType="Admin"/>;
         </Switch>
