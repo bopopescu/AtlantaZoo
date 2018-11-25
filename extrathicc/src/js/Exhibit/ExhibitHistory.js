@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../../css/Login.css";
-import {standardHandler} from "../../utils";
+import {query, standardHandler} from "../../utils";
 import {Grid} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField/TextField";
 import Paper from "@material-ui/core/Paper/Paper";
@@ -45,7 +45,7 @@ class ExhibitHistory extends Component {
     };
 
     componentDidMount = () => {
-        fetch(`http://localhost:5000/visit_exhibit?visitor_username=${this.context.username}`, {
+        fetch(`http://localhost:5000/visit_exhibit?${query({visitor_username:this.context.username})}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

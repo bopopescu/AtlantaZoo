@@ -391,7 +391,7 @@ def search_show_history(visitor_name, show_name, date, exhibit):
     if exhibit is None:
         exhibit = ""
 
-    query = "SELECT DISTINCT visitor_username, Visit_show.show_name, Visit_show.show_time, exhibit_name " \
+    query = "SELECT DISTINCT visitor_username, Visit_show.show_name as 'show_name', Visit_show.show_time as 'visit_time', exhibit_name " \
             "FROM Visit_show INNER JOIN `Show` ON Visit_show.show_name=`Show`.show_name " \
             "WHERE visitor_username = %s" \
             " AND (%s = '' OR Visit_show.show_name LIKE '%" + show_name + "%')" \
@@ -403,6 +403,9 @@ def search_show_history(visitor_name, show_name, date, exhibit):
     results = curr.fetchall()
     curr.close()
     conn.close()
+    for result in results:
+        result['visit_time'] = result['visit_time'].timestamp()
+
     return results
 
 
