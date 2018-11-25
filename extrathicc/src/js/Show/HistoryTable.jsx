@@ -41,8 +41,8 @@ function getSorting(order, orderBy) {
 
 const rows = [
     {id: 'show_name', numeric: false, disablePadding: true, label: 'Name'},
-    {id: 'time', numeric: false, disablePadding: false, label: 'Time'},
-    {id: 'exhibit', numeric: false, disablePadding: false, label: 'Exhibit'},
+    {id: 'visit_time', numeric: false, disablePadding: false, label: 'Time'},
+    {id: 'exhibit_name', numeric: false, disablePadding: false, label: 'Exhibit'},
 ];
 
 

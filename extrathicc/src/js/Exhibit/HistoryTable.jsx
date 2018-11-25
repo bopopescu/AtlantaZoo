@@ -41,7 +41,7 @@ function getSorting(order, orderBy) {
 
 const rows = [
     {id: 'exhibit_name', numeric: false, disablePadding: true, label: 'Name'},
-    {id: 'time', numeric: true, disablePadding: false, label: 'Time'},
+    {id: 'visit_time', numeric: true, disablePadding: false, label: 'Time'},
     {id: 'num_visits', numeric: true, disablePadding: false, label: 'Number of visits'},
 ];
 
@@ -145,7 +145,6 @@ class HistoryTable extends React.Component {
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            // onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
                             rowCount={exhibits.length}
                         />
@@ -158,11 +157,8 @@ class HistoryTable extends React.Component {
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={event => this.handleClick(event, n.id)}
-                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={id}
-                                            // selected={isSelected}
                                         >
                                             <TableCell/>
                                             <TableCell component="th" scope="row" padding="none">

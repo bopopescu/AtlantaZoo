@@ -13,6 +13,10 @@ import {query} from '../../utils';
 
 const exhibits = [
     {
+        value: '',
+        label: '',
+    },
+    {
         value: 'Pacific',
         label: 'Pacific',
     },
@@ -93,7 +97,7 @@ class ShowHistory extends Component {
         return (
             <div className={'Exhibit'}>
                 <Grid container justify="center">
-                    <header id="title">Exhibits</header>
+                    <header id="title">Show History</header>
                 </Grid>
                 <Grid container
                       direction="row"
