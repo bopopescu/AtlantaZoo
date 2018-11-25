@@ -452,7 +452,7 @@ def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn, curr = connection()
 
     curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
-                 (visitor_username, exhibit_name, datetime.fromtimestamp(int(visit_time))))
+                 (visitor_username, exhibit_name.log_show_visit, datetime.fromtimestamp(int(visit_time))))
 
     conn.commit()
     curr.close()
@@ -466,10 +466,16 @@ def log_show_visit(visitor_username, show_name, show_time):
     curr.execute("INSERT INTO Visit_show(visitor_username, show_name, show_time) VALUES (%s, %s, %s);",
                  (visitor_username, show_name, datetime.fromtimestamp(int(show_time))))
 
+    curr.execute("SELECT exhibit_name FROM `Show` WHERE show_name=%s and show_time=%s ;", (show_name, show_time))
+    results = curr.fetchall()
+
     conn.commit()
     curr.close()
     conn.close()
-    return "Successfully logged show visit!!!"
+    # return "Successfully logged show visit!!!"
+    return results
+
+
 
 def log_note(staff_username, log_time, note, animal_name, animal_species):
     conn, curr = connection()
