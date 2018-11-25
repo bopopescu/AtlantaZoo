@@ -71,7 +71,7 @@ def login(email, password):
         abort(401, message="Incorrect username or password")
 
     session['logged_in'] = True
-    session['email'] = email
+    session['username'] = row['username']
 
     curr.close()
     conn.close()
