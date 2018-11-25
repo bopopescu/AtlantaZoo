@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../../css/Login.css";
 import { Grid } from "@material-ui/core";
-import ShowTable from "./ShowTable";
+import AssignedTable from "./AssignedTable";
 
 class AssignedShows extends Component {
     render() {
@@ -11,7 +11,7 @@ class AssignedShows extends Component {
                     <header id="title">Assigned Shows</header>
                 </Grid>
 
-                <ShowTable> </ShowTable>
+                <AssignedTable> </AssignedTable>
             </div>
         );
     }

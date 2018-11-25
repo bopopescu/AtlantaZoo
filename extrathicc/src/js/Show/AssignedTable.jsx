@@ -157,42 +157,6 @@ class ShowTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-    handleRender = userContext => event => {
-        // fetch(`http://localhost:5000/shows?email=${(userContext.email)}`, {
-
-    };
-
-    /**
-     * @todo: Need to grab username
-     * @param row contains show name, show time and its exhibit
-     * @returns {Function}
-     */
-    handleLogVisit = row => event => {
-        if (row.time <= this.state.currentTime) {
-            fetch('http://localhost:5000/shows/visit',
-                {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        show_name: row.name,
-                        show_time: row.time.unix(),
-                        staff_name: 'asdfasdf' // NOTE: not this name
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        this.setState({redirect: true});
-                    } else {
-                        response.json().then(resp => alert(resp.message));
-                    }
-                })
-                .catch(error => console.error('Error logging a visit to a show:', error));
-            event.preventDefault();
-        }
-    };
-
     render() {
         const {classes} = this.props;
         const {shows, order, orderBy, selected, rowsPerPage, page} = this.state;
@@ -226,17 +190,7 @@ class ShowTable extends React.Component {
                                             key={n.id}
                                             selected={isSelected}
                                         >
-                                            <TableCell>
-                                                <Button variant="outlined" color="secondary" className={classes.button}
-                                                        onClick={this.handleLogVisit(
-                                                            {
-                                                                name: n.name,
-                                                                time: n.time,
-                                                                exhibit: n.exhibit
-                                                            })}>
-                                                    Log Visit
-                                                </Button>
-                                            </TableCell>
+                                            <TableCell/>
                                             <TableCell component="th" scope="row" padding="none">
                                                 {n.name}
                                             </TableCell>

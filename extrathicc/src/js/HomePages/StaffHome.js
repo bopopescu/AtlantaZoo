@@ -12,7 +12,7 @@ class StaffHome extends Component {
                     <header id="title">Home Page</header>
                 </Grid>
                 <Grid container direction="column" justify="space-evenly" alignItems="center">
-                    <Link to="/assigned/shows">View Shows</Link>
+                    <Link to="/assigned_shows">View Shows</Link>
                     <Link to="/animals">Search for Animals</Link>
                     <Link to="/" onClick={LoginService.logout}>Log out</Link>
                 </Grid>
