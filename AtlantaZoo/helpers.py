@@ -483,3 +483,19 @@ def log_note(staff_username, log_time, note, animal_name, animal_species):
     conn.close()
     return "Successfully added note"
 
+
+def get_logged_note(animal_name, animal_species):
+    conn, curr = connection()
+
+    curr.execute(
+        "SELECT staff_username, note, log_time FROM test.Note where animal_name=%s AND animal_species=%s;",
+        (animal_name, animal_species))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    for result in results:
+        result['log_time'] = result['log_time'].timestamp()
+
+    return results
+

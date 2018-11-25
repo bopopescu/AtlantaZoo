@@ -55,13 +55,13 @@ def create_animal():
                                                  request.json['age'],
                                                  request.json['exhibit_name']))
 
-@app.route('/exhibits', methods=['POST','GET'])
-def create_exhibit():
 
+@app.route('/exhibits', methods=['POST', 'GET'])
+def create_exhibit():
     if request.method == 'POST':
         return jsonify(message=helpers.create_exhibit(request.json['exhibit_name'],
-                                                  request.json['water_feature'],
-                                                  request.json['size']))
+                                                      request.json['water_feature'],
+                                                      request.json['size']))
     if request.method == 'GET':
         name = request.args.get('exhibit_name')
         water = request.args.get('water_feature')
@@ -106,7 +106,7 @@ def get_all_animals():
     max_age = request.args.get('max_age')
     exhibit_name = request.args.get('exhibit_name')
 
-    if name and species and not(animal_type or min_age or max_age or exhibit_name):
+    if name and species and not (animal_type or min_age or max_age or exhibit_name):
         return jsonify(message=helpers.get_animal(name, species))
 
     if name or species or animal_type or min_age or max_age or exhibit_name:
@@ -135,8 +135,8 @@ def delete_user(username):
 def log_exhibit_visit():
     if request.method == 'POST':
         return jsonify(message=helpers.log_exhibit_visit(request.json['visitor_username'],
-                                                     request.json['exhibit_name'],
-                                                     request.json['visit_time']))
+                                                         request.json['exhibit_name'],
+                                                         request.json['visit_time']))
     if request.method == 'GET':
         visitor_name = request.args.get('visitor_username')
         exhibit_name = request.args.get('exhibit_name')
@@ -146,20 +146,22 @@ def log_exhibit_visit():
         return jsonify(message=helpers.search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits))
 
 
-#log_show_visit
+# log_show_visit
 @app.route('/visit_show', methods=['POST', 'GET'])
 def log_show_visit():
     if request.method == 'POST':
         return jsonify(message=helpers.log_show_visit(request.json['visitor_username'],
-                                                  request.json['show_name'],
-                                                  request.json['show_time']))
+                                                      request.json['show_name'],
+                                                      request.json['show_time']))
     if request.method == 'GET':
         visitor_name = request.args.get('visitor_username')
         show_name = request.args.get('show_name')
         show_time = request.args.get('show_time')
         exhibit_name = request.args.get('exhibit_name')
         return jsonify(message=helpers.search_show_history(visitor_name, show_name, show_time, exhibit_name))
-#log_note
+
+
+# log_note
 @app.route('/notes', methods=['POST'])
 def log_note():
     return jsonify(message=helpers.log_note(request.json['staff_username'],
@@ -168,13 +170,23 @@ def log_note():
                                             request.json['animal_name'],
                                             request.json['animal_species']))
 
+
+@app.route('/notes', methods=['GET'])
+def get_all_note():
+    animal_name = request.args.get('animal_name')
+    animal_species = request.args.get('animal_species')
+    return jsonify(message=helpers.get_logged_note(animal_name, animal_species))
+
+
 @app.errorhandler(HTTPException)
 def general_errors(e: HTTPException):
+    app.logger.exception(e)
     return make_response(jsonify(message=e.description), e.code)
 
 
 @app.errorhandler(Exception)
 def general_errors(e):
+    app.logger.exception(e)
     return make_response(jsonify(message=repr(e)), 500)
 
 

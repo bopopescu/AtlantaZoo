@@ -12,6 +12,7 @@ import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
 import SharedToolbar from '../../SharedToolbar.jsx';
 import { Link } from "react-router-dom";
+import UserContext from "../../UserContext";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -68,6 +69,8 @@ const allFilters = (filters, row) => {
 };
 
 class AnimalTable extends React.Component {
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -130,10 +133,11 @@ class AnimalTable extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
+        const {userType} = this.context;
         const { classes, filters, animals } = this.props;
         const { order, orderBy, selected, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, animals.length - page * rowsPerPage);
-
+        const url = userType.toLowerCase() === 'staff' ? `/animalcare/` : `/animaldetail/`;
         return (
             <Paper className={classes.root}>
                 <SharedToolbar numSelected={selected.length} title={'List of Animals'}/>
@@ -168,8 +172,8 @@ class AnimalTable extends React.Component {
                                                 <Checkbox checked={isSelected} />
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                <Link to={`/animaldetail/${n.animal_name}/${n.species}`} >
-                                                {n.animal_name}
+                                                <Link to={url +`${n.animal_name}/${n.species}`} >
+                                                    {n.animal_name}
                                                 </Link>
                                             </TableCell>
                                             <TableCell >{n.species}</TableCell>
