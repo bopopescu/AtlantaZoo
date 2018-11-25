@@ -41,7 +41,7 @@ def get_all_staff():
     return jsonify(message=helpers.get_all_staff())
 
 
-app.route('/logout', methods=['GET'])
+@app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
     return jsonify(message='You have successfully logged out')
