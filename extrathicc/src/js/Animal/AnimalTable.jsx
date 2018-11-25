@@ -42,7 +42,7 @@ const rows = [
     { id: 'species', numeric: false, disablePadding: true, label: 'Species' },
     { id: 'exhibit_name', numeric: false, disablePadding: true, label: 'Exhibit' },
     { id: 'age', numeric: true, disablePadding: false, label: 'Age (month)' },
-    { id: 'type', numeric: false, disablePadding: true, label: 'Type' },
+    { id: 'animal_type', numeric: false, disablePadding: true, label: 'Type' },
 ];
 
 const styles = theme => ({
