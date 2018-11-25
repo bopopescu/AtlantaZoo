@@ -18,6 +18,8 @@ import AddShow from "./js/Show/AddShow";
 import { Redirect } from "react-router-dom";
 import UserContext from "./UserContext.js";
 import AnimalCare from "./js/Animal/AnimalCare";
+import Visitors from "./js/Users/Vistors";
+import Staffs from "./js/Users/Staffs";
 
 const AuthRoute = ({ component: Component, requiredUserType, ...rest }) => (
     <UserContext.Consumer>
@@ -64,7 +66,9 @@ const Routes = () => {
             <AuthRoute path="/visitorhome" component={HomePage} requiredUserType="Visitor"/>;
             <Route path="/login" component={Login} />;
             <Route path="/registration" component={Registration} />;
-            <AuthRoute path="/exhibits/" component={Exhibits} />;
+            <AuthRoute path="/exhibits" component={Exhibits} />;
+            <AuthRoute path="/visitors" component={Visitors} />;
+            <AuthRoute path="/staffs" component={Staffs} />;
             <AuthRoute path="/shows" component={Shows} />;
             <AuthRoute path="/animals" component={Animals} />;
             <AuthRoute path="/exhibit_history" component={ExhibitHistory} />;

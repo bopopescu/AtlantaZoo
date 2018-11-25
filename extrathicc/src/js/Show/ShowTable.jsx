@@ -16,6 +16,7 @@ import SharedToolbar from '../../SharedToolbar.jsx';
 import {Link} from "react-router-dom";
 import UserContext from "../../UserContext";
 import { query } from '../../utils.js';
+import {standardHandler} from "../../utils";
 
 
 function desc(a, b, orderBy) {
@@ -134,37 +135,58 @@ class ShowTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-    handleLogVisit = row => event => {
-        if (row.time <= moment()) {
-            fetch('http://localhost:5000/visit_show',
-                {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        show_name: row.name,
-                        show_time: row.time,
-                        visitor_username: this.context.username // NOTE: not this name
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        response.json().then(resp => alert("You've successfully logged a visit"));
-                    } else {
-                        response.json().then(resp => alert("You've already logged a visit"));
-                    }
-                })
-                .catch(error => console.error('Error logging a visit to a show:', error));
-            event.preventDefault();
+    handleAction = row => event => {
+        if (this.context.userType.toLowerCase() === 'visitor') {
+            if (row.time <= moment()) {
+                fetch('http://localhost:5000/visit_show',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            show_name: row.name,
+                            show_time: row.time,
+                            visitor_username: this.context.username
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            response.json().then(resp => alert("You've successfully logged a visit"));
+                        } else {
+                            response.json().then(resp => alert("You've already logged a visit"));
+                        }
+                    })
+                    .catch(error => console.error('Error logging a visit to a show:', error));
+                event.preventDefault();
+            }
+        } else if (this.context.userType.toLowerCase() === 'admin') {
+            fetch(`http://localhost:5000/shows/${encodeURIComponent(row.name)}/${encodeURIComponent(row.time)}`, {
+
+                method: 'DELETE',
+                body: JSON.stringify({
+                    show_name: row.name,
+                    show_time: row.time
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(standardHandler)
+                .then(response => this.setState({rows: response.message}))
+                .then(response => this.props.refreshFunc())
+                .catch(response => {
+                    response.json().then(resp => alert(resp.message));
+                });
         }
+
     };
 
     render() {
         const {classes, filters, show_names} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, show_names.length - page * rowsPerPage);
-
+        const {userType} = this.context;
         return (
             <Paper className={classes.root}>
                 <SharedToolbar numSelected={selected.length} title={'List of Shows'}/>
@@ -196,13 +218,13 @@ class ShowTable extends React.Component {
                                         >
                                             <TableCell>
                                                 <Button variant="outlined" color="secondary" className={classes.button}
-                                                        onClick={this.handleLogVisit(
+                                                        onClick={this.handleAction(
                                                             {
                                                                 name: n.show_name,
                                                                 time: n.show_time,
                                                                 exhibit: n.exhibit_name
                                                             })}>
-                                                    Log Visit
+                                                    {userType === 'visitor' ? 'Log Visit' : 'Remove'}
                                                 </Button>
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">

@@ -130,6 +130,12 @@ def delete_user(username):
     return jsonify(message=helpers.delete_user(username))
 
 
+@app.route('/users', methods=['GET'])
+def get_users_by_type():
+    user_type = request.args.get('user_type')
+    return jsonify(message=helpers.get_users_by_type(user_type))
+
+
 # log_exhibit_visit
 @app.route('/visit_exhibit', methods=['POST', 'GET'])
 def log_exhibit_visit():

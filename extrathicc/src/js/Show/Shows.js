@@ -10,7 +10,7 @@ import ShowTable from './ShowTable.jsx';
 import Button from "@material-ui/core/Button";
 import moment from "moment";
 import {DatePicker} from "material-ui-pickers";
-import {standardHandler} from "../../utils";
+import {query, standardHandler} from "../../utils";
 import ExhibitTable from "../Exhibit/ExhibitTable";
 
 const exhibits = [
@@ -70,17 +70,21 @@ class Shows extends Component {
     };
 
     componentDidMount = () => {
+        this.refreshTable();
+    };
+
+    refreshTable = () => {
         fetch(`http://localhost:5000/shows`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-            .then(standardHandler)
-            .then(response => this.setState({rows: response.message}))
-            .catch(response => {
-                response.json().then(resp => alert(resp.message));
-            });
+        .then(standardHandler)
+        .then(response => this.setState({rows: response.message}))
+        .catch(response => {
+            response.json().then(resp => alert(resp.message));
+        });
     };
 
     handleChange = name => event => {
@@ -145,7 +149,8 @@ class Shows extends Component {
 
                 <ShowTable
                     show_names={this.state.rows}
-                    filters={this.generateFilters()}>
+                    filters={this.generateFilters()}
+                    refreshFunc={this.refreshTable}>
                 </ShowTable>
             </div>
         );

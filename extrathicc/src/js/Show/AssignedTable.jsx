@@ -70,7 +70,7 @@ const styles = theme => ({
 /**
  * @todo: change api to fetch if only want to fetch assigned shows for a specific staff member
  */
-class ShowTable extends React.Component {
+class AssignedTable extends React.Component {
     static contextType = UserContext;
 
     constructor(props) {
@@ -231,8 +231,8 @@ class ShowTable extends React.Component {
     }
 }
 
-ShowTable.propTypes = {
+AssignedTable.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ShowTable);
+export default withStyles(styles)(AssignedTable);

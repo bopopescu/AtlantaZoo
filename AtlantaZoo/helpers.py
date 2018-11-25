@@ -246,6 +246,17 @@ def get_all_staff():
     conn.close()
     return results
 
+def get_users_by_type(user_type):
+    conn, curr = connection()
+
+    curr.execute("SELECT username, email FROM `User` WHERE user_type = %s", (user_type,))
+
+    results = curr.fetchall()
+
+    curr.close()
+    conn.close()
+    return results
+
 def get_animal(name, species):
     conn, curr = connection()
 

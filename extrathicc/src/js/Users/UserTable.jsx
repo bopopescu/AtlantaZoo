@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -7,10 +8,22 @@ import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
+import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
 import {Link} from "react-router-dom";
+import UserContext from "../../UserContext";
+import {query} from '../../utils.js';
+import {standardHandler} from "../../utils";
+
+let counter = 0;
+
+function createData(username, email) {
+    counter += 1;
+    return {id: counter, username, email};
+}
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -37,12 +50,9 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-    {id: 'exhibit_name', numeric: false, disablePadding: true, label: 'Name'},
-    {id: 'size', numeric: true, disablePadding: false, label: 'Size'},
-    {id: 'total_animals', numeric: true, disablePadding: false, label: 'Num of Animals'},
-    {id: 'water_feature', numeric: false, disablePadding: true, label: 'Water Feature'}
+    {id: 'username', numeric: false, disablePadding: true, label: 'Username'},
+    {id: 'email', numeric: false, disablePadding: true, label: 'Email'}
 ];
-
 
 const styles = theme => ({
     root: {
@@ -66,17 +76,22 @@ const allFilters = (filters, row) => {
     return true;
 };
 
-class ExhibitTable extends React.Component {
+
+class UserTable extends React.Component {
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
             order: 'asc',
-            orderBy: 'exhibit_name',
+            orderBy: 'username',
             selected: [],
             page: 0,
             rowsPerPage: 5,
         };
     }
+
+
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -87,6 +102,14 @@ class ExhibitTable extends React.Component {
         }
 
         this.setState({order, orderBy});
+    };
+
+    handleSelectAllClick = event => {
+        // if (event.target.checked) {
+        //     this.setState(state => ({selected: state.users.map(n => n.id)}));
+        //     return;
+        // }
+        // this.setState({selected: []});
     };
 
     handleClick = (event, id) => {
@@ -120,14 +143,38 @@ class ExhibitTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+    handleDelete = row => event => {
+        fetch(`http://localhost:5000/users/${encodeURIComponent(row.username)}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(standardHandler)
+            .then(response => alert(response.message))
+            .then(response => fetch(`http://localhost:5000/users?${query({user_type: this.props.user_type})}`, {
+
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }))
+            .then(standardHandler)
+            .then(response => this.setState({users: response.message}))
+            .then(response => this.props.refreshFunc())
+            .catch(response => response.json().then(resp => alert(resp.message)));
+        event.preventDefault();
+    };
+
     render() {
-        const {classes, exhibits, filters} = this.props;
+        const {users, classes, filters} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
-        const emptyRows = rowsPerPage - Math.min(rowsPerPage, exhibits.length - page * rowsPerPage);
+        const emptyRows = rowsPerPage - Math.min(rowsPerPage, users.length - page * rowsPerPage);
 
         return (
             <Paper className={classes.root}>
-                <SharedToolbar numSelected={selected.length} title={this.props.title}/>
+                <SharedToolbar numSelected={selected.length} title={'List of Users'}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
@@ -135,12 +182,12 @@ class ExhibitTable extends React.Component {
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            // onSelectAllClick={this.handleSelectAllClick}
+                            onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            rowCount={exhibits.length}
+                            rowCount={users.length}
                         />
                         <TableBody>
-                            {stableSort(exhibits, getSorting(order, orderBy))
+                            {stableSort(users, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
@@ -148,21 +195,24 @@ class ExhibitTable extends React.Component {
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={event => this.handleClick(event, n.id)}
-                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={id}
-                                            // selected={isSelected}
+                                            selected={isSelected}
                                         >
-                                            <TableCell/>
-                                            <TableCell component="th" scope="row" padding="none">
-                                                <Link to={`/exhibitdetail/${n.exhibit_name}`} >
-                                                {n.exhibit_name}
-                                                </Link>
+                                            <TableCell>
+                                                <Button variant="outlined" color="secondary" className={classes.button}
+                                                        onClick={this.handleDelete(
+                                                            {
+                                                                username: n.username,
+                                                                email: n.email
+                                                            })}>
+                                                    Delete
+                                                </Button>
                                             </TableCell>
-                                            <TableCell>{n.size}</TableCell>
-                                            <TableCell>{n.total_animals}</TableCell>
-                                            <TableCell>{n.water_feature ? 'Yes' : 'No'}</TableCell>
+                                            <TableCell component="th" scope="row" padding="none">
+                                                {n.username}
+                                            </TableCell>
+                                            <TableCell>{n.email}</TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -177,7 +227,7 @@ class ExhibitTable extends React.Component {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={exhibits.length}
+                    count={users.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     backIconButtonProps={{
@@ -194,8 +244,8 @@ class ExhibitTable extends React.Component {
     }
 }
 
-ExhibitTable.propTypes = {
+UserTable.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ExhibitTable);
+export default withStyles(styles)(UserTable);

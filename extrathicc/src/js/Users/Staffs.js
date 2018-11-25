@@ -1,0 +1,93 @@
+import React, { Component } from "react";
+import "../../css/Login.css";
+import { Grid } from "@material-ui/core";
+import UserTable from "./UserTable";
+import TextField from "@material-ui/core/TextField/TextField";
+import {query, standardHandler} from "../../utils";
+
+class Staffs extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            email:'',
+            filters:[],
+            rows:[]
+        }
+    }
+
+    componentDidMount = () => {
+        this.refreshTable();
+    };
+
+    refreshTable = () => {
+        fetch(`http://localhost:5000/users?${query({user_type: 'staff'})}`, {
+
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
+
+    generateFilters = () => {
+        let filters = [];
+
+        const {username, email} = this.state;
+
+        if (username !== '') {
+            filters.push(row => row.username.toLowerCase().includes(username.toLowerCase()));
+        }
+        if (email !== '') {
+            filters.push(row => row.email.toLowerCase().includes(email.toLowerCase()));
+        }
+        return filters;
+    };
+
+    handleChange = name => event => {
+        this.setState({
+            [name]: event.target.value
+        });
+    };
+
+    render() {
+        return (
+            <div className={'Users'}>
+                <Grid container justify="center">
+                    <header id="title">View Staff</header>
+                </Grid>
+
+                <Grid container
+                      direction="row"
+                      justify="space-around"
+                      alignItems="center">
+                    <TextField
+                        label="Username"
+                        placeholder="Username"
+                        onChange={this.handleChange('username')}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.exhibit_name}
+                    />
+
+                    <TextField
+                        label="Email"
+                        placeholder="Email"
+                        onChange={this.handleChange('email')}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.email}
+                    />
+                </Grid>
+                <UserTable users={this.state.rows} filters={this.generateFilters()} refreshFunc={this.refreshTable}> </UserTable>
+            </div>
+        );
+    }
+}
+
+export default Staffs;
