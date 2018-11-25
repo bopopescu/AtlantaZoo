@@ -9,7 +9,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ShowTable from './ShowTable.jsx';
 import Button from "@material-ui/core/Button";
 import moment from "moment";
-import {DateTimePicker} from "material-ui-pickers";
+import {DatePicker} from "material-ui-pickers";
 import {standardHandler} from "../../utils";
 import ExhibitTable from "../Exhibit/ExhibitTable";
 
@@ -64,7 +64,7 @@ class Shows extends Component {
             filters.push(row => row.show_name.toLowerCase().includes(show_name.toLowerCase()));
         }
         if (search_time !== null) {
-            filters.push(row => row.show_time > moment());
+            filters.push(row => moment.unix(row.show_time).isSame(search_time, 'day'));
         }
         return filters;
     };
@@ -119,7 +119,7 @@ class Shows extends Component {
                         variant="outlined"
                     />
 
-                    <DateTimePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
+                    <DatePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
 
                 </Grid>
 

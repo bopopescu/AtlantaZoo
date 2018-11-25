@@ -67,12 +67,12 @@ const Routes = () => {
             <AuthRoute path="/shows" component={Shows} />;
             <AuthRoute path="/animals" component={Animals} />;
             <AuthRoute path="/exhibit_history" component={ExhibitHistory} />;
-            <AuthRoute path="/shows_history" component={ShowHistory} />;
+            <AuthRoute path="/show_history" component={ShowHistory} />;
             <AuthRoute path="/exhibitdetail/:name" component={ExhibitDetail} />;
             <AuthRoute path="/animaldetail/:name/:species" component={AnimalDetail} />;
-            <AuthRoute path="/assignedshows" component={AssignedShows} requiredUserType="Visitor"/>;
-            <AuthRoute path="/addanimal" component={AddAnimal} />;
-            <AuthRoute path="/addshow" component={AddShow} />;
+            <AuthRoute path="/assignedshows" component={AssignedShows} requiredUserType="Staff"/>;
+            <AuthRoute path="/addanimal" component={AddAnimal} requiredUserType="Admin"/>;
+            <AuthRoute path="/addshow" component={AddShow} requiredUserType="Admin"/>;
         </Switch>
     );
 };

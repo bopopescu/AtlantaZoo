@@ -30,8 +30,8 @@ class HomePage extends Component {
                     alignItems="center"
                 >
                     <Grid container direction="column" justify="space-evenly" alignItems="center">
-                        <Link to="/exhibits/history">View exhibit history</Link>
-                        <Link to="/shows/history">Search Shows</Link>
+                        <Link to="/exhibit_history">View exhibit history</Link>
+                        <Link to="/show_history">Search Shows</Link>
                         <Link to="/" onClick={LoginService.logout}>Log out</Link>
                     </Grid>
                 </Grid>
