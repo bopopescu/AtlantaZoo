@@ -437,6 +437,9 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
     results = curr.fetchall()
     curr.close()
     conn.close()
+
+    for result in results:
+        result['visit_time'] = result['visit_time'].timestamp()
     return results
 
 #log
