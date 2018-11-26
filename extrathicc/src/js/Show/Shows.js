@@ -48,23 +48,23 @@ class Shows extends Component {
             show_name: '',
             exhibit_name: '',
             search_time: null,
-            rows:[]
+            rows:[],
         };
     }
 
     generateFilters = () => {
-        let filters = [];
+        let filters = {};
 
         const {exhibit_name, show_name, search_time} = this.state;
 
         if (exhibit_name !== '') {
-            filters.push(row => row.exhibit_name.toLowerCase().includes(exhibit_name.toLowerCase()));
+            filters.exhibit_name = exhibit_name;
         }
         if (show_name !== '') {
-            filters.push(row => row.show_name.toLowerCase().includes(show_name.toLowerCase()));
+            filters.show_name = show_name;
         }
         if (search_time !== null) {
-            filters.push(row => moment.unix(row.show_time).isSame(search_time, 'day'));
+            filters.show_time = search_time.unix();
         }
         return filters;
     };
@@ -74,7 +74,7 @@ class Shows extends Component {
     };
 
     refreshTable = () => {
-        fetch(`http://localhost:5000/shows`, {
+        fetch(`http://localhost:5000/shows?${query(this.generateFilters())}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -88,20 +88,17 @@ class Shows extends Component {
     };
 
     handleChange = name => event => {
-        if (name === 'min_age' || name === 'max_age') {
             this.setState({
-                [name]: event.target.value < 0 ? 0 : event.target.value
+                [name]: event.target.value,
             });
-        } else {
-            this.setState({
-                [name]: event.target.value
-            });
-        }
-
     };
 
     handleDateChange = date => {
         this.setState({ search_time: date });
+    };
+
+    handleClick = event => {
+        this.refreshTable();
     };
 
     render() {
@@ -119,6 +116,7 @@ class Shows extends Component {
                         label="Name"
                         placeholder="Show name"
                         onChange={this.handleChange('show_name')}
+                        value={this.state.show_name}
                         margin="normal"
                         variant="outlined"
                     />
@@ -135,7 +133,7 @@ class Shows extends Component {
                         <InputLabel>Exhibit</InputLabel>
                         <Select
                             value={this.state.exhibit_name}
-                            onChange={this.handleChange('exhibit')}
+                            onChange={this.handleChange('exhibit_name')}
                         >
                             {exhibits.map(exhibit => (
                                 <MenuItem key={exhibit.value} value={exhibit.value}>
@@ -144,12 +142,18 @@ class Shows extends Component {
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
 
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                        onClick={this.handleClick}
+                    >
+                        Search
+                    </Button>
+                </Grid>
 
                 <ShowTable
                     show_names={this.state.rows}
-                    filters={this.generateFilters()}
                     refreshFunc={this.refreshTable}>
                 </ShowTable>
             </div>

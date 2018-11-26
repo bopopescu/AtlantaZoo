@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "../../css/Login.css";
 import UserContext from "../../UserContext";
 import moment from "moment";
@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper/Paper";
 import HistoryTable from "../Show/HistoryTable";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import {query} from '../../utils';
+import Button from "@material-ui/core/Button/Button";
 
 const exhibits = [
     {
@@ -47,31 +48,35 @@ class ShowHistory extends Component {
             rows: [],
             redirect: false,
             exhibit_name: '',
-            show_name:'',
+            show_name: '',
             search_time: null,
-            filters:[]
+            filters: []
         };
     }
 
     generateFilters = () => {
-        let filters = [];
-
+        let filters = {};
+        filters.visitor_username = this.context.username;
         const {exhibit_name, show_name, search_time} = this.state;
 
         if (exhibit_name !== '') {
-            filters.push(row => row.exhibit_name.toLowerCase().includes(exhibit_name.toLowerCase()));
+            filters.exhibit_name = exhibit_name;
         }
         if (show_name !== '') {
-            filters.push(row => row.show_name.toLowerCase().includes(show_name.toLowerCase()));
+            filters.show_name = show_name;
         }
         if (search_time !== null) {
-            filters.push(row => moment.unix(row.visit_time).isSame(search_time, 'day'));
+            filters.show_time = search_time.unix();
         }
         return filters;
     };
 
     componentDidMount = () => {
-        fetch(`http://localhost:5000/visit_show?${query({visitor_username:this.context.username})}`, {
+        this.refreshTable();
+    };
+
+    refreshTable = () => {
+        fetch(`http://localhost:5000/visit_show?${query(this.generateFilters())}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -90,7 +95,11 @@ class ShowHistory extends Component {
         });
     };
     handleDateChange = date => {
-        this.setState({ search_time: date });
+        this.setState({search_time: date});
+    };
+
+    handleClick = event => {
+        this.refreshTable();
     };
 
     render() {
@@ -130,12 +139,19 @@ class ShowHistory extends Component {
                         ))}
                     </TextField>
 
-                    <DatePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
+                    <DatePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange}/>
 
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                        onClick={this.handleClick}
+                    >
+                        Search
+                    </Button>
                 </Grid>
 
-                <Paper >
-                    <HistoryTable shows={this.state.rows} filters={this.generateFilters()}> </HistoryTable>
+                <Paper>
+                    <HistoryTable shows={this.state.rows} refreshFunc={this.refreshTable}> </HistoryTable>
                 </Paper>
             </div>
         );

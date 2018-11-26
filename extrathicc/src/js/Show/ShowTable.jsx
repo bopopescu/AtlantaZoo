@@ -68,15 +68,6 @@ const styles = theme => ({
     },
 });
 
-const allFilters = (filters, row) => {
-    for (let filter of filters) {
-        if (!filter(row)) {
-            return false;
-        }
-    }
-    return true;
-};
-
 class ShowTable extends React.Component {
     static contextType = UserContext;
 
@@ -181,7 +172,7 @@ class ShowTable extends React.Component {
     };
 
     render() {
-        const {classes, filters, show_names} = this.props;
+        const {classes, show_names} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, show_names.length - page * rowsPerPage);
         const {userType} = this.context;
@@ -202,7 +193,6 @@ class ShowTable extends React.Component {
                         <TableBody>
                             {stableSort(show_names, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
                                     const isSelected = this.isSelected(id);
                                     return (

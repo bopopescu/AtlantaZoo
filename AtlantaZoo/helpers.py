@@ -363,6 +363,8 @@ def search_show(show_name, date, exhibit, staff_name):
 def search_show(show_name, date, exhibit, staff_name):
     conn, curr = connection()
 
+    if staff_name is None:
+        staff_name = ""
     if show_name is None:
         show_name = ""
     if date is None:
@@ -376,16 +378,19 @@ def search_show(show_name, date, exhibit, staff_name):
 
 
     query = "SELECT * FROM `Show` " \
-            "WHERE staff_name = %s" \
-            " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
-            " AND (%s = '' OR DATE(show_time) = %s)" \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+            "WHERE (%s = '' OR staff_name = %s) " \
+            " AND (%s = '' OR LOWER(show_name) LIKE '%" + show_name.lower() + "%') " \
+            " AND (%s = '' OR DATE(show_time) = %s) " \
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%') "
 
-    curr.execute(query, (staff_name, show_name, date, date, exhibit))
+    curr.execute(query, (staff_name, staff_name, show_name, date, date, exhibit))
 
     results = curr.fetchall()
     curr.close()
     conn.close()
+
+    for result in results:
+        result['show_time'] = result['show_time'].timestamp()
     return results
 
 

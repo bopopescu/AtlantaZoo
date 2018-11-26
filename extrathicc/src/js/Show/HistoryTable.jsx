@@ -16,6 +16,14 @@ import moment from "moment";
 let counter = 0;
 
 function desc(a, b, orderBy) {
+    a = Object.assign({}, a);
+    b = Object.assign({}, b);
+    if (typeof a[orderBy] === 'string') {
+        a[orderBy] = a[orderBy].toLowerCase();
+    }
+    if (typeof b[orderBy] === 'string') {
+        b[orderBy] = b[orderBy].toLowerCase();
+    }
     if (b[orderBy] < a[orderBy]) {
         return -1;
     }
@@ -59,15 +67,6 @@ const styles = theme => ({
     },
 });
 
-const allFilters = (filters, row) => {
-    for (let filter of filters) {
-        if (!filter(row)) {
-            return false;
-        }
-    }
-    return true;
-};
-
 class HistoryTable extends React.Component {
     constructor(props) {
         super(props);
@@ -90,15 +89,6 @@ class HistoryTable extends React.Component {
 
         this.setState({order, orderBy});
     };
-
-    // handleSelectAllClick = event => {
-    //     if (event.target.checked) {
-    //         this.setState(state => ({selected: state.shows.map(n => n.id)}));
-    //         return;
-    //     }
-    //     this.setState({selected: []});
-    // };
-
     handleClick = (event, id) => {
         const {selected} = this.state;
         const selectedIndex = selected.indexOf(id);
@@ -131,7 +121,7 @@ class HistoryTable extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        const {classes, shows, filters} = this.props;
+        const {classes, shows} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, shows.length - page * rowsPerPage);
 
@@ -145,14 +135,12 @@ class HistoryTable extends React.Component {
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            // onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
                             rowCount={shows.length}
                         />
                         <TableBody>
                             {stableSort(shows, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
                                     const isSelected = this.isSelected(id);
                                     return (
