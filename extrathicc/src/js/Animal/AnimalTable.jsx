@@ -17,6 +17,14 @@ import Button from "@material-ui/core/es/Button/Button";
 import {standardHandler} from "../../utils";
 
 function desc(a, b, orderBy) {
+    a = Object.assign({}, a);
+    b = Object.assign({}, b);
+    if (typeof a[orderBy] === 'string') {
+        a[orderBy] = a[orderBy].toLowerCase();
+    }
+    if (typeof b[orderBy] === 'string') {
+        b[orderBy] = b[orderBy].toLowerCase();
+    }
     if (b[orderBy] < a[orderBy]) {
         return -1;
     }
@@ -197,7 +205,7 @@ class AnimalTable extends React.Component {
                                             // role="checkbox"
                                             // aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={n.id}
+                                            key={id}
                                             // selected={isSelected}
                                         >
                                             <TableCell padding="checkbox">

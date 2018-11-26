@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -15,11 +14,18 @@ import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
 import {Link} from "react-router-dom";
 import UserContext from "../../UserContext";
-import { query } from '../../utils.js';
 import {standardHandler} from "../../utils";
 
 
 function desc(a, b, orderBy) {
+    a = Object.assign({}, a);
+    b = Object.assign({}, b);
+    if (typeof a[orderBy] === 'string') {
+        a[orderBy] = a[orderBy].toLowerCase();
+    }
+    if (typeof b[orderBy] === 'string') {
+        b[orderBy] = b[orderBy].toLowerCase();
+    }
     if (b[orderBy] < a[orderBy]) {
         return -1;
     }
