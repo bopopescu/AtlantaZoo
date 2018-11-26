@@ -7,7 +7,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
 import SharedToolbar from '../../SharedToolbar.jsx';
@@ -68,15 +67,6 @@ const styles = theme => ({
         overflowX: 'auto',
     },
 });
-
-const allFilters = (filters, row) => {
-    for (let filter of filters) {
-        if (!filter(row)) {
-            return false;
-        }
-    }
-    return true;
-};
 
 class AnimalTable extends React.Component {
     static contextType = UserContext;
@@ -174,7 +164,7 @@ class AnimalTable extends React.Component {
 
     render() {
         const {userType} = this.context;
-        const { classes, filters, animals } = this.props;
+        const { classes, animals } = this.props;
         const { order, orderBy, selected, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, animals.length - page * rowsPerPage);
         const url = userType.toLowerCase() === 'staff' ? `/animalcare/` : `/animaldetail/`;
@@ -195,7 +185,6 @@ class AnimalTable extends React.Component {
                         <TableBody>
                             {stableSort(animals, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
                                     // const isSelected = this.isSelected(id);
                                     return (

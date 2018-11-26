@@ -89,9 +89,6 @@ def get_all_shows():
     show_name = request.args.get('show_name')
     date = request.args.get('show_time')
     exhibit = request.args.get('exhibit_name')
-    if staff_name and not (show_name or date or exhibit):
-        filters = request.args.to_dict()
-        return jsonify(message=helpers.get_show(**filters))
     if staff_name or show_name or date or exhibit:
         return jsonify(message=helpers.search_show(show_name, date, exhibit, staff_name))
     return jsonify(message=helpers.get_all_shows())
@@ -106,8 +103,8 @@ def get_all_animals():
     max_age = request.args.get('max_age')
     exhibit_name = request.args.get('exhibit_name')
 
-    if name and species and not (animal_type or min_age or max_age or exhibit_name):
-        return jsonify(message=helpers.get_animal(name, species))
+    # if name and species and not (animal_type or min_age or max_age or exhibit_name):
+    #     return jsonify(message=helpers.get_animal(name, species))
 
     if name or species or animal_type or min_age or max_age or exhibit_name:
         return jsonify(message=helpers.search_animal(name, species, animal_type, min_age, max_age, exhibit_name))

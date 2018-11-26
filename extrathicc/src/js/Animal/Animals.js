@@ -8,7 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import AnimalTable from './AnimalTable.jsx';
 import Button from "@material-ui/core/Button";
-import {standardHandler} from "../../utils";
+import {query, standardHandler} from "../../utils";
 
 const exhibits = [
     {
@@ -84,37 +84,34 @@ class Animals extends Component {
     }
 
     generateFilters = () => {
-        let filters = [];
+        let filters = {};
 
-        const {animal_name, type, species, min_age, max_age, exhibit_name} = this.state;
+        const {animal_name, type, species, min_age, max_age, exhibit_name,} = this.state;
 
         if (animal_name !== '') {
-            filters.push(row => row.animal_name.toLowerCase().includes(animal_name.toLowerCase()));
-        }
-        if (min_age !== '') {
-            filters.push(row => row.age >= min_age);
-        }
-        if (max_age !== '') {
-            filters.push(row => row.age <= max_age);
+            filters.name = animal_name;
         }
         if (type !== '') {
-            filters.push(row => row.animal_type.toLowerCase() === type.toLowerCase());
+            filters.animal_type = type;
         }
         if (species !== '') {
-            filters.push(row => row.species.toLowerCase().includes(species.toLowerCase()));
+            filters.species = species;
         }
-        if (exhibit_name !== '') {
-            filters.push(row => row.exhibit_name.toLowerCase() === exhibit_name.toLowerCase());
+        if (min_age !== '') {
+            filters.min_age = min_age;
+        }
+        if (max_age !== '') {
+            filters.max_age = max_age;
         }
         return filters;
     };
 
     componentDidMount = () => {
-        this.refreshFunction();
+        this.refreshTable();
     };
 
-    refreshFunction = () => {
-        fetch(`http://localhost:5000/animals`, {
+    refreshTable = () => {
+        fetch(`http://localhost:5000/animals?${query(this.generateFilters())}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -138,6 +135,11 @@ class Animals extends Component {
             });
         }
 
+    };
+
+
+    handleClick = event => {
+        this.refreshTable();
     };
 
 
@@ -232,11 +234,18 @@ class Animals extends Component {
                             ))}
                         </Select>
                     </FormControl>
+
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                        onClick={this.handleClick}
+                    >
+                        Search
+                    </Button>
                 </Grid>
                 <AnimalTable
                     animals={this.state.rows}
-                    filters={this.generateFilters()}
-                    refreshFunc={this.refreshFunction}>
+                    refreshFunc={this.refreshTable}>
                 </AnimalTable>
             </div>
         );
