@@ -102,14 +102,6 @@ class ShowTable extends React.Component {
         this.setState({order, orderBy});
     };
 
-    // handleSelectAllClick = event => {
-    //     if (event.target.checked) {
-    //         this.setState(state => ({selected: state.shows.map(n => n.id)}));
-    //         return;
-    //     }
-    //     this.setState({selected: []});
-    // };
-
     handleClick = (event, id) => {
         const {selected} = this.state;
         const selectedIndex = selected.indexOf(id);

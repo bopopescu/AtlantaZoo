@@ -33,7 +33,7 @@ class App extends React.Component {
         super(props);
 
         this.setUserContext = (context) => {
-            this.setState({userContext: context})
+            this.setState({userContext: {...this.state.userContext, ...context}});
         };
 
         this.state = {
@@ -49,6 +49,23 @@ class App extends React.Component {
                     .catch(response => this.setState({userContext: {...this.state.userContext, email: null, loggedIn: false, checkedLogin: true }}));
     }
 
+    handleHome = () => {
+        const {loggedIn, userType} = this.state.userContext;
+      if (loggedIn) {
+          switch(userType.toLowerCase()) {
+              case 'visitor':
+                return '/visitorhome';
+              case 'staff':
+                  return '/staffhome';
+              case 'admin':
+                  return '/adminhome';
+              default:
+                  alert('Error');
+          }
+      }
+      return '';
+    };
+
     render() {
         const { classes } = this.props;
         return (
@@ -63,9 +80,9 @@ class App extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" color="inherit" className={classes.grow}>
-                            Menu
+                            <Link to={this.handleHome()}>Menu</Link>
                         </Typography>
-                        <Grid container direction="row" justify="flex-end" alignItems="center">
+                        <Grid container direction="row" justify="space-around" alignItems="center">
                             <Link to="/registration">Registration</Link>
                             <Link to="/login">Login</Link>
                         </Grid>

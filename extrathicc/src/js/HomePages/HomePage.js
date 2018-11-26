@@ -5,6 +5,12 @@ import "../../css/Login.css";
 import LoginService from "../../_services/LoginService";
 
 class HomePage extends Component {
+    logout = event => {
+        const {setUserContext} = this.context;
+        LoginService.logout()
+            .then(resp => setUserContext({loggedIn: false}))
+            .catch(resp => resp.json().then(r => alert(r.message)));
+    };
     render() {
         return (
             <div className="HomePage">
@@ -32,7 +38,7 @@ class HomePage extends Component {
                     <Grid container direction="column" justify="space-evenly" alignItems="center">
                         <Link to="/exhibit_history">View exhibit history</Link>
                         <Link to="/show_history">Search Shows</Link>
-                        <Link to="/" onClick={LoginService.logout}>Log out</Link>
+                        <Link to="/" onClick={this.logout}>Log out</Link>
                     </Grid>
                 </Grid>
             </div>
