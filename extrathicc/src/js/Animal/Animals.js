@@ -110,6 +110,10 @@ class Animals extends Component {
     };
 
     componentDidMount = () => {
+        this.refreshFunction();
+    };
+
+    refreshFunction = () => {
         fetch(`http://localhost:5000/animals`, {
             method: 'GET',
             headers: {
@@ -231,7 +235,8 @@ class Animals extends Component {
                 </Grid>
                 <AnimalTable
                     animals={this.state.rows}
-                    filters={this.generateFilters()}>
+                    filters={this.generateFilters()}
+                    refreshFunc={this.refreshFunction}>
                 </AnimalTable>
             </div>
         );

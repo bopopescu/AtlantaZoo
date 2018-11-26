@@ -13,6 +13,8 @@ import SharedTableHead from '../../SharedTableHead.jsx';
 import SharedToolbar from '../../SharedToolbar.jsx';
 import { Link } from "react-router-dom";
 import UserContext from "../../UserContext";
+import Button from "@material-ui/core/es/Button/Button";
+import {standardHandler} from "../../utils";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -132,6 +134,36 @@ class AnimalTable extends React.Component {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+    handleRender = row => {
+        if (this.context.userType.toLowerCase() === 'admin') {
+            return (
+                <Button variant="outlined" color="secondary" onClick={this.handleRemove(row)}>
+                    Remove
+                </Button>
+            )
+        }
+    };
+
+    handleRemove = row => event => {
+        fetch(`http://localhost:5000/animals/${encodeURIComponent(row.name)}/${encodeURIComponent(row.species)}`, {
+
+            method: 'DELETE',
+            body: JSON.stringify({
+                animal_name: row.name,
+                species: row.species
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .then(response => this.props.refreshFunc())
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
+
     render() {
         const {userType} = this.context;
         const { classes, filters, animals } = this.props;
@@ -157,19 +189,23 @@ class AnimalTable extends React.Component {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
-                                    const isSelected = this.isSelected(id);
+                                    // const isSelected = this.isSelected(id);
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => this.handleClick(event, n.id)}
-                                            role="checkbox"
-                                            aria-checked={isSelected}
+                                            // onClick={event => this.handleClick(event, id)}
+                                            // role="checkbox"
+                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={n.id}
-                                            selected={isSelected}
+                                            // selected={isSelected}
                                         >
                                             <TableCell padding="checkbox">
-                                                <Checkbox checked={isSelected} />
+                                                {/*<Checkbox checked={isSelected} />*/}
+                                                {this.handleRender({
+                                                    name: n.animal_name,
+                                                    species: n.species
+                                                })}
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
                                                 <Link to={url +`${n.animal_name}/${n.species}`} >
@@ -177,7 +213,12 @@ class AnimalTable extends React.Component {
                                                 </Link>
                                             </TableCell>
                                             <TableCell >{n.species}</TableCell>
-                                            <TableCell >{n.exhibit_name}</TableCell>
+                                            <TableCell >
+                                                <Link to={`/exhibitdetail/${n.exhibit_name}`} >
+                                                    {n.exhibit_name}
+                                                </Link>
+
+                                                </TableCell>
                                             <TableCell numeric>{n.age}</TableCell>
                                             <TableCell >{n.animal_type}</TableCell>
                                         </TableRow>

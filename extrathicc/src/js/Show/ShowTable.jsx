@@ -172,12 +172,12 @@ class ShowTable extends React.Component {
                     'Content-Type': 'application/json'
                 }
             })
-                .then(standardHandler)
-                .then(response => this.setState({rows: response.message}))
-                .then(response => this.props.refreshFunc())
-                .catch(response => {
-                    response.json().then(resp => alert(resp.message));
-                });
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .then(response => this.props.refreshFunc())
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
         }
 
     };
