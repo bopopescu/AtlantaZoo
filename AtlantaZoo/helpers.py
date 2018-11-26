@@ -448,11 +448,11 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
 #log
 
 
-def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
+def log_exhibit_visit(visitor_username, exhibit_name):
     conn, curr = connection()
 
     curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
-                 (visitor_username, exhibit_name.log_show_visit, datetime.fromtimestamp(int(visit_time))))
+                 (visitor_username, exhibit_name, datetime.now()))
 
     conn.commit()
     curr.close()
@@ -466,15 +466,18 @@ def log_show_visit(visitor_username, show_name, show_time):
     curr.execute("INSERT INTO Visit_show(visitor_username, show_name, show_time) VALUES (%s, %s, %s);",
                  (visitor_username, show_name, datetime.fromtimestamp(int(show_time))))
 
-    curr.execute("SELECT exhibit_name FROM `Show` WHERE show_name=%s and show_time=%s ;", (show_name, show_time))
+    curr.execute("SELECT exhibit_name FROM `Show` WHERE show_name=%s and show_time=%s ;", (show_name, datetime.fromtimestamp(int(show_time))))
     results = curr.fetchall()
+
+    string = str(results[0])
+    exhibit_name = "" + string.split("'")[3]
+
+    log_exhibit_visit(visitor_username, exhibit_name)
 
     conn.commit()
     curr.close()
     conn.close()
-    # return "Successfully logged show visit!!!"
-    return results
-
+    return "Successfully logged show visit!!!"
 
 
 def log_note(staff_username, log_time, note, animal_name, animal_species):

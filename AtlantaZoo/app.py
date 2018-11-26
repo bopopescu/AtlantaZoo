@@ -135,8 +135,7 @@ def delete_user(username):
 def log_exhibit_visit():
     if request.method == 'POST':
         return jsonify(message=helpers.log_exhibit_visit(request.json['visitor_username'],
-                                                     request.json['exhibit_name'],
-                                                     request.json['visit_time']))
+                                                     request.json['exhibit_name']))
     if request.method == 'GET':
         visitor_name = request.args.get('visitor_username')
         exhibit_name = request.args.get('exhibit_name')
