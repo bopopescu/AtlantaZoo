@@ -258,7 +258,7 @@ def get_animal(name, species):
     return results
 
 
-def search_animal(name, species, type, min_age, max_age, exhibit):
+def search_animal(name, species, type, min_age, max_age, exhibit, sort, order):
     conn, curr = connection()
 
     if name is None:
@@ -273,24 +273,29 @@ def search_animal(name, species, type, min_age, max_age, exhibit):
         max_age = "1000000000"
     if exhibit is None:
         exhibit = ""
-
+    if sort is None or sort == "":
+        sort = "animal_name"
+    if order is None or order == "":
+        order = "ASC"
 
     query = "SELECT * FROM Animal " \
             "WHERE (%s = '' OR animal_name LIKE '%" + name + "%')" \
             " AND (%s = '' OR species LIKE '%" + species + "%')" \
             " AND (%s = '' OR animal_type LIKE '%" + type + "%')" \
             " AND age BETWEEN " + min_age + " AND " + max_age + \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')" \
+            " ORDER BY " + sort + " " + order
 
     curr.execute(query, (name, species, type, exhibit))
 
     results = curr.fetchall()
+
     curr.close()
     conn.close()
     return results
 
 
-def search_exhibit(name, water, min_size, max_size, min_animal, max_animal):
+def search_exhibit(name, water, min_size, max_size, min_animal, max_animal, sort, order):
     conn, curr = connection()
 
     if name is None:
@@ -305,6 +310,10 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal):
         min_animal = "0"
     if max_animal is None:
         max_animal = "1000000000"
+    if sort is None or sort == "":
+        sort = "exhibit_name"
+    if order is None or order == "":
+        order = "ASC"
 
     query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animals' " \
             "FROM Exhibit NATURAL JOIN Animal " \
@@ -312,7 +321,8 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal):
             " AND (%s ='' OR water_feature LIKE '%" + water + "%')" \
             " AND (size BETWEEN " + min_size + " AND " + max_size + ")" \
             " GROUP BY exhibit_name" \
-            " HAVING COUNT(exhibit_name) >= " + min_animal + " AND COUNT(exhibit_name) <= " + max_animal
+            " HAVING COUNT(exhibit_name) >= " + min_animal + " AND COUNT(exhibit_name) <= " + max_animal + "" \
+            " ORDER BY " + sort + " " + order
 
     curr.execute(query, (name, water))
 
@@ -322,9 +332,11 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal):
     return results
 
 
-def search_show(show_name, date, exhibit, staff_name):
+def search_show(show_name, date, exhibit, staff_name, sort, order):
     conn, curr = connection()
 
+    if staff_name is None:
+        staff_name = ""
     if show_name is None:
         show_name = ""
     if date is None:
@@ -335,11 +347,17 @@ def search_show(show_name, date, exhibit, staff_name):
     if exhibit is None:
         exhibit = ""
 
+    if sort is None or sort == "":
+        sort = "show_name"
+    if order is None or order == "":
+        order = "ASC"
+
     query = "SELECT * FROM `Show` " \
-            "WHERE staff_name = %s" \
+            "WHERE (%s = '' OR staff_name LIKE '%" + staff_name + "%')" \
             " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
             " AND (%s = '' OR DATE(show_time) = %s)" \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')" \
+            " ORDER BY " + sort + " " + order
 
     curr.execute(query, (staff_name, show_name, date, date, exhibit))
 
@@ -349,9 +367,11 @@ def search_show(show_name, date, exhibit, staff_name):
     return results
 
 
-def search_show(show_name, date, exhibit, staff_name):
+def search_show_history(visitor_name, show_name, date, exhibit, sort, order):
     conn, curr = connection()
 
+    if visitor_name is None:
+        visitor_name = ""
     if show_name is None:
         show_name = ""
     if date is None:
@@ -362,41 +382,18 @@ def search_show(show_name, date, exhibit, staff_name):
     if exhibit is None:
         exhibit = ""
 
-
-
-    query = "SELECT * FROM `Show` " \
-            "WHERE staff_name = %s" \
-            " AND (%s = '' OR show_name LIKE '%" + show_name + "%')" \
-            " AND (%s = '' OR DATE(show_time) = %s)" \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
-
-    curr.execute(query, (staff_name, show_name, date, date, exhibit))
-
-    results = curr.fetchall()
-    curr.close()
-    conn.close()
-    return results
-
-
-def search_show_history(visitor_name, show_name, date, exhibit):
-    conn, curr = connection()
-
-    if show_name is None:
-        show_name = ""
-    if date is None:
-        date = ""
-    else:
-        date = datetime.fromtimestamp(int(date)).date()
-
-    if exhibit is None:
-        exhibit = ""
+    if sort is None or sort == "":
+        sort = "show_name"
+    if order is None or order == "":
+        order = "ASC"
 
     query = "SELECT DISTINCT visitor_username, Visit_show.show_name as 'show_name', Visit_show.show_time as 'visit_time', exhibit_name " \
             "FROM Visit_show INNER JOIN `Show` ON Visit_show.show_name=`Show`.show_name " \
-            "WHERE visitor_username = %s" \
+            "WHERE (%s = '' OR visitor_username LIKE '%" + visitor_name + "%')" \
             " AND (%s = '' OR Visit_show.show_name LIKE '%" + show_name + "%')" \
             " AND (%s = '' OR DATE(Visit_show.show_time) = %s)" \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')"
+            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')" \
+            " ORDER BY " + sort + " " + order
 
     curr.execute(query, (visitor_name, show_name, date, date, exhibit))
 
@@ -409,9 +406,11 @@ def search_show_history(visitor_name, show_name, date, exhibit):
     return results
 
 
-def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits):
+def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits, sort, order):
     conn, curr = connection()
 
+    if visitor_name is None:
+        visitor_name = ""
     if exhibit_name is None:
         exhibit_name = ""
     if date is None:
@@ -424,16 +423,22 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
     if max_visits is None:
         max_visits = "1000000000"
 
+    if sort is None or sort == "":
+        sort = "exhibit_name"
+    if order is None or order == "":
+        order = "ASC"
+
     query = "SELECT exhibit_name as exhibit, visit_time, (SELECT COUNT(exhibit_name) " \
             "FROM Visit_exhibit " \
-            "WHERE visitor_username = %s" \
+            "WHERE (%s = '' OR visitor_username LIKE '%" + visitor_name + "%')" \
             " AND exhibit_name = exhibit) as num_visits " \
             "FROM Visit_exhibit " \
-            "WHERE visitor_username = %s" \
+            "WHERE (%s = '' OR visitor_username LIKE '%" + visitor_name + "%')" \
             " AND (%s = '' OR exhibit_name LIKE '%" + exhibit_name + "%')" \
             " AND (%s = '' OR DATE(visit_time) = %s)" \
             " GROUP BY exhibit_name, visit_time" \
-            " HAVING num_visits >= " + min_visits + " AND num_visits <= " + max_visits
+            " HAVING num_visits >= " + min_visits + " AND num_visits <= " + max_visits+ \
+            " ORDER BY " + sort + " " + order
 
     curr.execute(query, (visitor_name, visitor_name, exhibit_name, date, date))
 
@@ -452,7 +457,7 @@ def log_exhibit_visit(visitor_username, exhibit_name):
     conn, curr = connection()
 
     curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
-                 (visitor_username, exhibit_name, datetime.now()))
+                 (visitor_username, exhibit_name, datetime.fromtimestamp(datetime.now())))
 
     conn.commit()
     curr.close()
