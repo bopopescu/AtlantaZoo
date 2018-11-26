@@ -57,15 +57,6 @@ const styles = theme => ({
     },
 });
 
-const allFilters = (filters, row) => {
-    for (let filter of filters) {
-        if (!filter(row)) {
-            return false;
-        }
-    }
-    return true;
-};
-
 class ExhibitTable extends React.Component {
     constructor(props) {
         super(props);
@@ -121,7 +112,7 @@ class ExhibitTable extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        const {classes, exhibits, filters} = this.props;
+        const {classes, exhibits} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, exhibits.length - page * rowsPerPage);
 
@@ -142,7 +133,6 @@ class ExhibitTable extends React.Component {
                         <TableBody>
                             {stableSort(exhibits, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
                                     const isSelected = this.isSelected(id);
                                     return (

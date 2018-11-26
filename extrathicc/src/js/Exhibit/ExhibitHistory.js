@@ -8,6 +8,7 @@ import HistoryTable from "./HistoryTable";
 import moment from "moment";
 import {DatePicker} from "material-ui-pickers";
 import UserContext from "../../UserContext";
+import Button from "@material-ui/core/Button/Button";
 
 class ExhibitHistory extends Component {
     static contextType = UserContext;
@@ -25,27 +26,31 @@ class ExhibitHistory extends Component {
     }
 
     generateFilters = () => {
-        let filters = [];
-
+        let filters = {};
+        filters.visitor_username = this.context.username;
         const {exhibit_name, min_num_visits, max_num_visits, search_time} = this.state;
 
         if (exhibit_name !== '') {
-            filters.push(row => row.exhibit_name.toLowerCase().includes(exhibit_name.toLowerCase()));
+            filters.exhibit_name = exhibit_name;
         }
         if (min_num_visits !== '') {
-            filters.push(row => row.num_visits >= min_num_visits);
+            filters.min_visits = min_num_visits;
         }
         if (max_num_visits !== '') {
-            filters.push(row => row.num_visits <= max_num_visits);
+            filters.max_visits = max_num_visits;
         }
         if (search_time !== null) {
-            filters.push(row => moment.unix(row.visit_time).isSame(search_time, 'day'));
+            filters.time = search_time.unix();
         }
         return filters;
     };
 
     componentDidMount = () => {
-        fetch(`http://localhost:5000/visit_exhibit?${query({visitor_username:this.context.username})}`, {
+        this.refreshTable();
+    };
+
+    refreshTable = () => {
+        fetch(`http://localhost:5000/visit_exhibit?${query(this.generateFilters())}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -57,7 +62,6 @@ class ExhibitHistory extends Component {
                 response.json().then(resp => alert(resp.message));
             });
     };
-
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value
@@ -67,11 +71,15 @@ class ExhibitHistory extends Component {
         this.setState({ search_time: date });
     };
 
+    handleClick = event => {
+        this.refreshTable();
+    };
+
     render() {
         return (
             <div className={'Exhibit'}>
                 <Grid container justify="center">
-                    <header id="title">Exhibits</header>
+                    <header id="title">Exhibit History</header>
                 </Grid>
                 <Grid container
                       direction="row"
@@ -120,10 +128,18 @@ class ExhibitHistory extends Component {
                         margin="normal"
                         variant="outlined"
                     />
+
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                        onClick={this.handleClick}
+                    >
+                        Search
+                    </Button>
                 </Grid>
 
                 <Paper >
-                    <HistoryTable exhibits={this.state.rows} filters={this.generateFilters()}> </HistoryTable>
+                    <HistoryTable exhibits={this.state.rows} refreshFunc={this.refreshTable}> </HistoryTable>
                 </Paper>
             </div>
         );

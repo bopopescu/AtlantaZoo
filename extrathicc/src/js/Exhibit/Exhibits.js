@@ -8,7 +8,8 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import ExhibitTable from './ExhibitTable';
-import {standardHandler} from "../../utils";
+import {query, standardHandler} from "../../utils";
+import Button from "@material-ui/core/Button/Button";
 
 
 class Exhibits extends Component {
@@ -52,24 +53,59 @@ class Exhibits extends Component {
         return filters;
     };
 
+    generateFilters = () => {
+        let filters = {};
+
+        const {exhibit_name, min_num_animals, max_num_animals, min_size, max_size, water_feature} = this.state;
+
+        if (exhibit_name !== '') {
+            filters.exhibit_name = exhibit_name;
+        }
+        if (min_num_animals !== '') {
+            filters.min_animal_num = min_num_animals;
+        }
+        if (max_num_animals!== '') {
+            filters.max_animal_num= max_num_animals;
+        }
+        if (min_size !== '') {
+            filters.min_size = min_size;
+        }
+        if (max_size !== '') {
+            filters.max_size = max_size;
+        }
+        if (exhibit_name !== '') {
+            filters.water_feature = water_feature;
+        }
+
+        return filters;
+    };
+
     componentDidMount = () => {
-        fetch(`http://localhost:5000/exhibits`, {
+        this.refreshTable();
+    };
+
+    refreshTable = () => {
+        fetch(`http://localhost:5000/exhibits?${query(this.generateFilters())}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(standardHandler)
-        .then(response => this.setState({rows: response.message}))
-        .catch(response => {
-            response.json().then(resp => alert(resp.message));
-        });
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
     };
 
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value
         });
+    };
+
+    handleClick = event => {
+        this.refreshTable();
     };
 
     render() {
@@ -171,10 +207,18 @@ class Exhibits extends Component {
                             <MenuItem value={false}>No</MenuItem>
                         </Select>
                     </FormControl>
+
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                        onClick={this.handleClick}
+                    >
+                        Search
+                    </Button>
                 </Grid>
 
                 <Paper >
-                    <ExhibitTable exhibits={this.state.rows} filters={this.generateFilters()}> </ExhibitTable>
+                    <ExhibitTable exhibits={this.state.rows} refreshFunc={this.refreshTable}> </ExhibitTable>
                 </Paper>
             </div>
         );
