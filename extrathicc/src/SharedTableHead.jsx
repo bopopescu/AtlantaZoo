@@ -13,7 +13,7 @@ class SharedTableHead extends React.Component {
     };
 
     render() {
-        const { onSelectAllClick, order, orderBy, numSelected, rowCount, data } = this.props;
+        const { order, orderBy, data } = this.props;
 
         return (
             <TableHead>
@@ -31,7 +31,6 @@ class SharedTableHead extends React.Component {
                                 key={row.id}
                                 // numeric={row.numeric}
                                 padding={row.disablePadding ? 'none' : 'default'}
-                                // sortDirection={orderBy === row.id ? order : false}
                             >
                                 <Tooltip
                                     title="Sort"

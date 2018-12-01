@@ -8,10 +8,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import ShowTable from './ShowTable.jsx';
 import Button from "@material-ui/core/Button";
-import moment from "moment";
 import {DatePicker} from "material-ui-pickers";
 import {query, standardHandler} from "../../utils";
-import ExhibitTable from "../Exhibit/ExhibitTable";
 
 const exhibits = [
     {

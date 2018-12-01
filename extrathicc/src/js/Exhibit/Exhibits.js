@@ -10,6 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ExhibitTable from './ExhibitTable';
 import {query, standardHandler} from "../../utils";
 import Button from "@material-ui/core/Button/Button";
+import ShowTable from "../Show/ShowTable";
 
 
 class Exhibits extends Component {
@@ -80,12 +81,56 @@ class Exhibits extends Component {
         return filters;
     };
 
+    generateSort = (sortBy, orderDir) => {
+        let sort = {};
+
+        const {exhibit_name, min_num_animals, max_num_animals, min_size, max_size, water_feature} = this.state;
+
+        sort.sort=sortBy;
+        sort.orderDir = orderDir;
+
+        if (exhibit_name !== '') {
+            sort.exhibit_name = exhibit_name;
+        }
+        if (min_num_animals !== '') {
+            sort.min_animal_num = min_num_animals;
+        }
+        if (max_num_animals!== '') {
+            sort.max_animal_num= max_num_animals;
+        }
+        if (min_size !== '') {
+            sort.min_size = min_size;
+        }
+        if (max_size !== '') {
+            sort.max_size = max_size;
+        }
+        if (exhibit_name !== '') {
+            sort.water_feature = water_feature;
+        }
+
+        return sort;
+    };
+
     componentDidMount = () => {
         this.refreshTable();
     };
 
     refreshTable = () => {
         fetch(`http://localhost:5000/exhibits?${query(this.generateFilters())}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
+
+    sortColumn = (sortBy, orderDir) => {
+        fetch(`http://localhost:5000/exhibits?${query(this.generateSort(sortBy, orderDir))}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -218,7 +263,11 @@ class Exhibits extends Component {
                 </Grid>
 
                 <Paper >
-                    <ExhibitTable exhibits={this.state.rows} refreshFunc={this.refreshTable}> </ExhibitTable>
+                    <ExhibitTable
+                        exhibits={this.state.rows}
+                        refreshFunc={this.refreshTable}
+                        sortFunc={this.sortColumn}>
+                    > </ExhibitTable>
                 </Paper>
             </div>
         );
