@@ -484,11 +484,11 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
 #log
 
 
-def log_exhibit_visit(visitor_username, exhibit_name):
+def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn, curr = connection()
 
     curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
-                 (visitor_username, exhibit_name, datetime.fromtimestamp(datetime.now())))
+                 (visitor_username, exhibit_name, datetime.fromtimestamp(int(visit_time))))
 
     conn.commit()
     curr.close()

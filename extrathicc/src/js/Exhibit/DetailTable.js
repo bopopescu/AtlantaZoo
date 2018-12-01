@@ -10,8 +10,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
-import SharedToolbar from '../../SharedToolbar.jsx';
 import {query, standardHandler} from "../../utils";
+import {Grid} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography/Typography";
 
 const rows = [
     {id: 'animal_name', numeric: false, disablePadding: true, label: 'Name'},
@@ -107,13 +108,18 @@ class DetailTable extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        const {classes} = this.props;
+        const {classes, title} = this.props;
         const {exhibits, order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, exhibits.length - page * rowsPerPage);
 
         return (
             <Paper className={classes.root}>
                 <div className={classes.tableWrapper}>
+                    <Grid container justify="center">
+                        <Typography variant="h6" id="tableTitle">
+                            {title}
+                        </Typography>
+                    </Grid>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
                             data={rows}

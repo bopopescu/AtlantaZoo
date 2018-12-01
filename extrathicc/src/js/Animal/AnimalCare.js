@@ -35,7 +35,7 @@ class AnimalCare extends Component {
             exhibit: '',
             type: '',
             notes: [],
-            new_note:'',
+            new_note: '',
         };
         const {match: {params: {name, species}}} = this.props;
         fetch(`http://localhost:5000/animals?${query({name, species})}`, {
@@ -58,32 +58,41 @@ class AnimalCare extends Component {
     }
 
     componentDidMount = () => {
-        fetch(`http://localhost:5000/notes?${query({animal_name: this.props.match.params.name, 
-                                                                animal_species: this.props.match.params.species})}`, {
+        this.refreshTable();
+    };
+
+    refreshTable = () => {
+        fetch(`http://localhost:5000/notes?${query({
+            animal_name: this.props.match.params.name,
+            animal_species: this.props.match.params.species
+        })}`, {
 
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(standardHandler)
-        .then(json => this.setState({
-            notes: json.message.map(
-                note => createData(
-                    note.staff_username,
-                    note.note,
-                    moment.unix(note.log_time).format('MM/DD/YY hh:mm a')))
-        }))
-        .catch(response => {
-            response.json().then(resp => alert(resp.message));
-        });
+            .then(standardHandler)
+            .then(json => this.setState({
+                notes: json.message.map(
+                    note => createData(
+                        note.staff_username,
+                        note.note,
+                        moment.unix(note.log_time).format('MM/DD/YY hh:mm a')))
+            }))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
 
     };
 
     handleLogNote = event => {
         const {match: {params: {name, species}}} = this.props;
         const {username} = this.context;
-        fetch(`http://localhost:5000/notes?${query({animal_name: this.state.name, animal_species: this.state.species})}`, {
+        fetch(`http://localhost:5000/notes?${query({
+            animal_name: this.state.name,
+            animal_species: this.state.species
+        })}`, {
 
             method: 'POST',
             body: JSON.stringify({
@@ -97,26 +106,35 @@ class AnimalCare extends Component {
                 'Content-Type': 'application/json'
             }
         })
-        .then(standardHandler)
-        .then(response => alert(response.message))
-        .then(response => fetch(`http://localhost:5000/notes?${query({animal_name: this.props.match.params.name,
-            animal_species: this.props.match.params.species})}`, {
+            .then(standardHandler)
+            .then(response => alert(response.message))
+            .then(response => this.refreshTable());
+        event.preventDefault();
+    };
+
+    sortColumn = (sortBy, orderDir) => {
+        const {match: {params: {name, species}}} = this.props;
+        fetch(`http://localhost:5000/notes?${query({
+            animal_name: name,
+            animal_species: species,
+            sort: sortBy,
+            orderDir: orderDir
+        })}`, {
 
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
-        }))
-        .then(standardHandler)
-        .then(json => this.setState({
-            notes: json.message.map(
-                note => createData(
-                    note.staff_username,
-                    note.note,
-                    moment.unix(note.log_time).format('MM/DD/YY hh:mm a')))
-        }))
-        .catch(response => response.json().then(resp => alert(resp.message)));
-        event.preventDefault();
+        })
+            .then(standardHandler)
+            .then(json => this.setState({
+                notes: json.message.map(
+                    note => createData(
+                        note.staff_username,
+                        note.note,
+                        moment.unix(note.log_time).format('MM/DD/YY hh:mm a')))
+            }))
+            .catch(response => response.json().then(resp => alert(resp.message)));
     };
 
     handleChange = name => event => {
@@ -150,7 +168,7 @@ class AnimalCare extends Component {
                                     {this.state.name}
                                 </TableCell>
                                 <TableCell>{this.state.species}</TableCell>
-                                <TableCell numeric>{this.state.age}</TableCell>
+                                <TableCell>{this.state.age}</TableCell>
                                 <TableCell>{this.state.exhibit}</TableCell>
                                 <TableCell>{this.state.type}</TableCell>
 
@@ -184,7 +202,10 @@ class AnimalCare extends Component {
                         Log Notes
                     </Button>
                 </Grid>
-                <CareTable notes={this.state.notes}/>
+                <CareTable
+                    notes={this.state.notes}
+                    sortFunc={this.sortColumn}
+                />
 
 
             </div>
