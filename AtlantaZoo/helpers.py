@@ -57,17 +57,21 @@ def create_user(username, email, password, user_type):
         abort(400, message="Duplicate user given")
 
 
-def get_users(user_type, username, email):
+def get_users(user_type, username, email, sort, order):
     conn, curr = connection()
 
     if username is None:
         username = ""
     if email is None:
         email= ""
+    if sort is None or sort == "":
+        sort = "username"
+    if order is None or order == "":
+        order = "ASC"
 
     query = "SELECT username, email FROM User WHERE user_type = %s " \
             "AND (%s = '' OR username LIKE '%" + username + "%') " \
-            "AND (%s = '' OR email LIKE '%" + email + "%')"
+            "AND (%s = '' OR email LIKE '%" + email + "%') ORDER BY " + sort + " " + order
 
     curr.execute(query, (user_type, username, email))
 

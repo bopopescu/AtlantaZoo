@@ -45,7 +45,9 @@ def get_users_by_type():
     user_type = request.args.get('user_type')
     username = request.args.get('username')
     email = request.args.get('email')
-    return jsonify(message=helpers.get_users(user_type, username, email))
+    sort = request.args.get('sort')
+    order = request.args.get('orderDir')
+    return jsonify(message=helpers.get_users(user_type, username, email, sort, order))
 
 
 @app.route('/staff', methods=['GET'])
