@@ -11,43 +11,9 @@ import Button from '@material-ui/core/Button';
 import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
 import moment from "moment";
-import SharedToolbar from '../../SharedToolbar.jsx';
 import {Link} from "react-router-dom";
 import UserContext from "../../UserContext";
 import {standardHandler} from "../../utils";
-
-
-// function desc(a, b, orderBy) {
-//     a = Object.assign({}, a);
-//     b = Object.assign({}, b);
-//     if (typeof a[orderBy] === 'string') {
-//         a[orderBy] = a[orderBy].toLowerCase();
-//     }
-//     if (typeof b[orderBy] === 'string') {
-//         b[orderBy] = b[orderBy].toLowerCase();
-//     }
-//     if (b[orderBy] < a[orderBy]) {
-//         return -1;
-//     }
-//     if (b[orderBy] > a[orderBy]) {
-//         return 1;
-//     }
-//     return 0;
-// }
-//
-// function stableSort(array, cmp) {
-//     const stabilizedThis = array.map((el, index) => [el, index]);
-//     stabilizedThis.sort((a, b) => {
-//         const order = cmp(a[0], b[0]);
-//         if (order !== 0) return order;
-//         return a[1] - b[1];
-//     });
-//     return stabilizedThis.map(el => el[0]);
-// }
-//
-// function getSorting(order, orderBy) {
-//     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-// }
 
 const rows = [
     {id: 'show_name', numeric: false, disablePadding: true, label: 'Name'},
@@ -93,27 +59,6 @@ class ShowTable extends React.Component {
         this.setState({order, orderBy});
         this.props.sortFunc(orderBy, order);
     };
-
-    // handleClick = (event, id) => {
-    //     const {selected} = this.state;
-    //     const selectedIndex = selected.indexOf(id);
-    //     let newSelected = [];
-    //
-    //     if (selectedIndex === -1) {
-    //         newSelected = newSelected.concat(selected, id);
-    //     } else if (selectedIndex === 0) {
-    //         newSelected = newSelected.concat(selected.slice(1));
-    //     } else if (selectedIndex === selected.length - 1) {
-    //         newSelected = newSelected.concat(selected.slice(0, -1));
-    //     } else if (selectedIndex > 0) {
-    //         newSelected = newSelected.concat(
-    //             selected.slice(0, selectedIndex),
-    //             selected.slice(selectedIndex + 1),
-    //         );
-    //     }
-    //
-    //     this.setState({selected: newSelected});
-    // };
 
     handleChangePage = (event, page) => {
         this.setState({page});
@@ -170,22 +115,18 @@ class ShowTable extends React.Component {
     render() {
         console.log(this.props);
         const {classes, show_names} = this.props;
-        const {order, orderBy, selected, rowsPerPage, page} = this.state;
+        const {order, orderBy, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, show_names.length - page * rowsPerPage);
         const {userType} = this.context;
         return (
             <Paper className={classes.root}>
-                <SharedToolbar numSelected={selected.length} title={'List of Shows'} classes={undefined}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
                             data={rows}
-                            // numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            // onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            // rowCount={show_names.length}
                         />
                         <TableBody>
                             {show_names
@@ -195,8 +136,6 @@ class ShowTable extends React.Component {
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={event => this.handleClick(event, n.id)}
-                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={id}
                                             selected={isSelected}

@@ -154,7 +154,7 @@ class Shows extends Component {
                         variant="outlined"
                     />
 
-                    <DatePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
+                    <DatePicker label="Date" clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
 
                 </Grid>
 
