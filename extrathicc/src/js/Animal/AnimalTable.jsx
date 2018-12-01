@@ -15,38 +15,6 @@ import UserContext from "../../UserContext";
 import Button from "@material-ui/core/es/Button/Button";
 import {standardHandler} from "../../utils";
 
-function desc(a, b, orderBy) {
-    a = Object.assign({}, a);
-    b = Object.assign({}, b);
-    if (typeof a[orderBy] === 'string') {
-        a[orderBy] = a[orderBy].toLowerCase();
-    }
-    if (typeof b[orderBy] === 'string') {
-        b[orderBy] = b[orderBy].toLowerCase();
-    }
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
-
 const rows = [
     { id: 'animal_name', numeric: false, disablePadding: true, label: 'Name' },
     { id: 'species', numeric: false, disablePadding: true, label: 'Species' },
@@ -91,35 +59,7 @@ class AnimalTable extends React.Component {
         }
 
         this.setState({ order, orderBy });
-    };
-
-    handleSelectAllClick = event => {
-        if (event.target.checked) {
-            this.setState(state => ({ selected: state.animals.map(n => n.id) }));
-            return;
-        }
-        this.setState({ selected: [] });
-    };
-
-    handleClick = (event, id) => {
-        const { selected } = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        this.setState({ selected: newSelected });
+        this.props.sortFunc(orderBy, order);
     };
 
     handleChangePage = (event, page) => {
@@ -170,35 +110,27 @@ class AnimalTable extends React.Component {
         const url = userType.toLowerCase() === 'staff' ? `/animalcare/` : `/animaldetail/`;
         return (
             <Paper className={classes.root}>
-                <SharedToolbar numSelected={selected.length} title={'List of Animals'}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
                             data={rows}
-                            numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            rowCount={animals.length}
                         />
                         <TableBody>
-                            {stableSort(animals, getSorting(order, orderBy))
+                            {animals
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((n, id) => {
-                                    // const isSelected = this.isSelected(id);
+                                    const isSelected = this.isSelected(id);
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={event => this.handleClick(event, id)}
-                                            // role="checkbox"
-                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={id}
-                                            // selected={isSelected}
+                                            selected={isSelected}
                                         >
                                             <TableCell padding="checkbox">
-                                                {/*<Checkbox checked={isSelected} />*/}
                                                 {this.handleRender({
                                                     name: n.animal_name,
                                                     species: n.species
@@ -209,15 +141,15 @@ class AnimalTable extends React.Component {
                                                     {n.animal_name}
                                                 </Link>
                                             </TableCell>
-                                            <TableCell >{n.species}</TableCell>
-                                            <TableCell >
+                                            <TableCell padding="none">{n.species}</TableCell>
+                                            <TableCell padding="none">
                                                 <Link to={`/exhibitdetail/${n.exhibit_name}`} >
                                                     {n.exhibit_name}
                                                 </Link>
 
                                                 </TableCell>
-                                            <TableCell numeric>{n.age}</TableCell>
-                                            <TableCell >{n.animal_type}</TableCell>
+                                            <TableCell padding="default">{n.age}</TableCell>
+                                            <TableCell padding="none">{n.animal_type}</TableCell>
                                         </TableRow>
                                     );
                                 })}
