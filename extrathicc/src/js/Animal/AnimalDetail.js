@@ -76,7 +76,7 @@ class AnimalDetail extends Component {
                                     {this.state.name}
                                 </TableCell>
                                 <TableCell>{this.state.species}</TableCell>
-                                <TableCell numeric>{this.state.age}</TableCell>
+                                <TableCell>{this.state.age}</TableCell>
                                 <TableCell>{this.state.exhibit}</TableCell>
                                 <TableCell>{this.state.type}</TableCell>
 

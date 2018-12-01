@@ -30,6 +30,7 @@ class AdminHome extends Component {
                         <Link to="/visitors">View Visitors</Link>
                         <Link to="/shows">View Shows</Link>
                         <Link to="/addshow">Add Show</Link>
+                        <Link to="/addanimal">Add Animal</Link>
                     </Grid>
                 </Grid>
                 <Grid
