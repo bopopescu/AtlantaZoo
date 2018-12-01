@@ -82,9 +82,9 @@ def create_exhibit():
         min_animal = request.args.get('min_animal_num')
         max_animal = request.args.get('max_animal_num')
         sort = request.args.get("sort")
-        order = request.args.get("order")
-        if name and not (water or min_size or max_size or min_animal or max_animal):
-            return jsonify(message=helpers.get_exhibit_details(name))
+        order = request.args.get("orderDir")
+        # if name and not (water or min_size or max_size or min_animal or max_animal):
+        #     return jsonify(message=helpers.get_exhibit_details(name))
         # if name and not (water or min_size or max_size or min_animal or max_animal):
         #     return jsonify(message=helpers.get_exhibit_details(name))
 
@@ -106,7 +106,7 @@ def get_all_shows():
     date = request.args.get('show_time')
     exhibit = request.args.get('exhibit_name')
     sort = request.args.get("sort")
-    order = request.args.get("order")
+    order = request.args.get("orderDir")
     # if staff_name and not (show_name or date or exhibit):
     #     filters = request.args.to_dict()
     #     return jsonify(message=helpers.get_show(**filters))
@@ -124,7 +124,7 @@ def get_all_animals():
     max_age = request.args.get('max_age')
     exhibit_name = request.args.get('exhibit_name')
     sort = request.args.get("sort")
-    order = request.args.get("order")
+    order = request.args.get("orderDir")
 
     # if name and species and not (animal_type or min_age or max_age or exhibit_name):
     #     return jsonify(message=helpers.get_animal(name, species))
@@ -159,7 +159,7 @@ def log_exhibit_visit():
         min_visits = request.args.get('min_visits')
         max_visits = request.args.get('max_visits')
         sort = request.args.get("sort")
-        order = request.args.get("order")
+        order = request.args.get("orderDir")
         return jsonify(message=helpers.search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_visits, sort, order))
 
 
@@ -176,7 +176,7 @@ def log_show_visit():
         show_time = request.args.get('show_time')
         exhibit_name = request.args.get('exhibit_name')
         sort = request.args.get("sort")
-        order = request.args.get("order")
+        order = request.args.get("orderDir")
         return jsonify(message=helpers.search_show_history(visitor_name, show_name, show_time, exhibit_name, sort, order))
 #log_note
 @app.route('/notes', methods=['POST'])
