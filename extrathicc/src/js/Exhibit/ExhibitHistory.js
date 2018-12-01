@@ -9,6 +9,7 @@ import moment from "moment";
 import {DatePicker} from "material-ui-pickers";
 import UserContext from "../../UserContext";
 import Button from "@material-ui/core/Button/Button";
+import ShowTable from "../Show/ShowTable";
 
 class ExhibitHistory extends Component {
     static contextType = UserContext;
@@ -45,6 +46,28 @@ class ExhibitHistory extends Component {
         return filters;
     };
 
+    generateSort = (sortBy, orderDir) => {
+        let sort = {};
+        sort.visitor_username = this.context.username;
+        sort.sort = sortBy;
+        sort.orderDir = orderDir;
+        const {exhibit_name, min_num_visits, max_num_visits, search_time} = this.state;
+
+        if (exhibit_name !== '') {
+            sort.exhibit_name = exhibit_name;
+        }
+        if (min_num_visits !== '') {
+            sort.min_visits = min_num_visits;
+        }
+        if (max_num_visits !== '') {
+            sort.max_visits = max_num_visits;
+        }
+        if (search_time !== null) {
+            sort.time = search_time.unix();
+        }
+        return sort;
+    };
+
     componentDidMount = () => {
         this.refreshTable();
     };
@@ -62,6 +85,21 @@ class ExhibitHistory extends Component {
                 response.json().then(resp => alert(resp.message));
             });
     };
+
+    sortColumn = (sortBy, orderDir) => {
+        fetch(`http://localhost:5000/visit_exhibit?${query(this.generateSort(sortBy, orderDir))}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
+
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value
@@ -95,7 +133,7 @@ class ExhibitHistory extends Component {
                         value={this.state.exhibit_name}
                     />
 
-                    <DatePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
+                    <DatePicker label='Date' clearable={true} value={this.state.search_time} onChange={this.handleDateChange} />
 
                 </Grid>
                 <Grid container
@@ -139,7 +177,11 @@ class ExhibitHistory extends Component {
                 </Grid>
 
                 <Paper >
-                    <HistoryTable exhibits={this.state.rows} refreshFunc={this.refreshTable}> </HistoryTable>
+                    <HistoryTable
+                        sortFunc={this.sortColumn}
+                        exhibits={this.state.rows}
+                        refreshFunc={this.refreshTable}>
+                    </HistoryTable>
                 </Paper>
             </div>
         );

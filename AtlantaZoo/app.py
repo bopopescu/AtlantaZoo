@@ -126,13 +126,7 @@ def get_all_animals():
     sort = request.args.get("sort")
     order = request.args.get("orderDir")
 
-    # if name and species and not (animal_type or min_age or max_age or exhibit_name):
-    #     return jsonify(message=helpers.get_animal(name, species))
-
-    if name or species or animal_type or min_age or max_age or exhibit_name or sort or order:
-        return jsonify(message=helpers.search_animal(name, species, animal_type, min_age, max_age, exhibit_name, sort, order))
-
-    return jsonify(message=helpers.get_all_animals())
+    return jsonify(message=helpers.search_animal(name, species, animal_type, min_age, max_age, exhibit_name, sort, order))
 
 
 @app.route('/animals/<animal_name>/<species>', methods=['DELETE'])
