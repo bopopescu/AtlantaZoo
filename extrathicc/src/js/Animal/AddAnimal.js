@@ -65,7 +65,7 @@ class AddAnimal extends Component {
             exhibit: "",
             type: "",
             species: "",
-            age: 0,
+            age: "",
         };
     }
 
@@ -125,7 +125,7 @@ class AddAnimal extends Component {
 
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to="/home" />;
+            return <Redirect to="/adminhome" />;
         }
     };
 
@@ -195,6 +195,7 @@ class AddAnimal extends Component {
 
                         <TextField
                             id="age"
+                            placeholder="Age"
                             value={this.state.age}
                             onChange={this.handleChange('age')}
                             type="number"

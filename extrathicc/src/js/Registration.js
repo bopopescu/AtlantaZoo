@@ -53,11 +53,12 @@ class Registration extends Component {
     }
 
     validateForm() {
-        const {username, password, email, confirm} = this.state;
+        const {username, password, email, confirm, userType} = this.state;
         if (username.length > 0
             && password.length >= 8
             && email.length > 0
-            && confirm.length > 0) {
+            && confirm.length > 0
+            && userType.length > 0) {
             if (!this.validateEmail(email)) {
                 return false
             } else if (password !== confirm) {
