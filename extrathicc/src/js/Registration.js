@@ -47,14 +47,20 @@ class Registration extends Component {
         event.preventDefault();
     };
 
+    validateEmail(email) {
+        let re = /^\w+@\w+\.\w+$/;
+        return re.test(String(email).toLowerCase());
+    }
+
     validateForm() {
-        if (this.state.username.length > 0
-            && this.state.password.length >= 8
-            && this.state.email.length > 0
-            && this.state.confirm.length > 0) {
-            if (!this.state.email.includes('@')) {
-                return false;
-            } else if (this.state.password !== this.state.confirm) {
+        const {username, password, email, confirm} = this.state;
+        if (username.length > 0
+            && password.length >= 8
+            && email.length > 0
+            && confirm.length > 0) {
+            if (!this.validateEmail(email)) {
+                return false
+            } else if (password !== confirm) {
                 return false;
             }
             return true;
