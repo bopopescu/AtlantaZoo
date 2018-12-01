@@ -19,19 +19,19 @@ class SharedTableHead extends React.Component {
             <TableHead>
                 <TableRow>
                     <TableCell padding="checkbox">
-                        <Checkbox
-                            indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={numSelected === rowCount}
-                            onChange={onSelectAllClick}
-                        />
+                        {/*<Checkbox*/}
+                            {/*indeterminate={numSelected > 0 && numSelected < rowCount}*/}
+                            {/*checked={numSelected === rowCount}*/}
+                            {/*onChange={onSelectAllClick}*/}
+                        {/*/>*/}
                     </TableCell>
                     {data.map(row => {
                         return (
                             <TableCell
                                 key={row.id}
-                                numeric={row.numeric}
+                                // numeric={row.numeric}
                                 padding={row.disablePadding ? 'none' : 'default'}
-                                sortDirection={orderBy === row.id ? order : false}
+                                // sortDirection={orderBy === row.id ? order : false}
                             >
                                 <Tooltip
                                     title="Sort"

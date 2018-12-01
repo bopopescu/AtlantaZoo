@@ -17,37 +17,37 @@ import UserContext from "../../UserContext";
 import {standardHandler} from "../../utils";
 
 
-function desc(a, b, orderBy) {
-    a = Object.assign({}, a);
-    b = Object.assign({}, b);
-    if (typeof a[orderBy] === 'string') {
-        a[orderBy] = a[orderBy].toLowerCase();
-    }
-    if (typeof b[orderBy] === 'string') {
-        b[orderBy] = b[orderBy].toLowerCase();
-    }
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
+// function desc(a, b, orderBy) {
+//     a = Object.assign({}, a);
+//     b = Object.assign({}, b);
+//     if (typeof a[orderBy] === 'string') {
+//         a[orderBy] = a[orderBy].toLowerCase();
+//     }
+//     if (typeof b[orderBy] === 'string') {
+//         b[orderBy] = b[orderBy].toLowerCase();
+//     }
+//     if (b[orderBy] < a[orderBy]) {
+//         return -1;
+//     }
+//     if (b[orderBy] > a[orderBy]) {
+//         return 1;
+//     }
+//     return 0;
+// }
+//
+// function stableSort(array, cmp) {
+//     const stabilizedThis = array.map((el, index) => [el, index]);
+//     stabilizedThis.sort((a, b) => {
+//         const order = cmp(a[0], b[0]);
+//         if (order !== 0) return order;
+//         return a[1] - b[1];
+//     });
+//     return stabilizedThis.map(el => el[0]);
+// }
+//
+// function getSorting(order, orderBy) {
+//     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+// }
 
 const rows = [
     {id: 'show_name', numeric: false, disablePadding: true, label: 'Name'},
@@ -91,28 +91,29 @@ class ShowTable extends React.Component {
         }
 
         this.setState({order, orderBy});
+        this.props.sortFunc(orderBy, order);
     };
 
-    handleClick = (event, id) => {
-        const {selected} = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        this.setState({selected: newSelected});
-    };
+    // handleClick = (event, id) => {
+    //     const {selected} = this.state;
+    //     const selectedIndex = selected.indexOf(id);
+    //     let newSelected = [];
+    //
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, id);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(
+    //             selected.slice(0, selectedIndex),
+    //             selected.slice(selectedIndex + 1),
+    //         );
+    //     }
+    //
+    //     this.setState({selected: newSelected});
+    // };
 
     handleChangePage = (event, page) => {
         this.setState({page});
@@ -139,13 +140,8 @@ class ShowTable extends React.Component {
                             'Content-Type': 'application/json'
                         }
                     })
-                    .then(response => {
-                        if (response.ok) {
-                            response.json().then(resp => alert("You've successfully logged a visit"));
-                        } else {
-                            response.json().then(resp => alert("You've already logged a visit"));
-                        }
-                    })
+                    .then(standardHandler)
+                    .then(resp => alert("You've successfully logged a visit"))
                     .catch(error => console.error('Error logging a visit to a show:', error));
                 event.preventDefault();
             }
@@ -172,26 +168,27 @@ class ShowTable extends React.Component {
     };
 
     render() {
+        console.log(this.props);
         const {classes, show_names} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, show_names.length - page * rowsPerPage);
         const {userType} = this.context;
         return (
             <Paper className={classes.root}>
-                <SharedToolbar numSelected={selected.length} title={'List of Shows'}/>
+                <SharedToolbar numSelected={selected.length} title={'List of Shows'} classes={undefined}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
                             data={rows}
-                            numSelected={selected.length}
+                            // numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
                             // onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            rowCount={show_names.length}
+                            // rowCount={show_names.length}
                         />
                         <TableBody>
-                            {stableSort(show_names, getSorting(order, orderBy))
+                            {show_names
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((n, id) => {
                                     const isSelected = this.isSelected(id);
@@ -218,8 +215,8 @@ class ShowTable extends React.Component {
                                             <TableCell component="th" scope="row" padding="none">
                                                 {n.show_name}
                                             </TableCell>
-                                            <TableCell>{moment.unix(n.show_time).format('MM/DD/YY hh:mm a')}</TableCell>
-                                            <TableCell>
+                                            <TableCell padding='none'>{moment.unix(n.show_time).format('MM/DD/YY hh:mm a')}</TableCell>
+                                            <TableCell padding='none'>
                                                 <Link to={`/exhibitdetail/${n.exhibit_name}`}>
                                                     {n.exhibit_name}
                                                 </Link>
@@ -257,6 +254,7 @@ class ShowTable extends React.Component {
 
 ShowTable.propTypes = {
     classes: PropTypes.object.isRequired,
+    sortFunc: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(ShowTable);

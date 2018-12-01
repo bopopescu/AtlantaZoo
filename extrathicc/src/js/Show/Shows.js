@@ -69,6 +69,25 @@ class Shows extends Component {
         return filters;
     };
 
+    generateSort = (sortBy, orderDir) => {
+        let sort = {};
+        const {exhibit_name, show_name, search_time} = this.state;
+
+        sort.sort = sortBy;
+        sort.orderDir = orderDir;
+        if (exhibit_name !== '') {
+            sort.exhibit_name = exhibit_name;
+        }
+        if (show_name !== '') {
+            sort.show_name = show_name;
+        }
+        if (search_time !== null) {
+            sort.show_time = search_time.unix();
+        }
+        return sort;
+
+    };
+
     componentDidMount = () => {
         this.refreshTable();
     };
@@ -78,6 +97,21 @@ class Shows extends Component {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
+            }
+        })
+        .then(standardHandler)
+        .then(response => this.setState({rows: response.message}))
+        .catch(response => {
+            response.json().then(resp => alert(resp.message));
+        });
+    };
+
+    sortColumn = (sortBy, orderDir) => {
+        fetch(`http://localhost:5000/shows?${query(this.generateSort(sortBy, orderDir))}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+
             }
         })
         .then(standardHandler)
@@ -100,7 +134,6 @@ class Shows extends Component {
     handleClick = event => {
         this.refreshTable();
     };
-
     render() {
         return (
             <div className={'Shows'}>
@@ -154,7 +187,8 @@ class Shows extends Component {
 
                 <ShowTable
                     show_names={this.state.rows}
-                    refreshFunc={this.refreshTable}>
+                    refreshFunc={this.refreshTable}
+                    sortFunc={this.sortColumn}>
                 </ShowTable>
             </div>
         );
