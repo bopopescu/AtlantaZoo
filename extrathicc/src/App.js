@@ -8,12 +8,13 @@ import {
     Typography,
     withStyles
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import Routes from "./Routes";
 import PropTypes from "prop-types";
 import { Grid } from "@material-ui/core";
 import UserContext from "./UserContext.js";
 import LoginService from "./_services/LoginService.js";
+import Button from "@material-ui/core/Button/Button";
 
 const styles = {
     root: {
@@ -70,15 +71,8 @@ class App extends React.Component {
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                <AppBar position="static">
+                <AppBar position="static" color="default">
                     <Toolbar>
-                        <IconButton
-                            className={classes.menuButton}
-                            color="inherit"
-                            aria-label="Menu"
-                        >
-                            <MenuIcon />
-                        </IconButton>
                         <Typography variant="h6" color="inherit" className={classes.grow}>
                             <Link to={this.handleHome()}>Menu</Link>
                         </Typography>

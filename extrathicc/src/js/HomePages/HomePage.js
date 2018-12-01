@@ -3,8 +3,11 @@ import {Link} from "react-router-dom";
 import {Grid} from "@material-ui/core";
 import "../../css/Login.css";
 import LoginService from "../../_services/LoginService";
+import UserContext from "../../UserContext";
 
 class HomePage extends Component {
+    static contextType = UserContext;
+
     logout = event => {
         const {setUserContext} = this.context;
         LoginService.logout()

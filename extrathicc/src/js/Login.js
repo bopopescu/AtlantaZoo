@@ -84,6 +84,13 @@ class Login extends Component {
                 <Grid container justify="center">
                     <header id="title">Login</header>
                 </Grid>
+                <Grid
+                    container
+                    direction="column"
+                    justify="space-between"
+                    alignitems="center"
+                >
+
                 <UserContext.Consumer>
                     {({setUserContext}) => (
                         <form autoComplete="off" onSubmit={this.handleSubmit(setUserContext)}>
@@ -113,7 +120,7 @@ class Login extends Component {
                                     type="password"
                                 />
                             </Grid>
-                            <Grid container direction="row" justify="center" alignitems="center">
+                            <Grid container direction="row" justify="space-around" alignitems="center">
                                 {this.renderRedirect()}
                                 <Button
                                     variant="outlined"
@@ -136,6 +143,7 @@ class Login extends Component {
                         </form>
                     )}
                 </UserContext.Consumer>
+                </Grid>
             </div>
         );
     }

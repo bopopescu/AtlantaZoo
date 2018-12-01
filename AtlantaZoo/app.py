@@ -41,7 +41,7 @@ def delete_user(username):
 
 
 @app.route('/users', methods=['GET'])
-def get_users_by_type():
+def get_users():
     user_type = request.args.get('user_type')
     username = request.args.get('username')
     email = request.args.get('email')

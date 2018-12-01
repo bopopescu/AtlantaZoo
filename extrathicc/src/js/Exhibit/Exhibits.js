@@ -74,7 +74,7 @@ class Exhibits extends Component {
         if (max_size !== '') {
             filters.max_size = max_size;
         }
-        if (exhibit_name !== '') {
+        if (water_feature !== '') {
             filters.water_feature = water_feature;
         }
 
@@ -104,7 +104,7 @@ class Exhibits extends Component {
         if (max_size !== '') {
             sort.max_size = max_size;
         }
-        if (exhibit_name !== '') {
+        if (water_feature !== '') {
             sort.water_feature = water_feature;
         }
 
@@ -248,8 +248,8 @@ class Exhibits extends Component {
                             onChange={this.handleChange('water_feature')}
                         >
                             <MenuItem value={''}/>
-                            <MenuItem value={true}>Yes</MenuItem>
-                            <MenuItem value={false}>No</MenuItem>
+                            <MenuItem value={1}>Yes</MenuItem>
+                            <MenuItem value={0}>No</MenuItem>
                         </Select>
                     </FormControl>
 
