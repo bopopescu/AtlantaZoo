@@ -186,7 +186,9 @@ def log_note():
 def get_all_note():
     animal_name = request.args.get('animal_name')
     animal_species = request.args.get('animal_species')
-    return jsonify(message=helpers.get_logged_note(animal_name, animal_species))
+    sort = request.args.get("sort")
+    order = request.args.get("orderDir")
+    return jsonify(message=helpers.get_logged_note(animal_name, animal_species, sort, order))
 
 
 @app.errorhandler(HTTPException)

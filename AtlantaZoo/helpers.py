@@ -529,11 +529,16 @@ def log_note(staff_username, log_time, note, animal_name, animal_species):
     return "Successfully added note"
 
 
-def get_logged_note(animal_name, animal_species):
+def get_logged_note(animal_name, animal_species, sort, order):
     conn, curr = connection()
 
+    if sort is None or sort == "":
+        sort = "staff_username"
+    if order is None or order == "":
+        order = "ASC"
+
     curr.execute(
-        "SELECT staff_username, note, log_time FROM test.Note where animal_name=%s AND animal_species=%s;",
+        "SELECT staff_username, note, log_time FROM test.Note where animal_name=%s AND animal_species=%s ORDER BY " + sort + " " + order,
         (animal_name, animal_species))
 
     results = curr.fetchall()
