@@ -25,9 +25,6 @@ class ExhibitDetail extends Component {
             current_time: moment(),
             redirect: false
         };
-        /**
-         * @todo: Update api to get a specific exhibit details
-         */
         const {match: {params: {name}}} = this.props;
 
         fetch(`http://localhost:5000/exhibits?${query({exhibit_name: name})}`, {
@@ -92,7 +89,7 @@ class ExhibitDetail extends Component {
                                             {detail.exhibit_name}
                                         </TableCell>
                                         <TableCell>{detail.size}</TableCell>
-                                        <TableCell>{detail.total_animal}</TableCell>
+                                        <TableCell>{detail.total_animals}</TableCell>
                                         <TableCell>{detail.water_feature ? 'Yes' : 'No'}</TableCell>
                                     </TableRow>
                                 );
@@ -112,7 +109,9 @@ class ExhibitDetail extends Component {
                         </Grid>
                     </form>
 
-                    <DetailTable title={'Animals in this Exhibit'} exhibit_name={this.props.match.params.name}/>
+                    <DetailTable
+                        title={'Animals in this Exhibit'}
+                        exhibit_name={this.props.match.params.name}/>
                 </Paper>
 
             </div >

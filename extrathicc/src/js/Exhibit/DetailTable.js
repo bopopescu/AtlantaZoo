@@ -8,48 +8,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import "../../css/Login.css";
 import SharedTableHead from '../../SharedTableHead.jsx';
-import moment from "moment";
 import SharedToolbar from '../../SharedToolbar.jsx';
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import {Link} from "react-router-dom";
-import {query} from "../../utils";
-
-
-let counter = 0;
-function createData(name, species) {
-    counter += 1;
-    return {id: counter, name, species};
-}
-
-function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
+import {query, standardHandler} from "../../utils";
 
 const rows = [
-    {id: 'name', numeric: false, disablePadding: true, label: 'Name'},
+    {id: 'animal_name', numeric: false, disablePadding: true, label: 'Name'},
     {id: 'species', numeric: true, disablePadding: false, label: 'Species'}
 ];
 
@@ -71,7 +36,7 @@ class DetailTable extends React.Component {
         super(props);
         this.state = {
             order: 'asc',
-            orderBy: 'name',
+            orderBy: 'animal_name',
             selected: [],
             exhibits: [],
             page: 0,
@@ -84,13 +49,11 @@ class DetailTable extends React.Component {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => {
-                return response.json();
-            })
-            .then(json => this.setState({
-                exhibits: json.message.map(
-                    exhibit => createData(exhibit.animal_name, exhibit.species))
-            }))
+            .then(standardHandler)
+            .then(response => this.setState({exhibits: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
     }
 
     handleRequestSort = (event, property) => {
@@ -102,6 +65,27 @@ class DetailTable extends React.Component {
         }
 
         this.setState({order, orderBy});
+        this.sortColumn(orderBy, order);
+    };
+
+    sortColumn = (sortBy, orderDir) => {
+        fetch(`http://localhost:5000/animals?${query(
+            {
+                exhibit_name: this.props.exhibit_name,
+                sort: sortBy,
+                orderDir: orderDir
+            })}`, {
+
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({exhibits: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
     };
 
     handleSelectAllClick = event => {
@@ -110,27 +94,6 @@ class DetailTable extends React.Component {
             return;
         }
         this.setState({selected: []});
-    };
-
-    handleClick = (event, id) => {
-        const {selected} = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        this.setState({selected: newSelected});
     };
 
     handleChangePage = (event, page) => {
@@ -150,48 +113,30 @@ class DetailTable extends React.Component {
 
         return (
             <Paper className={classes.root}>
-                <SharedToolbar numSelected={selected.length} title={this.props.title}/>
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <SharedTableHead
                             data={rows}
-                            numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            rowCount={exhibits.length}
                         />
                         <TableBody>
-                            {stableSort(exhibits, getSorting(order, orderBy))
+                            {exhibits
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map(n => {
                                     const isSelected = this.isSelected(n.id);
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={event => this.handleClick(event, n.id)}
-                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={n.id}
-                                            // selected={isSelected}
                                         >
                                             <TableCell>
-                                                {/*<Button variant="outlined" color="secondary" className={classes.button}*/}
-                                                        {/*onClick={this.handleLogVisit(*/}
-                                                            {/*{name: n.name,*/}
-                                                                {/*time: n.time,*/}
-                                                                {/*exhibit: n.exhibit})}>*/}
-                                                    {/*Log Visit*/}
-                                                {/*</Button>*/}
-
-                                                {/*<TableCell padding="checkbox">*/}
-                                                    {/*<Checkbox checked={isSelected} />*/}
-                                                {/*</TableCell>*/}
 
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                {n.name}
+                                                {n.animal_name}
                                             </TableCell>
                                             <TableCell>{n.species}</TableCell>
                                         </TableRow>
