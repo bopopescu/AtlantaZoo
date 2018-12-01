@@ -22,7 +22,7 @@ class StaffHome extends Component {
                     <header id="title">Home Page</header>
                 </Grid>
                 <Grid container direction="column" justify="space-evenly" alignItems="center">
-                    <Link to="/assigned_shows">View Shows</Link>
+                    <Link to="/assignedshows">View Shows</Link>
                     <Link to="/animals">Search for Animals</Link>
                     <Link to="/" onClick={this.logout}>Log out</Link>
                 </Grid>

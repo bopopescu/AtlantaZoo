@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "../../css/Login.css";
-import { Grid } from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import AssignedTable from "./AssignedTable";
 
 class AssignedShows extends Component {

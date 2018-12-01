@@ -4,6 +4,7 @@ import { Grid } from "@material-ui/core";
 import UserTable from "./UserTable";
 import TextField from "@material-ui/core/TextField/TextField";
 import {query, standardHandler} from "../../utils";
+import Button from "@material-ui/core/Button/Button";
 
 class Visitors extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class Visitors extends Component {
     };
 
     refreshTable = () => {
-        fetch(`http://localhost:5000/users?${query({user_type: 'visitor'})}`, {
+        fetch(`http://localhost:5000/users?${query(this.generateFilters())}`, {
 
             method: 'GET',
             headers: {
@@ -36,15 +37,16 @@ class Visitors extends Component {
     };
 
     generateFilters = () => {
-        let filters = [];
+        let filters = {};
+        filters.user_type = 'Visitor';
 
         const {username, email} = this.state;
 
         if (username !== '') {
-            filters.push(row => row.username.toLowerCase().includes(username.toLowerCase()));
+            filters.username = username;
         }
         if (email !== '') {
-            filters.push(row => row.email.toLowerCase().includes(email.toLowerCase()));
+            filters.email = email;
         }
         return filters;
     };
@@ -54,6 +56,11 @@ class Visitors extends Component {
             [name]: event.target.value
         });
     };
+
+    handleClick = event => {
+        this.refreshTable();
+    };
+
 
     render() {
         return (
@@ -84,7 +91,24 @@ class Visitors extends Component {
                         value={this.state.email}
                     />
                 </Grid>
-                <UserTable users={this.state.rows} filters={this.generateFilters()} refreshFunc={this.refreshTable}> </UserTable>
+
+                <Grid container
+                      direction="row"
+                      justify="space-around"
+                      alignItems="center">
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                        onClick={this.handleClick}
+                    >
+                        Search
+                    </Button>
+                </Grid>
+
+                <UserTable
+                    users={this.state.rows}
+                    refreshFunc={this.refreshTable}>
+                </UserTable>
             </div>
         );
     }

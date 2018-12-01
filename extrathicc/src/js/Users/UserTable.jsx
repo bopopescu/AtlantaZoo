@@ -18,13 +18,6 @@ import UserContext from "../../UserContext";
 import {query} from '../../utils.js';
 import {standardHandler} from "../../utils";
 
-let counter = 0;
-
-function createData(username, email) {
-    counter += 1;
-    return {id: counter, username, email};
-}
-
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -67,16 +60,6 @@ const styles = theme => ({
     },
 });
 
-const allFilters = (filters, row) => {
-    for (let filter of filters) {
-        if (!filter(row)) {
-            return false;
-        }
-    }
-    return true;
-};
-
-
 class UserTable extends React.Component {
     static contextType = UserContext;
 
@@ -91,8 +74,6 @@ class UserTable extends React.Component {
         };
     }
 
-
-
     handleRequestSort = (event, property) => {
         const orderBy = property;
         let order = 'desc';
@@ -102,14 +83,6 @@ class UserTable extends React.Component {
         }
 
         this.setState({order, orderBy});
-    };
-
-    handleSelectAllClick = event => {
-        // if (event.target.checked) {
-        //     this.setState(state => ({selected: state.users.map(n => n.id)}));
-        //     return;
-        // }
-        // this.setState({selected: []});
     };
 
     handleClick = (event, id) => {
@@ -168,7 +141,7 @@ class UserTable extends React.Component {
     };
 
     render() {
-        const {users, classes, filters} = this.props;
+        const {users, classes} = this.props;
         const {order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, users.length - page * rowsPerPage);
 
@@ -182,14 +155,12 @@ class UserTable extends React.Component {
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
                             rowCount={users.length}
                         />
                         <TableBody>
                             {stableSort(users, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .filter(row => allFilters(filters, row))
                                 .map((n, id) => {
                                     const isSelected = this.isSelected(id);
                                     return (

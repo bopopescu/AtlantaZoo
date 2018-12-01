@@ -68,7 +68,7 @@ const Routes = () => {
             <Route path="/registration" component={Registration} />;
             <AuthRoute path="/exhibits" component={Exhibits} />;
             <AuthRoute path="/visitors" component={Visitors} />;
-            <AuthRoute path="/staffs" component={Staffs} />;
+            <AuthRoute path="/staff" component={Staffs} />;
             <AuthRoute path="/shows" component={Shows} />;
             <AuthRoute path="/animals" component={Animals} />;
             <AuthRoute path="/exhibit_history" component={ExhibitHistory} />;
