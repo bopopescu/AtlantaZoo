@@ -35,6 +35,18 @@ def create_user():
                                                request.json['password'],
                                                request.json['user_type']))
 
+@app.route('/users/<username>', methods=['DELETE'])
+def delete_user(username):
+    return jsonify(message=helpers.delete_user(username))
+
+
+@app.route('/users', methods=['GET'])
+def get_users_by_type():
+    user_type = request.args.get('user_type')
+    username = request.args.get('username')
+    email = request.args.get('email')
+    return jsonify(message=helpers.get_users(user_type, username, email))
+
 
 @app.route('/staff', methods=['GET'])
 def get_all_staff():
@@ -69,8 +81,8 @@ def create_exhibit():
         max_size = request.args.get('max_size')
         min_animal = request.args.get('min_animal_num')
         max_animal = request.args.get('max_animal_num')
-        if name and not (water or min_size or max_size or min_animal or max_animal):
-            return jsonify(message=helpers.get_exhibit_details(name))
+        # if name and not (water or min_size or max_size or min_animal or max_animal):
+        #     return jsonify(message=helpers.get_exhibit_details(name))
 
         return jsonify(message=helpers.search_exhibit(name, water, min_size, max_size, min_animal, max_animal))
 
@@ -120,17 +132,6 @@ def delete_animal(animal_name, species):
 @app.route('/shows/<show_name>/<show_time>', methods=['DELETE'])
 def delete_show(show_name, show_time):
     return jsonify(message=helpers.delete_show(show_name, show_time))
-
-
-@app.route('/users/<username>', methods=['DELETE'])
-def delete_user(username):
-    return jsonify(message=helpers.delete_user(username))
-
-
-@app.route('/users', methods=['GET'])
-def get_users_by_type():
-    user_type = request.args.get('user_type')
-    return jsonify(message=helpers.get_users_by_type(user_type))
 
 
 # log_exhibit_visit

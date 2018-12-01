@@ -16,9 +16,6 @@ def _generate_filters(filters):
     return ' '.join(sql), list(filters.values())
 
 
-# def get_users():
-
-
 def abort(status_code, **fields):
     flask_abort(make_response(jsonify(**fields), status_code))
 
@@ -58,6 +55,27 @@ def create_user(username, email, password, user_type):
         return "User was successfully created"
     else:
         abort(400, message="Duplicate user given")
+
+
+def get_users(user_type, username, email):
+    conn, curr = connection()
+
+    if username is None:
+        username = ""
+    if email is None:
+        email= ""
+
+    query = "SELECT username, email FROM User WHERE user_type = %s " \
+            "AND (%s = '' OR username LIKE '%" + username + "%') " \
+            "AND (%s = '' OR email LIKE '%" + email + "%')"
+
+    curr.execute(query, (user_type, username, email))
+
+    results = curr.fetchall()
+    curr.close()
+    conn.close()
+    return results
+
 
 def login(email, password):
     conn, curr = connection()
