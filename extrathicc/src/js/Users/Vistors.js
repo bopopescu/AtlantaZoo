@@ -51,6 +51,38 @@ class Visitors extends Component {
         return filters;
     };
 
+    sortColumn = (sortBy, orderDir) => {
+        fetch(`http://localhost:5000/users?${query(this.generateSort(sortBy, orderDir))}`, {
+
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
+
+    generateSort = (sortBy, orderDir) => {
+        let sort = {};
+        sort.user_type = 'Visitor';
+        sort.sort=sortBy;
+        sort.orderDir=orderDir;
+
+        const {username, email} = this.state;
+
+        if (username !== '') {
+            sort.username = username;
+        }
+        if (email !== '') {
+            sort.email = email;
+        }
+        return sort;
+    };
+
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value
@@ -107,7 +139,8 @@ class Visitors extends Component {
 
                 <UserTable
                     users={this.state.rows}
-                    refreshFunc={this.refreshTable}>
+                    refreshFunc={this.refreshTable}
+                    sortFunc={this.sortColumn}>
                 </UserTable>
             </div>
         );
