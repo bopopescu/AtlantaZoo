@@ -11,6 +11,7 @@ import HistoryTable from "../Show/HistoryTable";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import {query} from '../../utils';
 import Button from "@material-ui/core/Button/Button";
+import ShowTable from "./ShowTable";
 
 const exhibits = [
     {
@@ -71,12 +72,45 @@ class ShowHistory extends Component {
         return filters;
     };
 
+    generateSort = (sortBy, orderDir) => {
+        let sort = {};
+        sort.visitor_username = this.context.username;
+        sort.sort = sortBy;
+        sort.orderDir = orderDir;
+        const {exhibit_name, show_name, search_time} = this.state;
+
+        if (exhibit_name !== '') {
+            sort.exhibit_name = exhibit_name;
+        }
+        if (show_name !== '') {
+            sort.show_name = show_name;
+        }
+        if (search_time !== null) {
+            sort.show_time = search_time.unix();
+        }
+        return sort;
+    };
+
     componentDidMount = () => {
         this.refreshTable();
     };
 
     refreshTable = () => {
         fetch(`http://localhost:5000/visit_show?${query(this.generateFilters())}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(standardHandler)
+            .then(response => this.setState({rows: response.message}))
+            .catch(response => {
+                response.json().then(resp => alert(resp.message));
+            });
+    };
+
+    sortColumn = (sortBy, orderDir) => {
+        fetch(`http://localhost:5000/visit_show?${query(this.generateSort(sortBy, orderDir))}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -139,7 +173,7 @@ class ShowHistory extends Component {
                         ))}
                     </TextField>
 
-                    <DatePicker clearable={true} value={this.state.search_time} onChange={this.handleDateChange}/>
+                    <DatePicker label='Date' clearable={true} value={this.state.search_time} onChange={this.handleDateChange}/>
 
                     <Button
                         variant="outlined"
@@ -151,7 +185,11 @@ class ShowHistory extends Component {
                 </Grid>
 
                 <Paper>
-                    <HistoryTable shows={this.state.rows} refreshFunc={this.refreshTable}> </HistoryTable>
+                    <HistoryTable
+                        shows={this.state.rows}
+                        refreshFunc={this.refreshTable}
+                        sortFunc={this.sortColumn}>
+                    </HistoryTable>
                 </Paper>
             </div>
         );

@@ -13,40 +13,6 @@ import SharedToolbar from '../../SharedToolbar.jsx';
 import {Link} from "react-router-dom";
 import moment from "moment";
 
-let counter = 0;
-
-function desc(a, b, orderBy) {
-    a = Object.assign({}, a);
-    b = Object.assign({}, b);
-    if (typeof a[orderBy] === 'string') {
-        a[orderBy] = a[orderBy].toLowerCase();
-    }
-    if (typeof b[orderBy] === 'string') {
-        b[orderBy] = b[orderBy].toLowerCase();
-    }
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
-
 const rows = [
     {id: 'show_name', numeric: false, disablePadding: true, label: 'Name'},
     {id: 'visit_time', numeric: false, disablePadding: false, label: 'Time'},
@@ -88,26 +54,7 @@ class HistoryTable extends React.Component {
         }
 
         this.setState({order, orderBy});
-    };
-    handleClick = (event, id) => {
-        const {selected} = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        this.setState({selected: newSelected});
+        this.props.sortFunc(orderBy, order);
     };
 
     handleChangePage = (event, page) => {
@@ -139,18 +86,16 @@ class HistoryTable extends React.Component {
                             rowCount={shows.length}
                         />
                         <TableBody>
-                            {stableSort(shows, getSorting(order, orderBy))
+                            {shows
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((n, id) => {
                                     const isSelected = this.isSelected(id);
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={event => this.handleClick(event, n.id)}
-                                            // aria-checked={isSelected}
                                             tabIndex={-1}
                                             key={id}
-                                            // selected={isSelected}
+                                            selected={isSelected}
                                         >
                                             <TableCell/>
                                             <TableCell component="th" scope="row" padding="none">

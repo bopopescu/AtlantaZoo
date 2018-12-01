@@ -24,9 +24,9 @@ class HomePage extends Component {
                     alignItems="center"
                 >
                     <Grid container direction="column" justify="space-evenly" alignItems="center">
-                        <Link to="/exhibits">Search Exhibits</Link>
-                        <Link to="/shows">Search Shows</Link>
-                        <Link to="/animals">Search for Animals</Link>
+                        <Link to="/exhibits">Exhibits</Link>
+                        <Link to="/shows">Shows</Link>
+                        <Link to="/animals">Animals</Link>
                     </Grid>
                 </Grid>
                 <Grid
@@ -36,8 +36,8 @@ class HomePage extends Component {
                     alignItems="center"
                 >
                     <Grid container direction="column" justify="space-evenly" alignItems="center">
-                        <Link to="/exhibit_history">View exhibit history</Link>
-                        <Link to="/show_history">Search Shows</Link>
+                        <Link to="/exhibit_history">Exhibit History</Link>
+                        <Link to="/show_history">Show History</Link>
                         <Link to="/" onClick={this.logout}>Log out</Link>
                     </Grid>
                 </Grid>
