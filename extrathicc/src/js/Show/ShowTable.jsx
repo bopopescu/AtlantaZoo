@@ -90,7 +90,7 @@ class ShowTable extends React.Component {
                     .catch(resp => resp.json().then(resp => alert(resp.message)));
                 event.preventDefault();
             } else {
-                alert("Show does not happen yet");
+                alert("Show has not happened yet");
                 event.preventDefault();
                 return ""
             }
