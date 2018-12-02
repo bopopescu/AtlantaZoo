@@ -403,7 +403,7 @@ def search_show(show_name, date, exhibit, staff_name, sort, order):
 
     query = "SELECT * FROM `Show` " \
             "WHERE (%s = '' OR staff_name = %s) " \
-            " AND (%s = '' OR LOWER(show_name) LIKE '%" + show_name.lower() + "%') " \
+            " AND (%s = '' OR show_name LIKE '%" + show_name.lower() + "%') " \
             " AND (%s = '' OR DATE(show_time) = %s) " \
             " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%') " \
             " ORDER BY " + sort + " " + order
