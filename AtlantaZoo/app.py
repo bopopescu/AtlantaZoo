@@ -112,9 +112,11 @@ def get_all_shows():
     # if staff_name and not (show_name or date or exhibit):
     #     filters = request.args.to_dict()
     #     return jsonify(message=helpers.get_show(**filters))
-    if staff_name or show_name or date or exhibit or order or sort:
-        return jsonify(message=helpers.search_show(show_name, date, exhibit, staff_name, sort, order))
-    return jsonify(message=helpers.get_all_shows())
+    # if staff_name or show_name or date or exhibit or order or sort:
+    #     return jsonify(message=helpers.search_show(show_name, date, exhibit, staff_name, sort, order))
+    # return jsonify(message=helpers.get_all_shows())
+
+    return jsonify(message=helpers.search_show(show_name, date, exhibit, staff_name, sort, order))
 
 
 @app.route('/animals', methods=['GET'])

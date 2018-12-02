@@ -86,8 +86,8 @@ class ShowTable extends React.Component {
                         }
                     })
                     .then(standardHandler)
-                    .then(resp => alert("You've successfully logged a visit"))
-                    .catch(resp => resp.json().then(resp => alert(resp)));
+                    .then(resp => alert(resp.message))
+                    .catch(resp => resp.json().then(resp => alert(resp.message)));
                 event.preventDefault();
             }
         } else if (this.context.userType.toLowerCase() === 'admin') {

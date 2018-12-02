@@ -33,6 +33,25 @@ class Registration extends Component {
     };
 
     handleSubmit = event => {
+        if (!this.validateEmail()) {
+            alert("Email should be in format abc@abc.abc");
+            event.preventDefault();
+            return ""
+        }
+        if (!this.validatePassword()) {
+            if (this.state.password.length < 8) {
+                alert("Password should be at least 8 characters long");
+            } else {
+                alert("Confirm password should match with input password");
+            }
+            event.preventDefault();
+            return ""
+        }
+        if (!this.validateUserType()) {
+            alert("Missing User Type");
+            event.preventDefault();
+            return ""
+        }
         const { setUserContext } = this.context;
 
         const { username, email, userType, password } = this.state;
@@ -47,27 +66,21 @@ class Registration extends Component {
         event.preventDefault();
     };
 
-    validateEmail(email) {
+    validateEmail() {
+        const{email} = this.state;
         let re = /^\w+@\w+\.\w+$/;
         return re.test(String(email).toLowerCase());
     }
 
-    validateForm() {
-        const {username, password, email, confirm, userType} = this.state;
-        if (username.length > 0
-            && password.length >= 8
-            && email.length > 0
-            && confirm.length > 0
-            && userType.length > 0) {
-            if (!this.validateEmail(email)) {
-                return false
-            } else if (password !== confirm) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    };
+    validatePassword() {
+        const {password,  confirm} = this.state;
+        return password.length>=8 && password.localeCompare(confirm) === 0;
+    }
+
+    validateUserType() {
+        const{userType} = this.state;
+        return userType.length > 0;
+    }
 
     renderRedirect = () => {
         if (this.state.redirect) {
@@ -94,6 +107,7 @@ class Registration extends Component {
                         alignItems="center"
                     >
                         <TextField
+                            required
                             id="email"
                             label="Email"
                             placeholder="email"
@@ -101,6 +115,7 @@ class Registration extends Component {
                             onChange={this.handleChange('email')}
                             margin="normal" />
                         <TextField
+                            required
                             id="username"
                             label="Username"
                             placeholder="username"
@@ -108,6 +123,7 @@ class Registration extends Component {
                             onChange={this.handleChange('username')}
                             margin="normal" />
                         <TextField
+                            required
                             id="password"
                             label="Password"
                             placeholder="password"
@@ -116,6 +132,7 @@ class Registration extends Component {
                             onChange={this.handleChange('password')}
                             margin="normal" />
                         <TextField
+                            required
                             id="confirm"
                             label="Confirm Password"
                             placeholder="confirm password"
@@ -144,7 +161,6 @@ class Registration extends Component {
                         <Button
                             id="register"
                             type="submit"
-                            disabled={!this.validateForm()}
                         >
                             Register
                         </Button>
