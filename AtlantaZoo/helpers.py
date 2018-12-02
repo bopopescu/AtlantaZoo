@@ -510,7 +510,7 @@ def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
         curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
                      (visitor_username, exhibit_name, datetime.fromtimestamp(int(visit_time))))
     except IntegrityError as e:
-        if e.errno == 1062:
+        if e.args[0] == 1062:
             abort(400, message='You already logged a visit')
         else:
             raise e
@@ -528,7 +528,7 @@ def log_show_visit(visitor_username, show_name, show_time):
         curr.execute("INSERT INTO Visit_show(visitor_username, show_name, show_time) VALUES (%s, %s, %s);",
                      (visitor_username, show_name, datetime.fromtimestamp(int(show_time))))
     except IntegrityError as e:
-        if e.errno == 1062:
+        if e.args[0] == 1062:
             abort(400, message='You already logged a visit')
         else:
             raise e

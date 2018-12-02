@@ -72,7 +72,7 @@ class ShowTable extends React.Component {
 
     handleAction = row => event => {
         if (this.context.userType.toLowerCase() === 'visitor') {
-            if (row.time <= moment()) {
+            if (moment.unix(row.time).isBefore(moment())) {
                 fetch('http://localhost:5000/visit_show',
                     {
                         method: 'POST',
@@ -89,6 +89,10 @@ class ShowTable extends React.Component {
                     .then(resp => alert(resp.message))
                     .catch(resp => resp.json().then(resp => alert(resp.message)));
                 event.preventDefault();
+            } else {
+                alert("Show does not happen yet");
+                event.preventDefault();
+                return ""
             }
         } else if (this.context.userType.toLowerCase() === 'admin') {
             fetch(`http://localhost:5000/shows/${encodeURIComponent(row.name)}/${encodeURIComponent(row.time)}`, {
