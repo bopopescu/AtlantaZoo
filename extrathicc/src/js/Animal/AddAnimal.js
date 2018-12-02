@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import MenuItem from '@material-ui/core/MenuItem';
 import { Redirect } from "react-router-dom";
+import moment from "moment";
 
 const exhibits = [
     {
@@ -69,14 +70,15 @@ class AddAnimal extends Component {
         };
     }
 
-    validateForm() {
-        return this.state.name.length > 0
-            && this.state.species.length > 0
-            && this.state.type.length > 0
-            && this.state.age !== 0
-            && this.state.exhibit.length > 0;
+    validateType() {
+        return this.state.type.length > 0;
     }
-
+    validateExhibit() {
+        return this.state.exhibit.length > 0
+    }
+    validateAge() {
+        return this.state.age != 0;
+    }
     handleChange = name => event => {
         if (name === 'age') {
             this.setState({
@@ -92,6 +94,21 @@ class AddAnimal extends Component {
     };
 
     handleSubmit = event => {
+        if (!this.validateExhibit()) {
+            alert("Missing Exhibit");
+            event.preventDefault();
+            return ""
+        }
+        if (!this.validateType()) {
+            alert("Missing Animal Type");
+            event.preventDefault();
+            return ""
+        }
+        if (!this.validateAge()) {
+            alert("Age can't be Zero");
+            event.preventDefault();
+            return ""
+        }
         fetch('http://localhost:5000/animals',
             {
                 method: 'POST',
@@ -143,6 +160,7 @@ class AddAnimal extends Component {
                         alignItems="center"
                     >
                         <TextField
+                            required
                             id="name"
                             label="Name"
                             placeholder="Animal Name"
@@ -186,6 +204,7 @@ class AddAnimal extends Component {
                         </TextField>
 
                         <TextField
+                            required
                             id="species"
                             label="Animal Species"
                             placeholder="Animal species"
@@ -210,7 +229,6 @@ class AddAnimal extends Component {
                         <Button
                             variant="outlined"
                             type="submit"
-                            disabled={!this.validateForm()}
                         >
                             Add
                 </Button>

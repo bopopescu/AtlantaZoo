@@ -53,16 +53,6 @@ class AddShow extends Component {
         }).then(json => this.setState({ allStaff: json.message }));
     }
 
-    validateForm() {
-        return this.validateName()
-            && this.validateTime()
-            && this.validateStaff()
-            && this.validateExhibit();
-    }
-
-    validateName() {
-        return this.state.name.length > 0;
-    }
     validateStaff() {
         return this.state.staff.length > 0;
     }
@@ -208,7 +198,6 @@ class AddShow extends Component {
                         <Button
                             variant="outlined"
                             type="submit"
-                            // disabled={!this.validateForm()}
                             onSubmit={this.handleSubmit}
                         >
                             Add Show
