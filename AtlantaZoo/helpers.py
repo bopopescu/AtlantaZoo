@@ -114,8 +114,15 @@ def create_exhibit(exhibit_name, water_feature, size):
 
 def create_animal(animal_name, species, animal_type, age, exhibit_name):
     conn, curr = connection()
-    curr.execute("INSERT INTO Animal(animal_name, species, animal_type, age, exhibit_name) "
-                 "VALUES (%s, %s, %s, %s, %s);", (animal_name, species, animal_type, age, exhibit_name))
+    try:
+        curr.execute("INSERT INTO Animal(animal_name, species, animal_type, age, exhibit_name) "
+                     "VALUES (%s, %s, %s, %s, %s);", (animal_name, species, animal_type, age, exhibit_name))
+    except IntegrityError as e:
+        if e.errno == 1062:
+            abort(400, message='This animal already exists')
+        else:
+            raise e
+
     conn.commit()
     curr.close()
     conn.close()
@@ -124,8 +131,15 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
 
 def create_show(show_name, show_time, staff_name, exhibit_name):
     conn, curr = connection()
-    curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
-                 "VALUES (%s, %s, %s, %s);", (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
+    try:
+        curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
+                     "VALUES (%s, %s, %s, %s);",
+                     (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
+    except IntegrityError as e:
+        if e.errno == 1062:
+            abort(400, message='This show already exists')
+        else:
+            raise e
     conn.commit()
     curr.close()
     conn.close()
