@@ -443,7 +443,7 @@ def search_show_history(visitor_name, show_name, date, exhibit, sort, order):
             "WHERE visitor_username = %s" \
             " AND (%s = '' OR Visit_show.show_name LIKE '%%" + show_name + "%%')" \
             " AND (%s = '' OR DATE(Visit_show.show_time) = %s)" \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')" \
+            " AND (%s = '' OR exhibit_name LIKE '%%" + exhibit + "%%')" \
             " ORDER BY " + sort + " " + order
 
     curr.execute(query, (visitor_name, show_name, date, date, exhibit))
