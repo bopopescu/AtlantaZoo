@@ -1,5 +1,5 @@
 from flask import session, abort as flask_abort, make_response, jsonify
-from mysql.connector import IntegrityError
+from pymysql.err import IntegrityError
 
 from Connect import connection
 
@@ -72,8 +72,8 @@ def get_users(user_type, username, email, sort, order):
         order = "ASC"
 
     query = "SELECT username, email FROM User WHERE user_type = %s " \
-            "AND (%s = '' OR username LIKE '%" + username + "%') " \
-            "AND (%s = '' OR email LIKE '%" + email + "%') ORDER BY " + sort + " " + order
+            "AND (%s = '' OR username LIKE '%%" + username + "%%') " \
+            "AND (%s = '' OR email LIKE '%%" + email + "%%') ORDER BY " + sort + " " + order
 
     curr.execute(query, (user_type, username, email))
 
@@ -118,7 +118,7 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
         curr.execute("INSERT INTO Animal(animal_name, species, animal_type, age, exhibit_name) "
                      "VALUES (%s, %s, %s, %s, %s);", (animal_name, species, animal_type, age, exhibit_name))
     except IntegrityError as e:
-        if e.errno == 1062:
+        if e.args[0] == 1062:
             abort(400, message='This animal already exists')
         else:
             raise e
@@ -328,11 +328,11 @@ def search_animal(name, species, type, min_age, max_age, exhibit, sort, order):
         order = "ASC"
 
     query = "SELECT * FROM Animal " \
-            "WHERE (%s = '' OR animal_name LIKE '%" + name + "%')" \
-            " AND (%s = '' OR species LIKE '%" + species + "%')" \
-            " AND (%s = '' OR animal_type LIKE '%" + type + "%')" \
+            "WHERE (%s = '' OR animal_name LIKE '%%" + name + "%%')" \
+            " AND (%s = '' OR species LIKE '%%" + species + "%%')" \
+            " AND (%s = '' OR animal_type LIKE '%%" + type + "%%')" \
             " AND age BETWEEN " + min_age + " AND " + max_age + \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')" \
+            " AND (%s = '' OR exhibit_name LIKE '%%" + exhibit + "%%')" \
             " ORDER BY " + sort + " " + order
 
     curr.execute(query, (name, species, type, exhibit))
@@ -366,8 +366,8 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal, sort
 
     query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animals' " \
             "FROM Exhibit NATURAL JOIN Animal " \
-            "WHERE (%s = '' OR exhibit_name LIKE '%" + name + "%')" \
-            " AND (%s ='' OR water_feature LIKE '%" + water + "%')" \
+            "WHERE (%s = '' OR exhibit_name LIKE '%%" + name + "%%')" \
+            " AND (%s ='' OR water_feature LIKE '%%" + water + "%%')" \
             " AND (size BETWEEN " + min_size + " AND " + max_size + ")" \
             " GROUP BY exhibit_name" \
             " HAVING COUNT(exhibit_name) >= " + min_animal + " AND COUNT(exhibit_name) <= " + max_animal + "" \
@@ -403,9 +403,9 @@ def search_show(show_name, date, exhibit, staff_name, sort, order):
 
     query = "SELECT * FROM `Show` " \
             "WHERE (%s = '' OR staff_name = %s) " \
-            " AND (%s = '' OR show_name LIKE '%" + show_name.lower() + "%') " \
+            " AND (%s = '' OR LOWER(show_name) LIKE '%%" + show_name.lower() + "%%') " \
             " AND (%s = '' OR DATE(show_time) = %s) " \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%') " \
+            " AND (%s = '' OR exhibit_name LIKE '%%" + exhibit + "%%') " \
             " ORDER BY " + sort + " " + order
     curr.execute(query, (staff_name, staff_name, show_name, date, date, exhibit))
 
@@ -441,7 +441,7 @@ def search_show_history(visitor_name, show_name, date, exhibit, sort, order):
     query = "SELECT DISTINCT visitor_username, Visit_show.show_name as 'show_name', Visit_show.show_time as 'visit_time', exhibit_name " \
             "FROM Visit_show INNER JOIN `Show` ON Visit_show.show_name=`Show`.show_name " \
             "WHERE visitor_username = %s" \
-            " AND (%s = '' OR Visit_show.show_name LIKE '%" + show_name + "%')" \
+            " AND (%s = '' OR Visit_show.show_name LIKE '%%" + show_name + "%%')" \
             " AND (%s = '' OR DATE(Visit_show.show_time) = %s)" \
             " AND (%s = '' OR exhibit_name LIKE '%" + exhibit + "%')" \
             " ORDER BY " + sort + " " + order
@@ -485,7 +485,7 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
             " AND exhibit_name = exhibit) as num_visits " \
             "FROM Visit_exhibit " \
             "WHERE visitor_username = %s" \
-            " AND (%s = '' OR exhibit_name LIKE '%" + exhibit_name + "%')" \
+            " AND (%s = '' OR exhibit_name LIKE '%%" + exhibit_name + "%%')" \
             " AND (%s = '' OR DATE(visit_time) = %s)" \
             " GROUP BY exhibit_name, visit_time" \
             " HAVING num_visits >= " + min_visits + " AND num_visits <= " + max_visits+ \

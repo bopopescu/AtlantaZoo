@@ -1,22 +1,22 @@
-import mysql.connector
-from mysql.connector import errorcode
+from flask import current_app
+from pymysql import Connect
+from pymysql.cursors import DictCursor
+from pymysql.err import MySQLError
 
 
 def connection():
-    try:
-      cnx = mysql.connector.connect(host='timbess.net',
-                                    user='root',
-                                    password='haoquyenjeanniehaha',
-                                    database='test')
-      curr = cnx.cursor(dictionary=True)
-      return cnx, curr
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print("Something is wrong with your user name or password")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            print("Database does not exist")
-        else:
-            print(err)
-            cnx.close()
-        return "fail"
+    from helpers import abort
 
+    cnx = None
+    try:
+        cnx = Connect(host='timbess.net',
+                      user='root',
+                      password='haoquyenjeanniehaha',
+                      database='test')
+        curr = cnx.cursor(cursor=DictCursor)
+        return cnx, curr
+    except MySQLError as e:
+        if cnx is not None:
+            cnx.close()
+        current_app.logger.exception(e)
+        abort(500, message='Failed to connect to database')
