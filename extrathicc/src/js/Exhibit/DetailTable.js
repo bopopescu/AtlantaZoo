@@ -13,6 +13,7 @@ import SharedTableHead from '../../SharedTableHead.jsx';
 import {query, standardHandler} from "../../utils";
 import {Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography/Typography";
+import {Link} from "react-router-dom";
 
 const rows = [
     {id: 'animal_name', numeric: false, disablePadding: true, label: 'Name'},
@@ -142,7 +143,9 @@ class DetailTable extends React.Component {
 
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                {n.animal_name}
+                                                <Link to={`/animaldetail/${n.animal_name}/${n.species}`} >
+                                                    {n.animal_name}
+                                                </Link>
                                             </TableCell>
                                             <TableCell>{n.species}</TableCell>
                                         </TableRow>
