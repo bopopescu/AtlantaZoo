@@ -1,4 +1,6 @@
 from flask import session, abort as flask_abort, make_response, jsonify
+from mysql.connector import IntegrityError
+
 from Connect import connection
 
 from datetime import datetime
@@ -503,8 +505,14 @@ def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
 def log_show_visit(visitor_username, show_name, show_time):
     conn, curr = connection()
 
-    curr.execute("INSERT INTO Visit_show(visitor_username, show_name, show_time) VALUES (%s, %s, %s);",
-                 (visitor_username, show_name, datetime.fromtimestamp(int(show_time))))
+    try:
+        curr.execute("INSERT INTO Visit_show(visitor_username, show_name, show_time) VALUES (%s, %s, %s);",
+                     (visitor_username, show_name, datetime.fromtimestamp(int(show_time))))
+    except IntegrityError as e:
+        if e.errno == 1062:
+            abort(400, message='You already logged a visit')
+        else:
+            raise e
 
     curr.execute("SELECT exhibit_name FROM `Show` WHERE show_name=%s and show_time=%s ;", (show_name, datetime.fromtimestamp(int(show_time))))
     results = curr.fetchall()
