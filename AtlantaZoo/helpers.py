@@ -131,18 +131,23 @@ def create_animal(animal_name, species, animal_type, age, exhibit_name):
 
 def create_show(show_name, show_time, staff_name, exhibit_name):
     conn, curr = connection()
-    try:
-        curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
-                     "VALUES (%s, %s, %s, %s);",
-                     (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
-    except IntegrityError as e:
-        if e.errno == 1062:
-            abort(400, message='This show already exists')
-        else:
-            raise e
-    conn.commit()
-    curr.close()
-    conn.close()
+    query = "SELECT * FROM test.`Show` where staff_name=%s AND show_time=%s;"
+    curr.execute(query, (staff_name, datetime.fromtimestamp(int(show_time))))
+    if curr.fetchall():
+        abort(400, message='Cannot host multiple shows at the same time')
+    else:
+        try:
+            curr.execute("INSERT INTO `Show`(show_name, show_time, staff_name, exhibit_name) "
+                         "VALUES (%s, %s, %s, %s);",
+                         (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
+        except IntegrityError as e:
+            if e.errno == 1062:
+                abort(400, message='This show already exists')
+            else:
+                raise e
+        conn.commit()
+        curr.close()
+        conn.close()
 
     return "Show was successfully created"
 
