@@ -54,12 +54,21 @@ class AddShow extends Component {
     }
 
     validateForm() {
-        return this.state.name.length > 0
+        return this.validateName()
             && this.validateTime()
-            && this.state.staff.length > 0
-            && this.state.exhibit.length > 0;
+            && this.validateStaff()
+            && this.validateExhibit();
     }
 
+    validateName() {
+        return this.state.name.length > 0;
+    }
+    validateStaff() {
+        return this.state.staff.length > 0;
+    }
+    validateExhibit() {
+        return this.state.exhibit.length > 0
+    }
     validateTime() {
         return this.state.datetime > moment()
     }
@@ -82,6 +91,21 @@ class AddShow extends Component {
     };
 
     handleSubmit = event => {
+        if (!this.validateExhibit()) {
+            alert("Missing Exhibit");
+            event.preventDefault();
+            return ""
+        }
+        if (!this.validateStaff()) {
+            alert("Missing Staff Name");
+            event.preventDefault();
+            return ""
+        }
+        if (!this.validateTime()) {
+            alert("Invalid Date");
+            event.preventDefault();
+            return ""
+        }
         fetch('http://localhost:5000/shows',
             {
                 method: 'POST',
@@ -119,6 +143,7 @@ class AddShow extends Component {
     };
 
     render() {
+        let {name, exhibit, staff} = this.state;
         return (
             <div className="Login">
                 <Grid container justify="center">
@@ -132,6 +157,7 @@ class AddShow extends Component {
                         alignItems="center"
                     >
                         <TextField
+                            required={true}
                             id="name"
                             label="Show Name"
                             value={this.state.name}
@@ -140,6 +166,7 @@ class AddShow extends Component {
 
 
                         <TextField
+                            required={true}
                             id="exhibit"
                             select
                             label="Exhibit Name"
@@ -157,6 +184,7 @@ class AddShow extends Component {
                         </TextField>
 
                         <TextField
+                            required
                             id="staff"
                             select
                             label="Assign Staff"
@@ -180,7 +208,7 @@ class AddShow extends Component {
                         <Button
                             variant="outlined"
                             type="submit"
-                            disabled={!this.validateForm()}
+                            // disabled={!this.validateForm()}
                             onSubmit={this.handleSubmit}
                         >
                             Add Show

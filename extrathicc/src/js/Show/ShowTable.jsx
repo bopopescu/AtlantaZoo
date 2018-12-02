@@ -87,7 +87,7 @@ class ShowTable extends React.Component {
                     })
                     .then(standardHandler)
                     .then(resp => alert("You've successfully logged a visit"))
-                    .catch(error => console.error('Error logging a visit to a show:', error));
+                    .catch(resp => resp.json().then(resp => alert(resp)));
                 event.preventDefault();
             }
         } else if (this.context.userType.toLowerCase() === 'admin') {
@@ -148,7 +148,7 @@ class ShowTable extends React.Component {
                                                                 time: n.show_time,
                                                                 exhibit: n.exhibit_name
                                                             })}>
-                                                    {userType === 'visitor' ? 'Log Visit' : 'Remove'}
+                                                    {userType.toLowerCase() === 'visitor' ? 'Log Visit' : 'Remove'}
                                                 </Button>
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">

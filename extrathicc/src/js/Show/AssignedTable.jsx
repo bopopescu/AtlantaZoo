@@ -67,9 +67,6 @@ const styles = theme => ({
     },
 });
 
-/**
- * @todo: change api to fetch if only want to fetch assigned shows for a specific staff member
- */
 class AssignedTable extends React.Component {
     static contextType = UserContext;
 
