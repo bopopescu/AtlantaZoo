@@ -506,9 +506,14 @@ def search_exhibit_history(visitor_name, exhibit_name, date, min_visits, max_vis
 
 def log_exhibit_visit(visitor_username, exhibit_name, visit_time):
     conn, curr = connection()
-
-    curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
-                 (visitor_username, exhibit_name, datetime.fromtimestamp(int(visit_time))))
+    try:
+        curr.execute("INSERT INTO Visit_exhibit(visitor_username, exhibit_name, visit_time) VALUES (%s, %s, %s);",
+                     (visitor_username, exhibit_name, datetime.fromtimestamp(int(visit_time))))
+    except IntegrityError as e:
+        if e.errno == 1062:
+            abort(400, message='You already logged a visit')
+        else:
+            raise e
 
     conn.commit()
     curr.close()
@@ -534,7 +539,7 @@ def log_show_visit(visitor_username, show_name, show_time):
     string = str(results[0])
     exhibit_name = "" + string.split("'")[3]
 
-    log_exhibit_visit(visitor_username, exhibit_name)
+    log_exhibit_visit(visitor_username, exhibit_name, show_time)
 
     conn.commit()
     curr.close()
