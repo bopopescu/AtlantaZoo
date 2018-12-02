@@ -62,6 +62,7 @@ class AddAnimal extends Component {
         super(props);
         this.state = {
             redirect: false,
+            redirectAnimal:false,
             name: "",
             exhibit: "",
             type: "",
@@ -125,7 +126,8 @@ class AddAnimal extends Component {
             })
             .then(response => {
                 if (response.ok) {
-                    this.setState({ redirect: true });
+                    response.json().then(resp => alert(resp.message));
+                    this.setState({ redirectAnimal: true });
                 } else {
                     response.json().then(resp => alert(resp.message));
                 }
@@ -143,6 +145,9 @@ class AddAnimal extends Component {
     renderRedirect = () => {
         if (this.state.redirect) {
             return <Redirect to="/adminhome" />;
+        }
+        if (this.state.redirectAnimal) {
+            return <Redirect to="/animals" />;
         }
     };
 

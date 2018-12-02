@@ -36,6 +36,7 @@ class AddShow extends Component {
         super(props);
         this.state = {
             redirect: false,
+            redirectShow: false,
             name: "",
             exhibit: "",
             staff: "",
@@ -60,7 +61,7 @@ class AddShow extends Component {
         return this.state.exhibit.length > 0
     }
     validateTime() {
-        return this.state.datetime > moment()
+        return this.state.datetime >= moment()
     }
     handleDateChange = date => {
         this.setState({ datetime: date });
@@ -111,7 +112,8 @@ class AddShow extends Component {
             })
             .then(response => {
                 if (response.ok) {
-                    this.setState({ redirect: true });
+                    response.json().then(resp => alert(resp.message));
+                    this.setState({ redirectShow: true });
                 } else {
                     response.json().then(resp => alert(resp.message));
                 }
@@ -129,6 +131,9 @@ class AddShow extends Component {
     renderRedirect = () => {
         if (this.state.redirect) {
             return <Redirect to="/adminhome" />;
+        }
+        if (this.state.redirectShow) {
+            return <Redirect to="/shows" />;
         }
     };
 
