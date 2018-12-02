@@ -141,7 +141,7 @@ def create_show(show_name, show_time, staff_name, exhibit_name):
                          "VALUES (%s, %s, %s, %s);",
                          (show_name, datetime.fromtimestamp(int(show_time)), staff_name, exhibit_name))
         except IntegrityError as e:
-            if e.errno == 1062:
+            if e.args[0] == 1062:
                 abort(400, message='This show already exists')
             else:
                 raise e
