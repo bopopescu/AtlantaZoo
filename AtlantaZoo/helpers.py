@@ -369,13 +369,13 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal, sort
     if order is None or order == "":
         order = "ASC"
 
-    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animals' " \
-            "FROM Exhibit NATURAL JOIN Animal " \
-            "WHERE (%s = '' OR exhibit_name LIKE '%%" + name + "%%')" \
+    query = "SELECT Exhibit.exhibit_name, water_feature, size, COUNT(Exhibit.exhibit_name) as 'total_animals' " \
+            "FROM Exhibit LEFT OUTER JOIN Animal on Exhibit.exhibit_name = Animal.exhibit_name " \
+            "WHERE (%s = '' OR Exhibit.exhibit_name LIKE '%%" + name + "%%')" \
             " AND (%s ='' OR water_feature LIKE '%%" + water + "%%')" \
             " AND (size BETWEEN " + min_size + " AND " + max_size + ")" \
-            " GROUP BY exhibit_name" \
-            " HAVING COUNT(exhibit_name) >= " + min_animal + " AND COUNT(exhibit_name) <= " + max_animal + "" \
+            " GROUP BY Exhibit.exhibit_name" \
+            " HAVING COUNT(Exhibit.exhibit_name) >= " + min_animal + " AND COUNT(Exhibit.exhibit_name) <= " + max_animal + "" \
             " ORDER BY " + sort + " " + order
 
     curr.execute(query, (name, water))
