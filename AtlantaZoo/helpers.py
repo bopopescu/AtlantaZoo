@@ -202,10 +202,10 @@ def get_all_exhibits():
 def get_exhibit_details(exhibit):
     conn, curr = connection()
 
-    query = "SELECT exhibit_name, water_feature, size, COUNT(exhibit_name) as 'total_animal' " \
-            "FROM Exhibit NATURAL JOIN Animal " \
-            "WHERE exhibit_name = %s" \
-            "GROUP BY exhibit_name"
+    query = "SELECT Exhibit.exhibit_name, water_feature, size, COUNT(Exhibit.exhibit_name) as 'total_animal' " \
+            "FROM Exhibit LEFT JOIN Animal on Exhibit.exhibit_name = Animal.exhibit_name " \
+            "WHERE Exhibit.exhibit_name = %s" \
+            "GROUP BY Exhibit.exhibit_name"
 
     curr.execute(query, (exhibit, ))
 
@@ -369,7 +369,7 @@ def search_exhibit(name, water, min_size, max_size, min_animal, max_animal, sort
     if order is None or order == "":
         order = "ASC"
 
-    query = "SELECT Exhibit.exhibit_name, water_feature, size, COUNT(Exhibit.exhibit_name) as 'total_animals' " \
+    query = "SELECT Exhibit.exhibit_name, water_feature, size, COUNT(Exhibit.exhibit_name = Animal.exhibit_name) as 'total_animals' " \
             "FROM Exhibit LEFT OUTER JOIN Animal on Exhibit.exhibit_name = Animal.exhibit_name " \
             "WHERE (%s = '' OR Exhibit.exhibit_name LIKE '%%" + name + "%%')" \
             " AND (%s ='' OR water_feature LIKE '%%" + water + "%%')" \
